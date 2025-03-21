@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ProjectListings {
+  id          Int     @id @default(autoincrement())
+  hypercertId String
+  listed      Boolean @default(false)
+
+  @@index([hypercertId])
+}
+
+model AlloProfiles {
+  id          Int    @id @default(autoincrement())
+  hypercertId String
+  alloProfile String
+  alloPool Int @default(0)
+
+  @@index([hypercertId])
+}

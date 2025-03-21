@@ -14,6 +14,9 @@ import {
   alloRegistryAbi,
   hyperfundFactoryAbi,
   contracts,
+  hypercertMinterAbi,
+  hyperstrategyFactoryAbi,
+  hyperfundAbi,
 } from "./data";
 import { useAccount, useWriteContract, useConfig } from "wagmi";
 import { Abi, encodeAbiParameters, decodeAbiParameters } from "viem";
@@ -86,7 +89,8 @@ export default function CreateProject() {
   const alloPoolForm = useForm<AlloPoolFormData>();
   const hypercertForm = useForm<HypercertFormData>();
   const account = useAccount();
-  const alloContract = useWriteContract();
+  const contract = useWriteContract();
+  const hyperminterWrite = useWriteContract();
 
   const { client } = useHypercertClient();
   const wagmiConfig = useConfig();
@@ -98,7 +102,11 @@ export default function CreateProject() {
     alloPoolId?: string;
     hyperfundAddress?: string;
     hyperstakerAddress?: string;
-  }>({});
+  }>({
+    // ipfsHash: "dasd",
+    // alloProfileId: "fcsa",
+    // hypercertId: "string",
+  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [stepStatus, setStepStatus] = useState("idle");
@@ -187,7 +195,7 @@ export default function CreateProject() {
         setCurrentStep(1);
         try {
           console.log(alloPoolData);
-          const tx = await alloContract.writeContractAsync({
+          const tx = await contract.writeContractAsync({
             // Allo registry contract
             address: "0x4AAcca72145e1dF2aeC137E1f3C5E3D75DB8b5f3",
             abi: alloRegistryAbi as Abi,
@@ -242,9 +250,9 @@ export default function CreateProject() {
           description: alloPoolData.description,
           image: `https://ipfs.io/ipfs/${alloPoolData.bannerImg}`,
           version: "1.0",
-          impactScope: hypercertData.impactScope as string[],
-          excludedImpactScope: hypercertData.excludedImpactScope as string[],
-          workScope: hypercertData.workScope as string[],
+          impactScope: [...hypercertData.impactScope],
+          excludedImpactScope: [...hypercertData.excludedImpactScope],
+          workScope: [...hypercertData.workScope],
           excludedWorkScope: hypercertData.excludedWorkScope as string[],
           workTimeframeStart:
             new Date(hypercertData.workTimeframeStart).getTime() / 1000,
@@ -293,83 +301,11 @@ export default function CreateProject() {
         }
       }
 
-      // Step 4: Create Allo Pool
-      if (!completedSteps.alloPoolId) {
+      // Step 4: Create Hyperfund Pool
+      if (!completedSteps.hyperfundAddress) {
         setCurrentStep(3);
         try {
-          // Strategy initialization data
-          const initializationData = encodeAbiParameters(
-            [
-              { name: "useRegistryAnchor", type: "bool" },
-              { name: "metadataRequired", type: "bool" },
-              { name: "grantAmountRequired", type: "bool" },
-              { name: "registrationStartTime", type: "uint64" },
-              { name: "registrationEndTime", type: "uint64" },
-            ],
-            [
-              true,
-              false,
-              false,
-              BigInt(Date.now().toString()) / BigInt(1000),
-              BigInt((Date.now() + 10000000).toString()) / BigInt(1000),
-            ]
-          );
-
-          // Pool metadata
-          const metadata = {
-            pointer: stateRef.current.ipfsHash ?? "",
-            protocol: "1",
-          };
-          const tx = await alloContract.writeContractAsync({
-            // Allo contract address
-            address: contracts[account.chainId as keyof typeof contracts]
-              .alloContract as `0x${string}`,
-            abi: alloAbi as Abi,
-            functionName: "createPool",
-            args: [
-              stateRef.current.alloProfileId as `0x${string}`,
-              contracts[account.chainId as keyof typeof contracts]
-                .directGrantsSimpleStrategy as `0x${string}`, // Strategy address - DirectGrantsSimpleStrategy
-              initializationData,
-              contracts[account.chainId as keyof typeof contracts]
-                .usdc as `0x${string}`, // USDC on Sepolia
-              BigInt(0), // amount
-              metadata,
-              [], // managers array
-            ],
-          });
-
-          const txReceipt = await waitForTransactionReceipt(wagmiConfig, {
-            hash: tx,
-          });
-
-          // Extract alloPoolId from transaction receipt events
-          const alloPoolId = decodeAbiParameters(
-            [{ name: "id", type: "uint256" }],
-            txReceipt.logs[0]?.topics?.[1] as `0x${string}`
-          )[0];
-
-          if (alloPoolId) {
-            setCompletedSteps((prevSteps) => ({
-              ...prevSteps,
-              alloPoolId: alloPoolId.toString(),
-            }));
-
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-          }
-        } catch (error) {
-          console.error("Error creating Allo Pool:", error);
-          setStepStatus("error");
-          setErrorMessage("Failed to create Allo Pool");
-          return;
-        }
-      }
-
-      // Step 5: Create Hyperfund Pool
-      if (!completedSteps.hyperfundAddress) {
-        setCurrentStep(4);
-        try {
-          const tx = await alloContract.writeContractAsync({
+          const tx = await contract.writeContractAsync({
             address: contracts[account.chainId as keyof typeof contracts]
               .hyperstakerFactoryContract as `0x${string}`,
             abi: hyperfundFactoryAbi as Abi,
@@ -386,11 +322,27 @@ export default function CreateProject() {
 
           // Extract hyperfundAddress from transaction receipt events
           const hyperfundAddress = decodeAbiParameters(
-            [{ name: "hypperfundAddress", type: "address" }],
+            [{ name: "hyperfundAddress", type: "address" }],
             txReceipt.logs[2]?.topics?.[1] as `0x${string}`
           )[0];
 
           if (hyperfundAddress) {
+            stateRef.current = {
+              ...stateRef.current,
+              hyperfundAddress: hyperfundAddress,
+            };
+
+            await contract.writeContractAsync({
+              address: hyperfundAddress as `0x${string}`,
+              abi: hyperfundAbi as Abi,
+              functionName: "allowlistToken",
+              args: [
+                contracts[account.chainId as keyof typeof contracts]
+                  .usdc as `0x${string}`,
+                1,
+              ],
+            });
+
             setCompletedSteps((prevSteps) => ({
               ...prevSteps,
               hyperfundAddress: hyperfundAddress,
@@ -406,11 +358,123 @@ export default function CreateProject() {
         }
       }
 
+      // Step 5: Create Allo Pool
+      if (!completedSteps.alloPoolId) {
+        setCurrentStep(4);
+        try {
+          // Deploy strategy contract
+          const stx = await contract.writeContractAsync({
+            address: contracts[account.chainId as keyof typeof contracts]
+              .hyperstrategyFactory as `0x${string}`,
+            abi: hyperstrategyFactoryAbi as Abi,
+            functionName: "createHyperstrategy",
+            args: [
+              contracts[account.chainId as keyof typeof contracts]
+                .alloContract as `0x${string}`,
+              "HyperStrategy",
+            ],
+          });
+
+          const txreceipt = await waitForTransactionReceipt(wagmiConfig, {
+            hash: stx,
+          });
+
+          // Extract hyperfundAddress from transaction receipt events
+          const hyperstrategyAddress = decodeAbiParameters(
+            [{ name: "hyperstrategyAddress", type: "address" }],
+            txreceipt.logs[1]?.topics?.[1] as `0x${string}`
+          )[0];
+
+          // Approve strategy to distribute hypercerts
+          await hyperminterWrite.writeContractAsync({
+            abi: hypercertMinterAbi,
+            address: contracts[account.chainId as keyof typeof contracts]
+              .hypercertMinterContract as `0x${string}`,
+            functionName: "setApprovalForAll",
+            args: [hyperstrategyAddress, true],
+          });
+
+          // Strategy initialization data
+          const initializationData = encodeAbiParameters(
+            [
+              { name: "manager", type: "address" },
+              { name: "hyperfund", type: "address" },
+            ],
+            [
+              contracts[account.chainId as keyof typeof contracts]
+                .alloContract as `0x${string}`,
+              stateRef.current.hyperfundAddress as `0x${string}`,
+            ]
+          );
+
+          // Pool metadata
+          const metadata = {
+            pointer: stateRef.current.ipfsHash ?? "",
+            protocol: "1",
+          };
+          const tx = await contract.writeContractAsync({
+            // Allo contract address
+            address: contracts[account.chainId as keyof typeof contracts]
+              .alloContract as `0x${string}`,
+            abi: alloAbi as Abi,
+            functionName: "createPoolWithCustomStrategy",
+            args: [
+              stateRef.current.alloProfileId as `0x${string}`,
+              hyperstrategyAddress,
+              initializationData,
+              contracts[account.chainId as keyof typeof contracts]
+                .usdc as `0x${string}`, // USDC on Sepolia
+              BigInt(0), // amount
+              metadata,
+              [], // managers array
+            ],
+          });
+
+          const txReceipt = await waitForTransactionReceipt(wagmiConfig, {
+            hash: tx,
+          });
+
+          // Extract alloPoolId from transaction receipt events
+          const alloPoolId = decodeAbiParameters(
+            [{ name: "poolId", type: "uint256" }],
+            txReceipt.logs[5]?.topics?.[1] as `0x${string}`
+          )[0];
+
+          if (alloPoolId) {
+            setCompletedSteps((prevSteps) => ({
+              ...prevSteps,
+              alloPoolId: alloPoolId.toString(),
+            }));
+
+            // Call the API to add entries to the database
+            await fetch("/api/addEntry", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                hypercertId: stateRef.current.hypercertId,
+                alloProfile: stateRef.current.alloProfileId,
+                alloPool: alloPoolId,
+                listed: false,
+              }),
+            });
+
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          }
+        } catch (error) {
+          console.error("Error creating Allo Pool:", error);
+          setStepStatus("error");
+          setErrorMessage("Failed to create Allo Pool");
+          return;
+        }
+      }
+
       // Step 6: Create Hyperstaker
       if (!completedSteps.hyperstakerAddress) {
         setCurrentStep(5);
         try {
-          const tx = await alloContract.writeContractAsync({
+          const tx = await contract.writeContractAsync({
             address: contracts[account.chainId as keyof typeof contracts]
               .hyperstakerFactoryContract as `0x${string}`,
             abi: hyperfundFactoryAbi as Abi,
@@ -483,8 +547,8 @@ export default function CreateProject() {
     "Saving to IPFS",
     "Creating Allo Profile",
     "Creating Hypercert",
-    "Creating Allo Pool",
     "Creating Hyperfund Pool",
+    "Creating Allo Pool",
     "Creating Hyperstaker",
   ];
 
@@ -629,8 +693,9 @@ export default function CreateProject() {
             label="Impact Scope"
             fullWidth
             margin="normal"
-            {...hypercertForm.register("impactScope", {
-              required: "Impact scope is required",
+            {...(hypercertForm.register("impactScope"),
+            {
+              required: true,
               onChange: (e) => {
                 hypercertForm.setValue("impactScope", [
                   ...e.target.value
@@ -646,8 +711,9 @@ export default function CreateProject() {
             label="Excluded Impact Scope"
             fullWidth
             margin="normal"
-            {...hypercertForm.register("excludedImpactScope", {
-              required: "Excluded impact scope is required",
+            {...(hypercertForm.register("excludedImpactScope"),
+            {
+              required: true,
               onChange: (e) => {
                 hypercertForm.setValue("excludedImpactScope", [
                   ...e.target.value
@@ -663,8 +729,9 @@ export default function CreateProject() {
             label="Work Scope"
             fullWidth
             margin="normal"
-            {...hypercertForm.register("workScope", {
-              required: "Work scope is required",
+            {...(hypercertForm.register("workScope"),
+            {
+              required: true,
               onChange: (e) => {
                 hypercertForm.setValue("workScope", [
                   ...e.target.value
@@ -726,8 +793,9 @@ export default function CreateProject() {
             helperText={
               hypercertForm.formState.errors.contributorsList?.message
             }
-            {...hypercertForm.register("contributorsList", {
-              required: "Contributors are required",
+            {...(hypercertForm.register("contributorsList"),
+            {
+              required: true,
               onChange: (e) => {
                 hypercertForm.setValue("contributorsList", [
                   ...e.target.value
