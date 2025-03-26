@@ -5,8 +5,14 @@ import { Skeleton } from "./ui/Skeleton";
 import { Button } from "./ui/Button";
 import Project from "../interfaces/Project";
 import Metadata from "../interfaces/Metadata";
-import { useWriteContract } from "wagmi";
-import { hyperfundAbi, hyperstakerAbi } from "./data";
+import { useWriteContract, useAccount, useConfig } from "wagmi";
+import { readContract } from "@wagmi/core";
+import {
+  contracts,
+  hypercertMinterAbi,
+  hyperfundAbi,
+  hyperstakerAbi,
+} from "./data";
 import { Abi } from "viem";
 import { useState } from "react";
 import { Modal } from "./ui/Modal";
@@ -30,13 +36,45 @@ export default function ManageHypercert({
   stakedFractions: string[];
   nonFinancialContributions: bigint | number;
 }) {
+  const account = useAccount();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [txHash, setTxHash] = useState("");
   const hyperstakerContract = useWriteContract();
   const hyperfundContract = useWriteContract();
+  const hyperminterWrite = useWriteContract();
+  const config = useConfig();
+
+  const checkApproved = async (operator: `0x${string}`) => {
+    if (account.chainId) {
+      const isApproved = await readContract(config, {
+        address: contracts[account.chainId as keyof typeof contracts]
+          .hypercertMinterContract as `0x${string}`,
+        abi: hypercertMinterAbi,
+        functionName: "isApprovedForAll",
+        args: [account.address, operator],
+      });
+
+      return isApproved;
+    }
+  };
+
+  const setApprovalForAll = async (operator: `0x${string}`) => {
+    const isApproved = await checkApproved(operator);
+
+    if (!isApproved) {
+      await hyperminterWrite.writeContractAsync({
+        abi: hypercertMinterAbi,
+        address: contracts[account.chainId as keyof typeof contracts]
+          .hypercertMinterContract as `0x${string}`,
+        functionName: "setApprovalForAll",
+        args: [operator, true],
+      });
+    }
+  };
 
   const handleStakeFraction = async (fractionId: string) => {
     try {
+      await setApprovalForAll(hyperstaker as `0x${string}`);
       const tx = await hyperstakerContract.writeContractAsync({
         address: hyperstaker as `0x${string}`,
         abi: hyperstakerAbi as Abi,
@@ -69,6 +107,7 @@ export default function ManageHypercert({
 
   const handleRetireFraction = async (fractionId: string, token: string) => {
     try {
+      await setApprovalForAll(hyperfund as `0x${string}`);
       const tx = await hyperfundContract.writeContractAsync({
         address: hyperfund as `0x${string}`,
         abi: hyperfundAbi as Abi,
@@ -110,7 +149,7 @@ export default function ManageHypercert({
                   </Skeleton>
                 </p>
               </div>
-              <div className="mb-24">
+              {/* <div className="mb-24">
                 <Skeleton isLoading={isLoading} className="w-full">
                   <div className="">
                     <h5 className="mt-8">
@@ -138,9 +177,6 @@ export default function ManageHypercert({
                           <div className="text-2xl font-bold text-gray-300">
                             40 ETH
                           </div>
-                          {/* <div className="text-xs text-gray-200">
-                            20% of prev RPGF
-                          </div> */}
                         </div>
                         <div>
                           <div className="text-sm font-medium text-gray-200">
@@ -156,7 +192,7 @@ export default function ManageHypercert({
                     <div className="clear-both"></div>
                   </div>
                 </Skeleton>
-              </div>
+              </div> */}
               {/* <Skeleton isLoading={isLoading} className="w-[100px]">
                 <ImpactCategories tags={metadata?.data?.impactCategory} />
               </Skeleton> */}
@@ -177,7 +213,9 @@ export default function ManageHypercert({
                           key={s}
                         >
                           <div>
-                            <p className="font-medium">Fraction ID: {s}</p>
+                            <p className="font-medium">
+                              Fraction ID: {s.slice(0, 5)}...{s.slice(-5)}
+                            </p>
                             {/* <p className="text-sm text-gray-200">
                             Yield: 0.5 ETH
                           </p> */}
@@ -206,7 +244,9 @@ export default function ManageHypercert({
                           key={f}
                         >
                           <div>
-                            <p className="font-medium">Fraction ID: {f}</p>
+                            <p className="font-medium">
+                              Fraction ID: {f.slice(0, 5)}...{f.slice(-5)}
+                            </p>
                           </div>
                           <div className="flex space-x-2">
                             <Button

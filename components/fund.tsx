@@ -20,7 +20,7 @@ interface FundProps {
 const coinData = [{ value: "USDC", label: "USDC" }];
 
 const Fund: React.FC<FundProps> = ({ project, poolId }) => {
-  const { chain, isConnected } = useAccount();
+  const { address, chain, isConnected } = useAccount();
   const [selectedToken, setSelectedToken] = useState<string>("USDC");
   const [amount, setAmount] = useState<string>("");
   const { data: hash, error, isPending, writeContract } = useWriteContract();
@@ -41,7 +41,7 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
       ?.usdc as `0x${string}`,
     functionName: "allowance",
     args: [
-      project.recipient,
+      address,
       contracts[chain?.id as keyof typeof contracts]?.alloContract,
     ],
   });
