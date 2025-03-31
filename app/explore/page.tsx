@@ -22,7 +22,7 @@ export default function Page() {
     }
 
     fetchCampaigns();
-  });
+  }, []);
 
   async function getHypercertId(id: string) {
     const query = graphql(`
@@ -80,7 +80,12 @@ export default function Page() {
   }
 
   async function getProjectListings() {
-    const res = await fetch("/api/projectListings");
+    const res = await fetch("/api/projectListings", {
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
+    });
     if (!res.ok) {
       throw new Error("Failed to fetch project listings");
     }
