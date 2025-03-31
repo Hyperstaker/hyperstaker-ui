@@ -22,7 +22,7 @@ export default function Page() {
     }
 
     fetchCampaigns();
-  }, []);
+  });
 
   async function getHypercertId(id: string) {
     const query = graphql(`
