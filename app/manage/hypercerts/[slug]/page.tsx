@@ -42,7 +42,7 @@ export default function Page({ params }: { params: { slug: string } }) {
     const query = graphql(`
       query MyQuery {
         hypercerts(
-          where: {fractions: {owner_address: {eq: "${walletAddress}"}}, hypercert_id: { eq: "${params.slug}"}}
+          where: {hypercert_id: { eq: "${params.slug}"}}
         ) {
           data {
             contract {
@@ -66,6 +66,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                   work_timeframe_from
                   work_timeframe_to
                 }
+                owner_address
               }
             }
             units
@@ -89,12 +90,14 @@ export default function Page({ params }: { params: { slug: string } }) {
 
     const _unstakedFractions: string[] = [];
     res?.hypercerts.data?.map((d: any) => {
-      d.fractions.data.map((f: any) =>
-        _unstakedFractions.push(f.fraction_id.split("-")[2])
-      );
+      d.fractions.data.map((f: any) => {
+        if (f.owner_address == walletAddress) {
+          _unstakedFractions.push(f.fraction_id.split("-")[2]);
+        }
+      });
     });
 
-    setUnstakedFractions(_unstakedFractions as string[]);
+    setUnstakedFractions(Array.from(new Set(_unstakedFractions)));
 
     return res.hypercerts.data;
   }
@@ -142,7 +145,7 @@ export default function Page({ params }: { params: { slug: string } }) {
     const _stakedFractions = data.data.stakeds.items.map(
       (i: { fractionId: any }) => i.fractionId
     );
-    setStakedFractions(_stakedFractions);
+    setStakedFractions(Array.from(new Set(_stakedFractions)));
     const _hyperfund = data.data.hyperfundCreated.hyperfund;
     setHyperfund(_hyperfund);
     const _nonFinancialContributions = await readContract(config, {
