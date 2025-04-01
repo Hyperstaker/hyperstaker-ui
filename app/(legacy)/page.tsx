@@ -1,9 +1,9 @@
-import Hero from "../components/hero";
-import SectionTitle from "../components/sectionTitle";
-import { benefitOne } from "../components/data";
+import Hero from "../../components/hero";
+import SectionTitle from "../../components/sectionTitle";
+import { benefitOne } from "../../components/data";
 // import Video from "../components/video";
-import Benefits from "../components/benefits";
-import Footer from "../components/footer";
+import Benefits from "../../components/benefits";
+import Footer from "../../components/footer";
 // import Testimonials from "../components/testimonials";
 // import Cta from "../components/cta";
 // import Faq from "../components/faq";
