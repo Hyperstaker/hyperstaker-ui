@@ -1,20 +1,19 @@
-import { TextInput, Text, Paper, Title, Stack, Button, Group } from '@mantine/core';
-import { DateInput } from '@mantine/dates';
-import '@mantine/dates/styles.css';
-import { useForm } from 'react-hook-form';
-import { useAccount, useWriteContract, useConfig } from 'wagmi';
-import { waitForTransactionReceipt } from '@wagmi/core';
-import { Abi, encodeAbiParameters, decodeAbiParameters } from 'viem';
-import { formatHypercertData, TransferRestrictions } from '@hypercerts-org/sdk';
-import { useHypercertClient } from '@/hooks/useHypercertClient';
-import { alloAbi, alloRegistryAbi, hyperfundFactoryAbi, contracts } from '@/components/data';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { TextInput, Text, Paper, Title, Stack, Button, Group } from "@mantine/core";
+import { DateInput } from "@mantine/dates";
+import "@mantine/dates/styles.css";
+import { useForm } from "react-hook-form";
+import { useAccount, useWriteContract, useConfig } from "wagmi";
+import { waitForTransactionReceipt } from "@wagmi/core";
+import { Abi, encodeAbiParameters, decodeAbiParameters } from "viem";
+import { formatHypercertData, TransferRestrictions } from "@hypercerts-org/sdk";
+import { useHypercertClient } from "@/hooks/useHypercertClient";
+import { alloAbi, alloRegistryAbi, hyperfundFactoryAbi, contracts } from "@/components/data";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const testing = true;
 
 interface CreateHypercertProps {
-  onNext: () => void;
   onPrevious: () => void;
 }
 
@@ -35,7 +34,7 @@ interface HypercertFormData {
   excludedRights: string[];
 }
 
-export function CreateHypers({ onNext, onPrevious }: CreateHypercertProps) {
+export function CreateHypers({ onPrevious }: CreateHypercertProps) {
   const defaultValues = testing ? {
     title: "Climate Action Project",
     description: "A project focused on reducing carbon emissions through innovative technology",
@@ -86,7 +85,7 @@ export function CreateHypers({ onNext, onPrevious }: CreateHypercertProps) {
         const metadata = formatHypercertData({
           name: data.title,
           description: data.description,
-          image: "https://placehold.co/600x400", // Default placeholder image
+          image: "https://placehold.co/600x400",
           version: "1.0",
           impactScope: data.impactScope,
           excludedImpactScope: data.excludedImpactScope,
@@ -190,7 +189,6 @@ export function CreateHypers({ onNext, onPrevious }: CreateHypercertProps) {
         }
       }
 
-      // Navigate to projects page after successful completion
       router.push("/projects");
       
     } catch (error) {
@@ -204,7 +202,7 @@ export function CreateHypers({ onNext, onPrevious }: CreateHypercertProps) {
       p="xl" 
       radius="lg"
       bg="dark.7"
-      style={{ border: '1px solid var(--mantine-color-dark-4)' }}
+      style={{ border: "1px solid var(--mantine-color-dark-4)" }}
     >
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Stack gap="xl">
@@ -215,11 +213,11 @@ export function CreateHypers({ onNext, onPrevious }: CreateHypercertProps) {
             required
             {...form.register("goal", { required: "Goal is required" })}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)",
               },
             }}
           /> */}
@@ -234,7 +232,7 @@ export function CreateHypers({ onNext, onPrevious }: CreateHypercertProps) {
             </Button>
             <Button
               variant="gradient"
-              gradient={{ from: 'blue', to: 'cyan' }}
+              gradient={{ from: "blue", to: "cyan" }}
               type="submit"
             >
               Next Step

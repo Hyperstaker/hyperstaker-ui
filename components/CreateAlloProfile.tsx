@@ -1,5 +1,5 @@
-import { TextInput, Text, Textarea, Paper, Title, Stack, Button, Group, FileInput } from '@mantine/core';
-import { useForm } from 'react-hook-form';
+import { TextInput, Text, Textarea, Paper, Title, Stack, Button, Group, FileInput } from "@mantine/core";
+import { useForm } from "react-hook-form";
 
 interface CreateAlloProfileProps {
   onNext: () => void;
@@ -75,7 +75,7 @@ export function CreateAlloProfile({ onNext, onPrevious }: CreateAlloProfileProps
       p="xl" 
       radius="lg"
       bg="dark.7"
-      style={{ border: '1px solid var(--mantine-color-dark-4)' }}
+      style={{ border: "1px solid var(--mantine-color-dark-4)" }}
     >
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Stack gap="xl">
@@ -90,12 +90,12 @@ export function CreateAlloProfile({ onNext, onPrevious }: CreateAlloProfileProps
               required: "Title is required"
             })}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
-              },
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)"
+              }
             }}
           />
 
@@ -109,12 +109,12 @@ export function CreateAlloProfile({ onNext, onPrevious }: CreateAlloProfileProps
               required: "Description is required"
             })}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
-              },
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)"
+              }
             }}
           />
 
@@ -123,12 +123,12 @@ export function CreateAlloProfile({ onNext, onPrevious }: CreateAlloProfileProps
             placeholder="Project website URL"
             {...form.register("website")}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
-              },
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)"
+              }
             }}
           />
 
@@ -137,12 +137,12 @@ export function CreateAlloProfile({ onNext, onPrevious }: CreateAlloProfileProps
             placeholder="@username"
             {...form.register("projectTwitter")}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
-              },
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)"
+              }
             }}
           />
 
@@ -151,12 +151,12 @@ export function CreateAlloProfile({ onNext, onPrevious }: CreateAlloProfileProps
             placeholder="Repository URL"
             {...form.register("projectGithub")}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
-              },
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)"
+              }
             }}
           />
 
@@ -166,12 +166,12 @@ export function CreateAlloProfile({ onNext, onPrevious }: CreateAlloProfileProps
             accept="image/*"
             onChange={(file) => handleLogoUpload(file)}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
-              },
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)"
+              }
             }}
           />
 
@@ -181,12 +181,12 @@ export function CreateAlloProfile({ onNext, onPrevious }: CreateAlloProfileProps
             accept="image/*"
             onChange={(file) => handleBannerUpload(file)}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
-              },
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)"
+              }
             }}
           />
 
@@ -205,12 +205,12 @@ export function CreateAlloProfile({ onNext, onPrevious }: CreateAlloProfileProps
               );
             }}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
-              },
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)"
+              }
             }}
           />
 
@@ -228,12 +228,12 @@ export function CreateAlloProfile({ onNext, onPrevious }: CreateAlloProfileProps
               );
             }}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
-              },
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)"
+              }
             }}
           />
 
@@ -246,7 +246,7 @@ export function CreateAlloProfile({ onNext, onPrevious }: CreateAlloProfileProps
             </Button>
             <Button
               variant="gradient"
-              gradient={{ from: 'blue', to: 'cyan' }}
+              gradient={{ from: "blue", to: "cyan" }}
               type="submit"
             >
               Next Step

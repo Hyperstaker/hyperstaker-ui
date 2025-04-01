@@ -1,7 +1,7 @@
-import { TextInput, Text, Paper, Title, Stack, Button, Group } from '@mantine/core';
-import { DateInput } from '@mantine/dates';
-import '@mantine/dates/styles.css';
-import { useForm } from 'react-hook-form';
+import { TextInput, Text, Paper, Title, Stack, Button, Group } from "@mantine/core";
+import { DateInput } from "@mantine/dates";
+import "@mantine/dates/styles.css";
+import { useForm } from "react-hook-form";
 
 const testing = true;
 
@@ -55,7 +55,7 @@ export function CreateHypercert({ onNext, onPrevious }: CreateHypercertProps) {
       p="xl" 
       radius="lg"
       bg="dark.7"
-      style={{ border: '1px solid var(--mantine-color-dark-4)' }}
+      style={{ border: "1px solid var(--mantine-color-dark-4)" }}
     >
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Stack gap="xl">
@@ -67,11 +67,11 @@ export function CreateHypercert({ onNext, onPrevious }: CreateHypercertProps) {
             required
             {...form.register("goal", { required: "Goal is required" })}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)",
               },
             }}
           />
@@ -86,11 +86,11 @@ export function CreateHypercert({ onNext, onPrevious }: CreateHypercertProps) {
               form.setValue("impactScope", e.target.value.split(",").map(i => i.trim()).filter(i => i !== ""));
             }}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)",
               },
             }}
           />
@@ -103,11 +103,11 @@ export function CreateHypercert({ onNext, onPrevious }: CreateHypercertProps) {
               form.setValue("excludedImpactScope", e.target.value.split(",").map(i => i.trim()).filter(i => i !== ""));
             }}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)",
               },
             }}
           />
@@ -121,11 +121,11 @@ export function CreateHypercert({ onNext, onPrevious }: CreateHypercertProps) {
               form.setValue("workScope", e.target.value.split(",").map(i => i.trim()).filter(i => i !== ""));
             }}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)",
               },
             }}
           />
@@ -138,11 +138,11 @@ export function CreateHypercert({ onNext, onPrevious }: CreateHypercertProps) {
               form.setValue("excludedWorkScope", e.target.value.split(",").map(i => i.trim()).filter(i => i !== ""));
             }}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)",
               },
             }}
           />
@@ -153,11 +153,11 @@ export function CreateHypercert({ onNext, onPrevious }: CreateHypercertProps) {
             value={form.watch("workTimeframeStart")}
             onChange={(value) => value && form.setValue("workTimeframeStart", value)}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)",
               },
             }}
           />
@@ -167,11 +167,11 @@ export function CreateHypercert({ onNext, onPrevious }: CreateHypercertProps) {
             required
             onChange={(value) => value && form.setValue("workTimeframeEnd", value)}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)",
               },
             }}
           />
@@ -182,11 +182,11 @@ export function CreateHypercert({ onNext, onPrevious }: CreateHypercertProps) {
             value={form.watch("impactTimeframeStart")}
             onChange={(value) => value && form.setValue("impactTimeframeStart", value)}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)",
               },
             }}
           />
@@ -195,11 +195,11 @@ export function CreateHypercert({ onNext, onPrevious }: CreateHypercertProps) {
             label="Impact End Date"
             required
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)",
               },
             }}
           />
@@ -212,11 +212,11 @@ export function CreateHypercert({ onNext, onPrevious }: CreateHypercertProps) {
               form.setValue("contributorsList", e.target.value.split(",").map(i => i.trim()).filter(i => i !== ""));
             }}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)",
               },
             }}
           />
@@ -230,11 +230,11 @@ export function CreateHypercert({ onNext, onPrevious }: CreateHypercertProps) {
               form.setValue("rights", e.target.value.split(",").map(i => i.trim()).filter(i => i !== ""));
             }}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)",
               },
             }}
           />
@@ -247,11 +247,11 @@ export function CreateHypercert({ onNext, onPrevious }: CreateHypercertProps) {
               form.setValue("excludedRights", e.target.value.split(",").map(i => i.trim()).filter(i => i !== ""));
             }}
             styles={{
-              label: { color: 'var(--mantine-color-gray-4)' },
+              label: { color: "var(--mantine-color-gray-4)" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                color: 'var(--mantine-color-white)',
-                border: '1px solid var(--mantine-color-dark-4)',
+                backgroundColor: "var(--mantine-color-dark-6)",
+                color: "var(--mantine-color-white)",
+                border: "1px solid var(--mantine-color-dark-4)",
               },
             }}
           />
@@ -265,7 +265,7 @@ export function CreateHypercert({ onNext, onPrevious }: CreateHypercertProps) {
             </Button>
             <Button
               variant="gradient"
-              gradient={{ from: 'blue', to: 'cyan' }}
+              gradient={{ from: "blue", to: "cyan" }}
               type="submit"
             >
               Next Step

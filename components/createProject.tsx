@@ -660,7 +660,7 @@ export default function CreateProject() {
             {...alloPoolForm.register("credentials")}
           />
           <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
-            <Button variant="contained" type="submit">
+            <Button type="submit">
               Next
             </Button>
           </Box>
@@ -844,7 +844,7 @@ export default function CreateProject() {
           />
           <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
             <Button onClick={handleBack}>Back</Button>
-            <Button variant="contained" type="submit">
+            <Button type="submit">
               Create Project
             </Button>
           </Box>
@@ -917,7 +917,6 @@ export default function CreateProject() {
               <p style={{ color: "red" }}>Error: {errorMessage}</p>
               <Button
                 className="text-black"
-                variant="contained"
                 onClick={() => {
                   setStepStatus("processing");
                   handleSubmitProject();
