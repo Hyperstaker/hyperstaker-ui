@@ -4,7 +4,6 @@ import { ThemeToggle } from "./_components/ThemeToggle";
 import { FeaturesSection } from "./_components/FeaturesSection";
 import { ValuePropositionSection } from "./_components/ValuePropositionSection";
 import { ProductRoadmapSection } from "./_components/ProductRoadmapSection";
-import Image from "next/image";
 import { Footer } from "./_components/Footer"; // Add this import
 
 export default function Home() {
@@ -16,7 +15,7 @@ export default function Home() {
         style={{ borderBottomColor: "#242b3d" }}
       >
         <div className="flex items-center">
-          <Image
+          <img 
             src="/img/logo.png"
             alt="Hyperstaker Logo"
             width={32}

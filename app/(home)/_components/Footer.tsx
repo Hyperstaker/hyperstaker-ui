@@ -12,12 +12,12 @@ export function Footer() {
             {/* Logo and Description */}
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center mb-4">
-                <Image
-                  src="/img/logo.png"
-                  alt="Hyperstaker Logo"
-                  width={32}
-                  height={32}
-                  className="w-8 h-8 mr-2"
+                <img 
+                  src="/img/logo.png" 
+                  alt="Hyperstaker Logo" 
+                  width={32} 
+                  height={32} 
+                  className="w-8" 
                 />
                 <span className="text-xl font-bold text-white">Hyperstaker</span>
               </div>
@@ -25,15 +25,13 @@ export function Footer() {
                 Aligning incentives between builders and funders with programmable impact certificates (HyperCerts) for retroactive rewards.
               </p>
               <div className="flex space-x-4">
-                <a href="#" aria-label="GitHub" className="text-gray-500 hover:text-white transition-colors">
+                <a href="https://github.com/hyperstaker" aria-label="GitHub" className="text-gray-500 hover:text-white transition-colors">
                   <IconBrandGithub size={20} />
                 </a>
-                <a href="#" aria-label="Twitter" className="text-gray-500 hover:text-white transition-colors">
+                <a href="https://x.com/hyperstaker" aria-label="Twitter" className="text-gray-500 hover:text-white transition-colors">
                   <IconBrandTwitter size={20} />
                 </a>
-                <a href="#" aria-label="Website" className="text-gray-500 hover:text-white transition-colors">
-                  <IconWorld size={20} />
-                </a>
+                
               </div>
             </div>
   

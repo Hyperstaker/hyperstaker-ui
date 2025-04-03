@@ -19,7 +19,6 @@ import { Modal } from "./ui/Modal";
 
 export default function ManageHypercert({
   project,
-  metadata,
   isLoading,
   hyperfund,
   hyperstaker,

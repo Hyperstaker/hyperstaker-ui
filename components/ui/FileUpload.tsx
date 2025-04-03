@@ -15,8 +15,7 @@ interface FileUploadProps {
 
 export const FileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
   (
-    { label, error, helperText, fullWidth, margin = "none", accept, onChange },
-    ref
+    { label, error, helperText, fullWidth, margin = "none", accept, onChange }
   ) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [fileName, setFileName] = useState<string | null>(null); // {{ edit_1 }}
