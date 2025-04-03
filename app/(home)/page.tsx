@@ -1,10 +1,11 @@
-import { IconCode, IconUsers, IconWorld } from  "@tabler/icons-react";
-import { GetStartedButton } from './_components/GetStartedButton';
-import { ThemeToggle } from './_components/ThemeToggle';
-import { FeaturesSection } from './_components/FeaturesSection';
-import { ValuePropositionSection } from './_components/ValuePropositionSection';
-import { ProductRoadmapSection } from './_components/ProductRoadmapSection';
-import Image from 'next/image';
+import { IconCertificate, IconCurrencyDollar, IconBolt } from  "@tabler/icons-react";
+import { GetStartedButton } from "./_components/GetStartedButton";
+import { ThemeToggle } from "./_components/ThemeToggle";
+import { FeaturesSection } from "./_components/FeaturesSection";
+import { ValuePropositionSection } from "./_components/ValuePropositionSection";
+import { ProductRoadmapSection } from "./_components/ProductRoadmapSection";
+import Image from "next/image";
+import { Footer } from "./_components/Footer"; // Add this import
 
 export default function Home() {
   return (
@@ -12,7 +13,7 @@ export default function Home() {
       {/* Navigation */}
       <header 
         className="relative z-10 flex justify-between items-center py-6 px-8 border-b"
-        style={{ borderBottomColor: '#242b3d' }}
+        style={{ borderBottomColor: "#242b3d" }}
       >
         <div className="flex items-center">
           <Image
@@ -41,7 +42,7 @@ export default function Home() {
       {/* Hero Section */}
       <main className="min-h-screen relative">
         <div className="absolute inset-0 bg-gradient-custom" />
-        
+
         <div 
           className="container mx-auto px-4 py-20 flex flex-col items-center text-center"
           style={{
@@ -50,25 +51,24 @@ export default function Home() {
               rgba(55, 48, 163, 0.1) 45%, 
               rgba(30, 27, 75, 0.05) 70%,
               rgba(15, 23, 42, 0) 100%)`,
-            position: 'relative',
+            position: "relative",
             zIndex: 10
           }}
         >
           <div className="max-w-3xl mx-auto">
             <div className="mb-12">
               <span className="inline-block px-4 py-2 rounded-full bg-purple-900/30 text-purple-300 text-sm font-medium mb-6 border border-[rgb(107,33,168)]">
-                The Operating System for Self-Sovereign Software
+                Retroactive Rewards for the Builders of Tomorrow
               </span>
-              
+
               <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-6">
-                Exponential Growth for Open-Source Projects
+                Rewarding Early Support for Public Goods
               </h1>
-              
+
               <p className="text-gray-300 text-lg mb-8">
-                Exponential is the platform where teams of AIs and humans organize to collaborate on software
-                development, bringing ideas from zero to one with fair compensation based on contributions.
+                Hyperstaker aligns incentives between builders and funders by issuing programmable impact certificates (HyperCerts) that reward early contributions when projects succeed.
               </p>
-              
+
               <div className="flex flex-wrap justify-center gap-4">
                 <GetStartedButton />
                 <a href="#" className="px-6 py-3 bg-transparent border border-gray-700 text-gray-300 font-medium rounded-md hover:bg-gray-800 transition-colors">
@@ -77,40 +77,40 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Feature Cards - Moved up right below the buttons */}
+            {/* Feature Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
               {[
                 {
-                  icon: <IconCode size={36} stroke={1.5} />,
-                  iconBg: '#2F2459',
-                  iconColor: '#B794F4',
-                  title: 'Open-Source Sustainability',
-                  description: 'Fair compensation for all contributors'
+                  icon: <IconCertificate size={36} stroke={1.5} />, 
+                  iconBg: "#2F2459",
+                  iconColor: "#B794F4",
+                  title: "HyperCerts for Early Contributions",
+                  description: "Recognize and reward work done before success arrives."
                 },
                 {
-                  icon: <IconUsers size={36} stroke={1.5} />,
-                  iconBg: '#1E3A8A',
-                  iconColor: '#90CDF4',
-                  title: 'Human-AI Collaboration',
-                  description: 'Teams of humans and AIs working together'
+                  icon: <IconCurrencyDollar size={36} stroke={1.5} />, 
+                  iconBg: "#1E3A8A",
+                  iconColor: "#90CDF4",
+                  title: "Retroactive Payouts",
+                  description: "Funders and builders earn upside when projects receive retro funding."
                 },
                 {
-                  icon: <IconWorld size={36} stroke={1.5} />,
-                  iconBg: '#322659',
-                  iconColor: '#D6BCFA',
-                  title: 'Decentralized Funding',
-                  description: 'Enabling innovation through fair distribution'
+                  icon: <IconBolt size={36} stroke={1.5} />, 
+                  iconBg: "#322659",
+                  iconColor: "#D6BCFA",
+                  title: "Incentive Alignment",
+                  description: "De-risk early stage funding by sharing future rewards with early supporters."
                 }
               ].map((feature, index) => (
                 <div 
                   key={index}
                   style={{ 
-                    background: 'linear-gradient(180deg, rgba(14, 23, 47, 0.5) 0%, rgba(11, 15, 36, 0.7) 100%)',
-                    backdropFilter: 'blur(10px)',
-                    borderColor: 'rgba(255, 255, 255, 0.1)',
-                    borderWidth: '1px',
-                    borderStyle: 'solid',
-                    borderRadius: '12px'
+                    background: "linear-gradient(180deg, rgba(14, 23, 47, 0.5) 0%, rgba(11, 15, 36, 0.7) 100%)",
+                    backdropFilter: "blur(10px)",
+                    borderColor: "rgba(255, 255, 255, 0.1)",
+                    borderWidth: "1px",
+                    borderStyle: "solid",
+                    borderRadius: "12px"
                   }}
                   className="p-6 transition-all duration-300 hover:border-opacity-20"
                 >
@@ -119,7 +119,7 @@ export default function Home() {
                       className="w-20 h-20 rounded-full flex items-center justify-center mb-6"
                       style={{ 
                         backgroundColor: feature.iconBg,
-                        boxShadow: `0 4px 16px rgba(79, 70, 229, 0.25)`,
+                        boxShadow: "0 4px 16px rgba(79, 70, 229, 0.25)",
                         color: feature.iconColor
                       }}
                     >
@@ -133,16 +133,19 @@ export default function Home() {
             </div>
           </div>
         </div>
-        
+
         {/* Features Section */}
         <FeaturesSection />
-        
+
         {/* Value Proposition Section */}
         <ValuePropositionSection />
-        
-        {/* Product Roadmap Section - added after Value Proposition */}
+
+        {/* Product Roadmap Section */}
         <ProductRoadmapSection />
       </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }

@@ -1,12 +1,12 @@
 import React from "react";
 import { Container, Title, Text, SimpleGrid } from "@mantine/core";
-import { 
-  IconGitPullRequest, 
-  IconUsers, 
-  IconCode, 
-  IconBriefcase, 
-  IconChartBar, 
-  IconWorld 
+import {
+  IconCertificate,
+  IconCurrencyDollar,
+  IconBolt,
+  IconUsers,
+  IconRocket,
+  IconLayoutGrid
 } from "@tabler/icons-react";
 
 interface FeatureCardProps {
@@ -32,43 +32,42 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
 );
 
 export const FeaturesSection: React.FC = () => {
-  // Feature data
   const features: FeatureCardProps[] = [
     {
-      icon: <IconGitPullRequest size={32} stroke={1.5} />,
-      iconColor: "#c4b5fd", // Light purple
-      title: "Project Management",
-      description: "AI-assisted tracking of tasks, milestones, and progress with GitHub integration for seamless workflow."
+      icon: <IconCertificate size={32} stroke={1.5} />,
+      iconColor: "#c4b5fd",
+      title: "HyperCerts",
+      description: "Programmatic, tradable proof of contribution that links early work to future value."
+    },
+    {
+      icon: <IconCurrencyDollar size={32} stroke={1.5} />,
+      iconColor: "#6ee7b7",
+      title: "Prospective & Retro Funding",
+      description: "Mix early-stage capital with retroactive rewards to fund innovation at any stage."
+    },
+    {
+      icon: <IconBolt size={32} stroke={1.5} />,
+      iconColor: "#facc15",
+      title: "Aligned Incentives",
+      description: "Builders, funders, and speculators all benefit when projects succeed — not just VCs."
     },
     {
       icon: <IconUsers size={32} stroke={1.5} />,
-      iconColor: "#93c5fd", // Light blue
-      title: "Team Management",
-      description: "Coordinate human and AI contributors efficiently, ensuring everyone works together harmoniously."
+      iconColor: "#93c5fd",
+      title: "Governance by Builders",
+      description: "Contributors earn decision-making power by staking their HyperCerts."
     },
     {
-      icon: <IconCode size={32} stroke={1.5} />,
-      iconColor: "#c4b5fd", // Light purple
-      title: "Human/AI Coordination Layer",
-      description: "Automate workflow optimization with AI agents that help manage tasks and improve productivity."
+      icon: <IconRocket size={32} stroke={1.5} />,
+      iconColor: "#f472b6",
+      title: "Bootstrapping Made Easy",
+      description: "Pre-launch HyperCerts enable projects to fundraise and onboard contributors from day one."
     },
     {
-      icon: <IconBriefcase size={32} stroke={1.5} />,
-      iconColor: "#6ee7b7", // Light green
-      title: "Virtual Scalable Next-Gen VC",
-      description: "Create a funding ecosystem for OSS projects that helps them grow from zero to one and beyond."
-    },
-    {
-      icon: <IconChartBar size={32} stroke={1.5} />,
-      iconColor: "#fcd34d", // Light amber
-      title: "Fair Compensation",
-      description: "Ensure contributors are rewarded based on their impact with transparent evaluation mechanisms."
-    },
-    {
-      icon: <IconWorld size={32} stroke={1.5} />,
-      iconColor: "#fda4af", // Light red
-      title: "Self-Sovereign Software",
-      description: "Enable teams to work in an autonomous, transparent, and fair ecosystem with decentralized governance."
+      icon: <IconLayoutGrid size={32} stroke={1.5} />,
+      iconColor: "#fda4af",
+      title: "Composable & Interoperable",
+      description: "Built to work with Gitcoin, Allo, and the broader web3 funding ecosystem."
     }
   ];
 
@@ -76,15 +75,14 @@ export const FeaturesSection: React.FC = () => {
     <section className="py-24 w-full bg-[#0e1525]">
       <Container size="lg">
         <div className="mb-16 text-center">
-          <Title 
+          <Title
             className="text-4xl md:text-5xl font-bold mb-6"
-            style={{ color: "#a78bfa" }} // Specific purple color from design
+            style={{ color: "#a78bfa" }}
           >
-            Key Features & Differentiators
+            Core Innovations of Hyperstaker
           </Title>
           <p className="text-gray-300 text-lg mb-8 max-w-[60%] mx-auto">
-            Exponential combines AI-driven project coordination, decentralized funding, and a 
-            governance model that rewards contributions fairly.
+            A new foundation for open-source sustainability: programmable rewards, shared risk, and retroactive value alignment.
           </p>
         </div>
 
@@ -106,4 +104,4 @@ export const FeaturesSection: React.FC = () => {
       </Container>
     </section>
   );
-}; 
+};

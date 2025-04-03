@@ -1,29 +1,29 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export function ThemeToggle() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   
   useEffect(() => {
     // Check if user has a preference stored
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     
-    // Default to dark mode if user prefers it or hasn't set a preference
-    setIsDarkMode(savedTheme === 'dark' || (!savedTheme && prefersDark));
+    // Default to dark mode if user prefers it or hasn"t set a preference
+    setIsDarkMode(savedTheme === "dark" || (!savedTheme && prefersDark));
   }, []);
   
   const toggleTheme = () => {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
-    localStorage.setItem('theme', newMode ? 'dark' : 'light');
+    localStorage.setItem("theme", newMode ? "dark" : "light");
     
     // Apply theme to document
     if (newMode) {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
   };
   

@@ -4,26 +4,27 @@ import { IconClock } from "@tabler/icons-react";
 
 interface RoadmapItemProps {
   title: string;
+  description?: string;
 }
 
-const RoadmapItem: React.FC<RoadmapItemProps & { children: React.ReactNode }> = ({ 
+const RoadmapItem: React.FC<RoadmapItemProps> = ({ 
   title, 
-  children 
+  description 
 }) => (
   <div className="flex items-start gap-3 mb-6">
     <IconClock size={20} className="text-[#8896c5] mt-0.5 flex-shrink-0" />
     <div>
-      <Text className="text-[rgb(203 213 225 / var(--tw-text-opacity))] text-base font-medium">{title}</Text>
-      {children}
+      <Text className="text-white font-medium mb-1">{title}</Text>
+      {description && <Text className="text-[#94a3b8] text-sm">{description}</Text>}
     </div>
   </div>
 );
 
 interface RoadmapPhaseProps {
-  status: 'in-progress' | 'upcoming' | 'planned';
+  status: "in-progress" | "upcoming" | "planned";
   timeline: string;
   title: string;
-  items: string[];
+  items: RoadmapItemProps[];
 }
 
 const RoadmapPhase: React.FC<RoadmapPhaseProps> = ({
@@ -34,29 +35,29 @@ const RoadmapPhase: React.FC<RoadmapPhaseProps> = ({
 }) => {
   const getStatusStyles = () => {
     switch (status) {
-      case 'in-progress':
+      case "in-progress":
         return {
-          bgColor: '#10172A',
-          textColor: '#93C5FD',
-          label: 'In Progress'
+          bgColor: "#10172A",
+          textColor: "#93C5FD",
+          label: "In Progress"
         };
-      case 'upcoming':
+      case "upcoming":
         return {
-          bgColor: '#10172A',
-          textColor: '#C4B5FD',
-          label: 'Upcoming'
+          bgColor: "#10172A",
+          textColor: "#C4B5FD",
+          label: "Upcoming"
         };
-      case 'planned':
+      case "planned":
         return {
-          bgColor: '#10172A',
-          textColor: '#CBD5E1',
-          label: 'Planned'
+          bgColor: "#10172A",
+          textColor: "#CBD5E1",
+          label: "Planned"
         };
       default:
         return {
-          bgColor: '#1F2937',
-          textColor: '#CBD5E1',
-          label: 'Planned'
+          bgColor: "#1F2937",
+          textColor: "#CBD5E1",
+          label: "Planned"
         };
     }
   };
@@ -89,7 +90,7 @@ const RoadmapPhase: React.FC<RoadmapPhaseProps> = ({
 
       <div className="space-y-6">
         {items.map((item, index) => (
-          <RoadmapItem key={index} title={item}>{item}</RoadmapItem>
+          <RoadmapItem key={index} title={item.title} description={item.description} />
         ))}
       </div>
     </div>
@@ -99,39 +100,41 @@ const RoadmapPhase: React.FC<RoadmapPhaseProps> = ({
 export const ProductRoadmapSection: React.FC = () => {
   const phases: RoadmapPhaseProps[] = [
     {
-      status: 'in-progress',
-      timeline: '3 months',
-      title: 'Phase 1: MVP Development',
+      status: "in-progress",
+      timeline: "Now - Q2 2025",
+      title: "Phase 1: MVP Launch & Onboarding",
       items: [
-        'GitHub integration for issue tracking and milestone setting',
-        'AI-driven project estimation and roadmap tracking',
-        'HyperCert staking and governance token integration',
-        'Integrated with Github',
-        'AI project manager'
+        { title: "Launch Hyperstaker MVP on testnet" },
+        { title: "Mint pre-launch HyperCerts", description: "Enable builders and funders to own early project value." },
+        { title: "Allo governance & payout logic", description: "Use Allo to manage monthly distributions." },
+        { title: "Enable HyperCert cash-out vs. stake decisions" },
+        { title: "Distribute $7.5k/month to builder pool", description: "Based on 3.75% of pre-launch HyperCert valuation." },
+        { title: "Launch dashboard for all participants" },
+        { title: "Onboard first projects to dogfood the model" }
       ]
     },
     {
-      status: 'upcoming',
-      timeline: '6 months',
-      title: 'Phase 2: Advanced Features',
+      status: "upcoming",
+      timeline: "6 months",
+      title: "Phase 2: Advanced Features",
       items: [
-        'AI-powered contribution evaluation',
-        'Payment distribution mechanism for open-source developers',
-        'Expansion of human/AI team functionalities',
-        'Impact Evaluation & Feedback Loop',
-        'Return Software revenue to Open Source developers'
+        { title: "AI-powered contribution evaluation" },
+        { title: "Payment distribution for OSS devs" },
+        { title: "Expand human/AI team capabilities" },
+        { title: "Impact Evaluation & Feedback Loop" },
+        { title: "Return software revenue to OSS developers" }
       ]
     },
     {
-      status: 'planned',
-      timeline: '2+ years',
-      title: 'Phase 3: Ecosystem Expansion',
+      status: "planned",
+      timeline: "2+ years",
+      title: "Phase 3: Ecosystem Expansion",
       items: [
-        'Scaling integrations to broader open-source communities',
-        'Partnering with funding platforms and grant programs',
-        'Position as the "Virtual, scalable next-gen VC" for open-source',
-        'Fully integrate payment rails and contribution-based compensation',
-        'Expand adoption to major open-source communities'
+        { title: "Broaden open-source integrations" },
+        { title: "Partner with grant programs & funding platforms" },
+        { title: "Position as next-gen VC for OSS" },
+        { title: "Integrated payment + contribution rewards" },
+        { title: "Adopt across major OSS ecosystems" }
       ]
     }
   ];
@@ -147,7 +150,7 @@ export const ProductRoadmapSection: React.FC = () => {
             Product Roadmap
           </Title>
           <p className="text-gray-300 text-lg mb-8 max-w-[60%] mx-auto">
-            Our strategic plan for developing Exponential and bringing self-sovereign software to life.
+            Our roadmap for making Hyperstaker the new standard for funding innovation through programmable impact and aligned incentives.
           </p>
         </div>
 
@@ -165,4 +168,4 @@ export const ProductRoadmapSection: React.FC = () => {
       </div>
     </section>
   );
-}; 
+};

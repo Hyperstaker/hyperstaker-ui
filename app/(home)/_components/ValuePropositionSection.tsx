@@ -1,10 +1,11 @@
 import React from "react";
 import { Container, Group, Title, Text } from "@mantine/core";
-import { 
-  IconBolt, 
-  IconMedal, 
-  IconUsers, 
-  IconCode 
+import {
+  IconBolt,
+  IconCertificate,
+  IconScale,
+  IconUsers,
+  IconCurrencyDollar
 } from "@tabler/icons-react";
 import { IconCheck } from "@tabler/icons-react";
 
@@ -23,7 +24,7 @@ const FeatureDetailCard: React.FC<FeatureDetailCardProps> = ({
   title,
   description
 }) => (
-  <div className="rounded-xl border border-[rgba(255,255,255,0.1)] p-8 transition-all duration-300 hover:border-[rgba(255,255,255,0.15)] hover:shadow-lg" 
+  <div className="rounded-xl border border-[rgba(255,255,255,0.1)] p-8 transition-all duration-300 hover:border-[rgba(255,255,255,0.15)] hover:shadow-lg"
     style={{ backgroundColor: iconBgColor }}>
     <div className="mb-6" style={{ color: iconColor }}>
       {icon}
@@ -42,42 +43,42 @@ const BenefitItem: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 
 export const ValuePropositionSection: React.FC = () => {
   const benefits = [
-    "Open-source sustainability",
-    "Fair compensation for contributions",
-    "Human-AI collaboration",
-    "Decentralized funding for innovation",
-    "Rewarding early contributors",
-    "Enabling self-sovereign software development"
+    "Reward early contributors with future upside",
+    "Mix prospective and retro funding models",
+    "Create trustless, programmable funding infrastructure",
+    "Align incentives across builders, funders, and speculators",
+    "Bootstrap new projects without relying on VC funding",
+    "Earn governance through contribution, not capital"
   ];
 
   const features = [
     {
-      icon: <IconBolt size={32} stroke={1.5} />,
-      iconColor: "#c4b5fd", // Light purple
-      iconBgColor: "#170F24", // Dark purple background
-      title: "HyperFund Mechanism",
-      description: "Stake HyperCerts to earn governance tokens and participate in project funding decisions."
+      icon: <IconCertificate size={32} stroke={1.5} />,
+      iconColor: "#c4b5fd",
+      iconBgColor: "#170F24",
+      title: "HyperCerts",
+      description: "Digital proof of contribution — stakable, tradable, and redeemable for governance or value."
     },
     {
-      icon: <IconMedal size={32} stroke={1.5} />,
-      iconColor: "#93c5fd", // Light blue
-      iconBgColor: "#0F1224", // Dark blue background
-      title: "Impact Evaluation",
-      description: "Proof of ship with SolEng integration to evaluate and reward contributions fairly."
+      icon: <IconCurrencyDollar size={32} stroke={1.5} />,
+      iconColor: "#6ee7b7",
+      iconBgColor: "#0F1224",
+      title: "Retroactive Funding",
+      description: "Earn payouts and rewards when your project succeeds through retrofunding mechanisms."
     },
     {
       icon: <IconUsers size={32} stroke={1.5} />,
-      iconColor: "#c4b5fd", // Light purple
-      iconBgColor: "#151E31", // Dark purple background
-      title: "AI Project Manager",
-      description: "Intelligent coordination of tasks and resources to optimize project workflows."
+      iconColor: "#93c5fd",
+      iconBgColor: "#151E31",
+      title: "Builder Governance",
+      description: "Stakers of HyperCerts gain governance rights — power shifts to contributors, not speculators."
     },
     {
-      icon: <IconCode size={32} stroke={1.5} />,
-      iconColor: "#6ee7b7", // Light green
-      iconBgColor: "#172033", // Dark green background
-      title: "GitHub Integration",
-      description: "Seamless connection with existing repositories for issue tracking and milestone setting."
+      icon: <IconScale size={32} stroke={1.5} />,
+      iconColor: "#fcd34d",
+      iconBgColor: "#172033",
+      title: "Aligned Incentives",
+      description: "Everyone benefits when projects succeed. No winners-take-all — just shared value."
     }
   ];
 
@@ -91,17 +92,17 @@ export const ValuePropositionSection: React.FC = () => {
                 Value Proposition
               </span>
             </div>
-            
+
             <Title
               className="text-4xl md:text-5xl font-bold mb-6 text-white pb-4"
             >
-              The Platform Where Self-Sovereign Software Development Thrives
+              Hyperstaker: The Engine Behind Sustainable Innovation
             </Title>
-            
-            <Text 
+
+            <Text
               className="text-[#cbd5e1] text-xl mb-12 leading-relaxed"
             >
-              Exponential enables projects to find early funding, attract non-financial contributors, and fairly compensate open-source developers based on their relative contributions.
+              Hyperstaker creates a programmable impact layer for funding innovation, helping projects attract early support, reward meaningful work, and align long-term incentives with sustainable open-source development.
             </Text>
 
             <div className="space-y-3 mt-4">
@@ -138,4 +139,4 @@ export const ValuePropositionSection: React.FC = () => {
   );
 };
 
-export default ValuePropositionSection; 
+export default ValuePropositionSection;

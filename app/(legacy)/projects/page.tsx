@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import ProjectItem from "../../components/projectItem";
+import ProjectItem from "../../../components/projectItem";
+
 
 import { graphql } from "@/lib/graphql";
 import request from "graphql-request";
