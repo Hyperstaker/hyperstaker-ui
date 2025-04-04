@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Title, Text, SimpleGrid } from "@mantine/core";
+import { Container, Title, SimpleGrid } from "@mantine/core";
 import {
   IconCertificate,
   IconCurrencyDollar,

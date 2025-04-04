@@ -11,7 +11,7 @@ interface GetStartedButtonProps {
 export function GetStartedButton({ 
   className = "", 
   showArrow = true, 
-  href = "/use-the-force",
+  href = "/explore",
   size = "default"
 }: GetStartedButtonProps) {
   // Calculate padding and text size based on the size prop

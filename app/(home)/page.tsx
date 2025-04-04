@@ -27,7 +27,7 @@ export default function Home() {
 
         <nav className="hidden md:flex items-center space-x-8">
           <a href="#" className="text-purple-400 hover:text-white transition-colors">Home</a>
-          <a href="#" className="text-purple-400 hover:text-white transition-colors">Features</a>
+          <a href="#features" className="text-purple-400 hover:text-white transition-colors">Features</a>
           <a href="#" className="text-purple-400 hover:text-white transition-colors">Roadmap</a>
           <a href="#" className="text-purple-400 hover:text-white transition-colors">Dashboard</a>
         </nav>
@@ -70,8 +70,8 @@ export default function Home() {
 
               <div className="flex flex-wrap justify-center gap-4">
                 <GetStartedButton />
-                <a href="#" className="px-6 py-3 bg-transparent border border-gray-700 text-gray-300 font-medium rounded-md hover:bg-gray-800 transition-colors">
-                  Learn More
+                <a href="/projects/create" className="px-6 py-3 bg-transparent border border-gray-700 text-gray-300 font-medium rounded-md hover:bg-gray-800 transition-colors">
+                  Find contributors
                 </a>
               </div>
             </div>
@@ -134,7 +134,9 @@ export default function Home() {
         </div>
 
         {/* Features Section */}
-        <FeaturesSection />
+        <div id="features">
+          <FeaturesSection />
+        </div>
 
         {/* Value Proposition Section */}
         <ValuePropositionSection />
