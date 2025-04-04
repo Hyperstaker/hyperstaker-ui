@@ -2,51 +2,83 @@ import React, { useState } from "react";
 import { NativeSelect, rem, TextInput } from "@mantine/core";
 import {
   type BaseError,
-  useSendTransaction,
   useWaitForTransactionReceipt,
   useAccount,
+  useWriteContract,
+  useReadContract,
 } from "wagmi";
-import { parseEther } from "viem";
 
 import Project from "../interfaces/Project";
 import { getTransactionExplorerUrl } from "../explorer";
+import { alloAbi, contracts, erc20ContractABI } from "./data";
 
 interface FundProps {
   project: Project;
+  poolId: number;
 }
 
-const coinData = [
-  { value: "EUR", label: "ETH" },
-  { value: "USDC", label: "USDC" },
-  { value: "DAI", label: "DAI" },
-];
+const coinData = [{ value: "USDC", label: "USDC" }];
 
-const Fund: React.FC<FundProps> = ({ project }) => {
-  const { chain, isConnected } = useAccount();
-  //const [isConnected, setIsConnected] = useState<boolean>(isConnected);
-  const [selectedToken, setSelectedToken] = useState<string>("ETH");
+const Fund: React.FC<FundProps> = ({ project, poolId }) => {
+  const { address, chain, isConnected } = useAccount();
+  const [selectedToken, setSelectedToken] = useState<string>("USDC");
   const [amount, setAmount] = useState<string>("");
-  const {
-    data: hash,
-    error,
-    isPending,
-    sendTransaction,
-  } = useSendTransaction();
+  const { data: hash, error, isPending, writeContract } = useWriteContract();
+  const erc20Contract = useWriteContract();
 
   const transactionUrl =
     hash && chain ? getTransactionExplorerUrl(chain.id, hash) : undefined;
-  const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false);
+  const [, setIsButtonEnabled] = useState<boolean>(false);
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const amountValue = event.target.value;
     setAmount(amountValue);
     setIsButtonEnabled(amountValue !== "");
   };
+
+  const allowance = useReadContract({
+    abi: erc20ContractABI,
+    address: contracts[chain?.id as keyof typeof contracts]
+      ?.usdc as `0x${string}`,
+    functionName: "allowance",
+    args: [
+      address,
+      contracts[chain?.id as keyof typeof contracts]?.alloContract,
+    ],
+  });
+
+  const checkAllowance = async () => {
+    return allowance.data;
+  };
+
+  const approveToken = async () => {
+    await erc20Contract.writeContractAsync({
+      abi: erc20ContractABI,
+      address: contracts[chain?.id as keyof typeof contracts]
+        .usdc as `0x${string}`,
+      functionName: "approve",
+      args: [
+        contracts[chain?.id as keyof typeof contracts].alloContract,
+        amount,
+      ],
+    });
+  };
+
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const to = formData.get("address") as `0x${string}`;
-    const value = formData.get("value") as string;
-    sendTransaction({ to, value: parseEther(value) });
+    const value = amount;
+
+    const allowance = await checkAllowance();
+    if (Number(allowance) < Number(value)) {
+      await approveToken();
+    }
+
+    writeContract({
+      abi: alloAbi,
+      address: contracts[chain?.id as keyof typeof contracts]
+        .alloContract as `0x${string}`,
+      functionName: "fundPool",
+      args: [poolId, value],
+    });
   }
   const handleTokenChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedToken(event.target.value);
@@ -109,30 +141,6 @@ const Fund: React.FC<FundProps> = ({ project }) => {
                 </button>
               )}
               {!isConnected && <p>Connect your wallet to contiue</p>}
-              {/* <div className="flex flex-row">
-              <select
-                className="bg-gray-700 text-white block w-full mx-0 p-2 border border-gray-300 rounded-md"
-                value={selectedToken}
-                onChange={handleTokenChange}
-              >
-                <option value="ETH">ETH</option>
-                <option value="USDC" disabled>
-                  USDC
-                </option>
-                <option value="DAI" disabled>
-                  DAI
-                </option>
-              </select>
-              <input
-                type="text"
-                className="bg-gray-700 text-white block w-full p-2 border border-gray-300 rounded-md"
-                placeholder={`Enter ${selectedToken} amount`}
-                value={amount}
-                onChange={handleAmountChange}
-                name="value"
-                required
-              />
-            </div> */}
             </div>
           </>
         )}
@@ -164,18 +172,6 @@ const Fund: React.FC<FundProps> = ({ project }) => {
         {error && (
           <div>Error: {(error as BaseError).shortMessage || error.message}</div>
         )}
-        {/* <button
-            className={`p-2 text-white rounded-md ${
-              isButtonEnabled && !isLoading
-                ? "bg-blue-500 hover:bg-blue-700"
-                : "bg-gray-500 cursor-not-allowed"
-            }`}
-            // disabled={!isButtonEnabled || isLoading}
-            disabled={!isButtonEnabled || isLoading}
-            // onClick={doFund}
-          >
-            {isLoading ? "Processing..." : "Fund"}
-          </button> */}
       </div>
     </form>
   );

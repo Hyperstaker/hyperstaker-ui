@@ -31,16 +31,10 @@ const button = tv({
 
 export const Button = createComponent("button", button);
 
-export const IconButton = forwardRef(function IconButton(
-  {
-    children,
-    icon,
-    size,
-    ...props
-  }: // eslint-disable-next-line
-  { icon: any; size?: string } & ComponentPropsWithRef<typeof Button>,
-  ref
-) {
+export const IconButton = forwardRef<
+  HTMLButtonElement,
+  ComponentPropsWithRef<typeof Button> & { icon: React.ElementType; size?: string }
+>(function IconButton({ children, icon, size, ...props }, ref) {
   return (
     <Button ref={ref} {...props} size={children ? size : "icon"}>
       {icon

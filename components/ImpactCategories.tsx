@@ -5,7 +5,7 @@ export const ImpactCategories = ({ tags }: { tags?: string[] }) => (
   <div className="no-scrollbar">
     <div className="flex gap-1 overflow-x-auto">
       {tags?.map((key) => (
-        <Tag key={key} size="sm">
+        <Tag key={key} className="rounded py-1 px-2 text-xs">
           {impactCategories[key as keyof typeof impactCategories]?.label ?? key}
         </Tag>
       ))}
