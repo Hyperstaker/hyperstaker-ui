@@ -26,10 +26,10 @@ export default function Home() {
         </div>
 
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#" className="text-purple-400 hover:text-white transition-colors">Home</a>
-          <a href="#features" className="text-purple-400 hover:text-white transition-colors">Features</a>
-          <a href="#" className="text-purple-400 hover:text-white transition-colors">Roadmap</a>
-          <a href="#" className="text-purple-400 hover:text-white transition-colors">Dashboard</a>
+          <a href="#" className="text-purple-400 hover:text-white transition-colors">Why?</a>
+          <a href="#features" className="text-purple-400 hover:text-white transition-colors">What?</a>
+          <a href="#why" className="text-purple-400 hover:text-white transition-colors">How?</a>
+          <a href="#roadmap" className="text-purple-400 hover:text-white transition-colors">Roadmap</a>
         </nav>
 
         <div className="flex items-center gap-2">
@@ -139,10 +139,14 @@ export default function Home() {
         </div>
 
         {/* Value Proposition Section */}
-        <ValuePropositionSection />
+        <div id="why">
+          <ValuePropositionSection />
+        </div>
 
         {/* Product Roadmap Section */}
-        <ProductRoadmapSection />
+        <div id="roadmap">
+          <ProductRoadmapSection />
+        </div>
       </main>
 
       {/* Footer */}
