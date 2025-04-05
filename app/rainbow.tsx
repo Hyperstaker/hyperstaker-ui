@@ -5,12 +5,13 @@ import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import {
-  // arbitrum,
-  // base,
+  arbitrum,
+  base,
   // mainnet,
-  // optimism,
+  optimism,
+  celo,
   // polygon,
-  sepolia,
+  // sepolia,
   // zora,
 } from "wagmi/chains";
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
@@ -20,8 +21,11 @@ const config = getDefaultConfig({
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_ID as string,
   chains: [
     // mainnet,
-    sepolia,
-    ...(process.env.NEXT_PUBLIC_WALLETCONNECT_ID === "true" ? [sepolia] : []),
+    arbitrum,
+    base,
+    optimism,
+    celo,
+    // ...(process.env.NEXT_PUBLIC_WALLETCONNECT_ID === "true" ? [sepolia] : []),
   ],
   ssr: true,
 });

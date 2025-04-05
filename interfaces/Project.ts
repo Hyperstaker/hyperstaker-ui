@@ -9,4 +9,5 @@ export default interface Project {
   avatarUrl: string;
   bannerUrl: string;
   slug: string;
+  hypercertId: string;
 }

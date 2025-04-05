@@ -10,6 +10,7 @@ const projects = [
     avatarUrl: "/img/hs-logo-small.jpg",
     bannerUrl: "/img/unicorn-dream.jpg",
     slug: "hyper-staker",
+    hypercertId: "18673335167153419121016144957425712371859456",
   },
   {
     id: "2",
@@ -22,10 +23,11 @@ const projects = [
     avatarUrl: "/img/ftc-square.jpg",
     bannerUrl: "/img/ftc-banner.jpg",
     slug: "funding-the-commons",
+    hypercertId: "18672994884786498182552681582818280603648000",
   },
   {
     id: "3",
-    recipient: "",
+    recipient: "0x0c2227c06624954FdB0bd7F379A3D697B49C1cFc", // TODO: Update this address
     name: "WERK",
     shortDescription:
       "Gain perspective on how to allocate your most valuable asset: your attention.",
@@ -34,6 +36,7 @@ const projects = [
     avatarUrl: "/img/werk-logo.png",
     bannerUrl: "",
     slug: "fux",
+    hypercertId: "18673675449520340059479608332033144140070912",
   },
 ];
 export default projects;

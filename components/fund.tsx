@@ -7,9 +7,11 @@ import {
   useAccount,
 } from "wagmi";
 import { parseEther } from "viem";
+import { DooglyDonateButton } from "@doogly/doogly-donate-component";
 
 import Project from "../interfaces/Project";
 import { getTransactionExplorerUrl } from "../explorer";
+import { DOOGLY_CONTRACT, ALLO_POOLID, RECEIVING_TOKEN } from "./data";
 
 interface FundProps {
   project: Project;
@@ -83,7 +85,26 @@ const Fund: React.FC<FundProps> = ({ project }) => {
               this round, and half of this will go to early stage funders, and
               they will be distributed relative to the amount donated.
             </p>
-            <div className="flex flex-row">
+            <DooglyDonateButton
+              buttonText="Support this project"
+              modalTitle="Support this project"
+              config={{
+                destinationChain: "optimism",
+                destinationAddress: DOOGLY_CONTRACT,
+                splitsAddress: project.recipient,
+                hypercertFractionId: project.hypercertId,
+                poolId: ALLO_POOLID as number,
+                destinationOutputTokenAddress: RECEIVING_TOKEN,
+              }}
+              buttonClassName="mt-6 text-white rounded-md bg-blue-500"
+              modalStyles={{
+                backgroundColor: "#EEEFF0",
+                headingColor: "#5874B7",
+                textColor: "#252E56",
+                buttonColor: "#5874B7",
+              }}
+            />
+            {/* <div className="flex flex-row">
               <input
                 type="hidden"
                 name="address"
@@ -109,31 +130,7 @@ const Fund: React.FC<FundProps> = ({ project }) => {
                 </button>
               )}
               {!isConnected && <p>Connect your wallet to contiue</p>}
-              {/* <div className="flex flex-row">
-              <select
-                className="bg-gray-700 text-white block w-full mx-0 p-2 border border-gray-300 rounded-md"
-                value={selectedToken}
-                onChange={handleTokenChange}
-              >
-                <option value="ETH">ETH</option>
-                <option value="USDC" disabled>
-                  USDC
-                </option>
-                <option value="DAI" disabled>
-                  DAI
-                </option>
-              </select>
-              <input
-                type="text"
-                className="bg-gray-700 text-white block w-full p-2 border border-gray-300 rounded-md"
-                placeholder={`Enter ${selectedToken} amount`}
-                value={amount}
-                onChange={handleAmountChange}
-                name="value"
-                required
-              />
             </div> */}
-            </div>
           </>
         )}
         {hash && (
