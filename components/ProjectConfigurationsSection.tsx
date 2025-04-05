@@ -1,26 +1,26 @@
-import { Table, Badge, Text, Title } from '@mantine/core';
+import { Table, Badge, Text, Title } from "@mantine/core";
 
 // Updated data structure for single project configuration
 const configurations = [
   { 
-    name: 'Contributor hypercerts transferrable', 
-    configValue: { type: 'badge', value: 'No', color: 'red' }, 
+    name: "Contributor hypercerts transferrable", 
+    configValue: { type: "badge", value: "No", color: "red" }, 
   },
   { 
-    name: 'Single Hypercert for all contributors', 
-    configValue: { type: 'badge', value: 'Yes', color: 'green' }, 
+    name: "Single Hypercert for all contributors", 
+    configValue: { type: "badge", value: "Yes", color: "green" }, 
   },
   { 
-    name: 'Percent of a Hypercert for non-financial contributors', 
-    configValue: { type: 'badge', value: '100%', color: 'gray' }, 
+    name: "Percent of a Hypercert for non-financial contributors", 
+    configValue: { type: "badge", value: "100%", color: "gray" }, 
   },
   { 
-    name: 'Do users need to retire Hypercerts when staking to receive retro funding?', 
-    configValue: { type: 'badge', value: 'Yes', color: 'green' }, 
+    name: "Do users need to retire Hypercerts when staking to receive retro funding?", 
+    configValue: { type: "badge", value: "Yes", color: "green" }, 
   },
   { 
-    name: 'Multiplier (ratio per token to unit of Hypercert conversion)', 
-    configValue: { type: 'badge', value: '1 to 1', color: 'gray' }, 
+    name: "Multiplier (ratio per token to unit of Hypercert conversion)", 
+    configValue: { type: "badge", value: "1 to 1", color: "gray" }, 
   },
 ];
 
@@ -29,7 +29,7 @@ function renderValue(value: { type: string; value: string; color: string } | nul
   if (!value) {
     return <Text>-</Text>; // Display dash for unspecified configurations
   }
-  if (value.type === 'badge') {
+  if (value.type === "badge") {
     return <Badge color={value.color} variant="light">{value.value}</Badge>;
   }
   return <Text size="sm">{value.value}</Text>;

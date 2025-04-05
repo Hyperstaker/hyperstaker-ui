@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { MantineProvider, createTheme, MantineTheme } from "@mantine/core";
 import "@mantine/core/styles.css";
@@ -9,7 +9,7 @@ import { ReactNode } from "react";
 // Define the theme configuration within the Client Component
 const mantineTheme = createTheme({
   colors: {
-    'input-bg': ["#1a263f", "#1a263f", "#1a263f", "#1a263f", "#1a263f", "#1a263f", "#1a263f", "#1a263f", "#1a263f", "#1a263f"],
+    "input-bg": ["#1a263f", "#1a263f", "#1a263f", "#1a263f", "#1a263f", "#1a263f", "#1a263f", "#1a263f", "#1a263f", "#1a263f"],
     blue: [
       "#e6f2ff", "#cce5ff", "#99caff", "#66b0ff", "#3395ff",
       "#007fff", "#0066cc", "#004d99", "#003366", "#001a33",
@@ -25,7 +25,7 @@ const mantineTheme = createTheme({
     TextInput: {
       styles: (theme: MantineTheme) => ({
         input: {
-          backgroundColor: theme.colors['input-bg'][6],
+          backgroundColor: theme.colors["input-bg"][6],
           color: theme.white,
           borderColor: theme.colors.dark[4],
         },
