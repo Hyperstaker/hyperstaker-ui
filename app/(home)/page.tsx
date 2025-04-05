@@ -5,6 +5,7 @@ import { FeaturesSection } from "./_components/FeaturesSection";
 import { ValuePropositionSection } from "./_components/ValuePropositionSection";
 import { ProductRoadmapSection } from "./_components/ProductRoadmapSection";
 import { Footer } from "./_components/Footer"; // Add this import
+import { NavLink } from "./_components/NavLink"; // Add this import
 
 export default function Home() {
   return (
@@ -25,10 +26,10 @@ export default function Home() {
         </div>
 
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#" className="text-purple-400 hover:text-white transition-colors">Why?</a>
-          <a href="#features" className="text-purple-400 hover:text-white transition-colors">What?</a>
-          <a href="#why" className="text-purple-400 hover:text-white transition-colors">How?</a>
-          <a href="#roadmap" className="text-purple-400 hover:text-white transition-colors">Roadmap</a>
+          <NavLink href="#why">Why?</NavLink>
+          <NavLink href="#features">What?</NavLink>
+          <NavLink href="#why">How?</NavLink>
+          <NavLink href="#roadmap">Roadmap</NavLink>
         </nav>
 
         <div className="flex items-center gap-2">

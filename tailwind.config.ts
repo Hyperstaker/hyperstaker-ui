@@ -29,6 +29,7 @@ const config: Config = {
         'bg-muted': '#150B31',
         'bg-header': '#150B31',
         'bg-footer': '#150B31',
+        'text-nav-link': '#D6CAF1',
       },
     },
   },
