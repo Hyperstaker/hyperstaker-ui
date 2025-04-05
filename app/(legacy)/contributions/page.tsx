@@ -132,7 +132,7 @@ export default function Page() {
       {error && <p className="text-center text-red-500">{error}</p>}
 
       {!isLoading && !error && campaigns.length === 0 && (
-        <p className="text-center">You haven't contributed to any projects yet (or own fractions of your own projects).</p>
+        <p className="text-center">You haven&apos;t contributed to any projects yet (or own fractions of your own projects).</p>
       )}
 
       {!isLoading && !error && campaigns.length > 0 && (

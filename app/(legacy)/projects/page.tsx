@@ -124,7 +124,7 @@ export default function Page() {
       {error && <p className="text-center text-red-500">{error}</p>}
 
       {!isLoading && !error && campaigns.length === 0 && (
-        <p className="text-center">You haven't created any projects yet.</p>
+        <p className="text-center">You haven&apos;t created any projects yet.</p>
       )}
 
       {!isLoading && !error && campaigns.length > 0 && (

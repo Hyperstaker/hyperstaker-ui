@@ -1,13 +1,13 @@
 "use client";
 
-// import Navbar from '../../components/navbar';
-import Rainbow from './rainbow';
-import { Header } from '../../components/Header';
-import { Disclosure } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import ThemeChanger from '../../components/DarkSwitch';
+// import Navbar from "../../components/navbar";
+import Rainbow from "./rainbow";
+import { Header } from "../../components/Header";
+import { Disclosure } from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import ThemeChanger from "../../components/DarkSwitch";
 
 export default function Template({ children }: { children: React.ReactNode }) {
   const navigation = [
@@ -51,7 +51,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
                          <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
                        )}
                      </Disclosure.Button>
-                     {/* Use absolute positioning for the panel relative to the button's container */}
+                     {/* Use absolute positioning for the panel relative to the button"s container */}
                      <Disclosure.Panel className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
                          <div className="px-2 pt-2 pb-3 space-y-1">
                            {navigation.map((item) => (
