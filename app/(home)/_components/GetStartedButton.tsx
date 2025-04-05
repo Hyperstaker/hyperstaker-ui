@@ -24,7 +24,7 @@ export function GetStartedButton({
       href={href} 
       className={`${sizeClasses} font-semibold rounded-md flex items-center gap-2 transition-all hover:shadow-lg hover:shadow-purple-500/20 text-white ${className}`}
       style={{ 
-        background: "linear-gradient(90deg, #8B5CF6 0%, #3B82F6 100%)"
+        background: "linear-gradient(90deg, #5646CD 0%, #3c2cb9 100%)"
       }}
     >
       Get Started {showArrow && <span className="ml-1">→</span>}

@@ -1,12 +1,12 @@
 import Image from "next/image";
-import { IconBrandGithub, IconBrandTwitter, IconWorld } from "@tabler/icons-react";
+import { IconBrandGithub, IconBrandTwitter, IconWorld, IconBrandX, IconBrandDiscord } from "@tabler/icons-react";
 import Link from "next/link";
 
 export function Footer() {
     const currentYear = new Date().getFullYear();
   
     return (
-      <footer className="bg-[#0e1525] text-gray-400 border-t border-[#242b3d] mt-20">
+      <footer className="bg-bg-base text-gray-400 border-t border-border-muted mt-20">
         <div className="container mx-auto px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             {/* Logo and Description */}
@@ -59,7 +59,7 @@ export function Footer() {
           </div>
   
           {/* Bottom Bar */}
-          <div className="border-t border-[#242b3d] pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
+          <div className="border-t border-border-muted pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
             <p>&copy; {currentYear} Hyperstaker. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>

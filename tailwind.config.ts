@@ -24,6 +24,11 @@ const config: Config = {
       },
       colors: {
         "custom-link": "#1791AC",
+        'border-muted': '#242b3d',
+        'bg-base': '#0E1525',
+        'bg-muted': '#150B31',
+        'bg-header': '#150B31',
+        'bg-footer': '#150B31',
       },
     },
   },

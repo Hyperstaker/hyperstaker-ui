@@ -8,11 +8,10 @@ import { Footer } from "./_components/Footer"; // Add this import
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#0e1525] text-white">
+    <div className="min-h-screen bg-bg-base text-white">
       {/* Navigation */}
       <header 
-        className="relative z-10 flex justify-between items-center py-6 px-8 border-b"
-        style={{ borderBottomColor: "#242b3d" }}
+        className="relative z-10 flex justify-between items-center py-6 px-8 border-b border-b-border-muted"
       >
         <div className="flex items-center">
           <img 
@@ -56,7 +55,7 @@ export default function Home() {
         >
           <div className="max-w-3xl mx-auto">
             <div className="mb-12">
-              <span className="inline-block px-4 py-2 rounded-full bg-purple-900/30 text-purple-300 text-sm font-medium mb-6 border border-[rgb(107,33,168)]">
+              <span className="inline-block px-4 py-2 rounded-full bg-[#150F38] text-purple-300 text-sm font-medium mb-6 border border-[rgb(107,33,168)]">
                 Retroactive Rewards for the Builders of Tomorrow
               </span>
 
