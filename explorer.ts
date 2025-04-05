@@ -8,6 +8,7 @@ export function getTransactionExplorerUrl(
     4: "https://rinkeby.etherscan.io/tx/", // Rinkeby Testnet
     5: "https://goerli.etherscan.io/tx/", // Goerli Testnet
     42: "https://kovan.etherscan.io/tx/", // Kovan Testnet
+    11155111: "https://sepolia.etherscan.io/tx/", // Sepolia Testnet
   };
 
   if (chainId && networkMap[chainId]) {
