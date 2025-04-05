@@ -4,39 +4,27 @@ import { ThemeToggle } from "./_components/ThemeToggle";
 import { FeaturesSection } from "./_components/FeaturesSection";
 import { ValuePropositionSection } from "./_components/ValuePropositionSection";
 import { ProductRoadmapSection } from "./_components/ProductRoadmapSection";
-import { Footer } from "./_components/Footer"; // Add this import
-import { NavLink } from "./_components/NavLink"; // Add this import
+import { Footer } from "./_components/Footer";
+import { NavLink } from "./_components/NavLink";
+import { Header } from "../../components/Header";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-bg-base text-white">
-      {/* Navigation */}
-      <header 
-        className="relative z-10 flex justify-between items-center py-6 px-8 border-b border-b-border-muted"
-      >
-        <div className="flex items-center">
-          <img 
-            src="/img/logo.png"
-            alt="Hyperstaker Logo"
-            width={32}
-            height={32}
-            className="w-8"
-          />
-          <span className="text-xl ml-2 font-bold text-white">Hyperstaker</span>
-        </div>
-
+      {/* Use the new Header component */}
+      <Header>
+        {/* Pass navigation and action buttons as children */}
         <nav className="hidden md:flex items-center space-x-8">
           <NavLink href="#why">Why?</NavLink>
           <NavLink href="#features">What?</NavLink>
           <NavLink href="#why">How?</NavLink>
           <NavLink href="#roadmap">Roadmap</NavLink>
         </nav>
-
         <div className="flex items-center gap-2">
           <GetStartedButton size="small" />
           <ThemeToggle />
         </div>
-      </header>
+      </Header>
 
       {/* Hero Section */}
       <main className="min-h-screen relative">
