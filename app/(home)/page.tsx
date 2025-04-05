@@ -147,6 +147,7 @@ export default function Home() {
         <div id="roadmap">
           <ProductRoadmapSection />
         </div>
+
       </main>
 
       {/* Footer */}

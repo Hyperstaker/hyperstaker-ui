@@ -4,7 +4,7 @@ import React from "react";
 import { OnboardingFlow } from "@/components/OnboardingFlow";
 export default function Page() {
   return (
-    <div className="container mx-auto flex justify-center">
+    <div className="container bg-bg-base mx-auto flex justify-center">
       <OnboardingFlow />
     </div>
   );
