@@ -1,8 +1,8 @@
 import { tv } from "tailwind-variants";
 import { createComponent } from ".";
 
-export const Heading = createComponent<"h1" | "h2" | "h3" | "h4" | "h5" | "h6", ReturnType<typeof tv>>(
-  "h2",
+export const Heading = createComponent(
+  "div",
   tv({
     base: "font-bold",
     variants: {
