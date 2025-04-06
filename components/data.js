@@ -1197,7 +1197,8 @@ const contracts = {
     alloContract: "0x1133eA7Af70876e64665ecD07C0A0476d09465a1",
     directGrantsSimpleStrategy: "0x8564d522b19836b7F5B4324E7Ee8Cb41810E9F9e",
     hyperStrategy: "0x1be52A8f4c05379cb6516Cc403e08DF7AdE47bC1",
-    usdc: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
+    usdc: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+    alloRegistry: "0x4AAcca72145e1dF2aeC137E1f3C5E3D75DB8b5f3"
   }
 }
 
