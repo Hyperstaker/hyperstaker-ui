@@ -227,7 +227,7 @@ export function CreateHypers({ onPrevious }: CreateHypercertProps) {
 
           // NOTE: Double check the log index and event signature if this fails
           const hyperfundAddress = decodeAbiParameters(
-            [{ name: "hypperfundAddress", type: "address" }], // Typo? Check contract event name ('hypperfundAddress' vs 'hyperfundAddress')
+            [{ name: "hyperfundAddress", type: "address" }], // Typo? Check contract event name ('hypperfundAddress' vs 'hyperfundAddress')
             txReceipt.logs[2]?.topics?.[1] as `0x${string}` // Assuming index 2 is correct
           )[0];
 
