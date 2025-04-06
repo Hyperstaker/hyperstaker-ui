@@ -12,64 +12,16 @@ import Link from "next/link";
 import Fund from "./fund";
 import { Accordion } from "@mantine/core";
 import Timeline from "./Timeline";
-import { useEffect, useState } from "react";
 
 export default function FundProject({
   project,
   metadata,
   isLoading,
-  poolId,
 }: {
   project: Project;
   metadata: Metadata;
   isLoading: boolean;
-  poolId: number;
 }) {
-  const [usdRaised, setUsdRaised] = useState(0);
-  const [raisePercent, setRaisePercent] = useState(0);
-
-  useEffect(() => {
-    const updateDonations = async () => {
-      const nonFinancialUnits = await getTotalFinancialContributions(poolId);
-
-      setUsdRaised(nonFinancialUnits / 10 ** 6);
-      setRaisePercent((nonFinancialUnits * 100) / (project.totalUnits ?? 1));
-    };
-
-    if (poolId != 0) {
-      updateDonations();
-    }
-  }, [poolId]);
-
-  async function getTotalFinancialContributions(poolId: number) {
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_HYPERINDEXER_ENDPOINT as unknown as URL,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: `
-          query MyQuery {
-            totalFinancialContributionsToPool(poolId: "${poolId}") {
-              totalHypercertUnits
-              poolId
-            }
-          }
-        `,
-        }),
-      }
-    );
-
-    const data = await response.json();
-    console.log(data);
-    // TODO: Add additional verification to ensure that fractions are still staked
-    const units =
-      data.data?.totalFinancialContributionsToPool?.totalHypercertUnits ?? 0;
-    return units;
-  }
-
   const content = [
     {
       value: "What is this project?",
@@ -157,7 +109,8 @@ export default function FundProject({
             url={project?.bannerUrl}
           />
           <ProjectAvatar
-            className="-mt-8 ml-4 rounded-full"
+            rounded="full"
+            className="-mt-8 ml-4"
             address={project?.recipient}
             url={project?.avatarUrl}
           />
@@ -178,12 +131,11 @@ export default function FundProject({
                 <Skeleton isLoading={isLoading} className="w-full">
                   <div className="">
                     <h5 className="mt-8">
-                      Funds raised{" "}
-                      <span className="float-right">{raisePercent}%</span>
+                      Funds raised <span className="float-right">40%</span>
                     </h5>
                     <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                       <div
-                        style={{ width: raisePercent.toString() + "%" }}
+                        style={{ width: "45%" }}
                         className="mb-4 bg-blue-600 h-2.5 rounded-full"
                       ></div>
                       <div className="flex justify-between items-center mb-4">
@@ -192,7 +144,7 @@ export default function FundProject({
                             Past Funding
                           </div>
                           <div className="text-2xl font-bold text-gray-200">
-                            {usdRaised} USD
+                            1.2 ETH
                           </div>
                         </div>
 
@@ -201,7 +153,7 @@ export default function FundProject({
                             Target
                           </div>
                           <div className="text-2xl font-bold text-gray-300">
-                            {(project.totalUnits ?? 0) / 10 ** 6} USD
+                            40 ETH
                           </div>
                           {/* <div className="text-xs text-gray-200">
                             20% of prev RPGF
@@ -232,7 +184,7 @@ export default function FundProject({
             </div>
             <div className="flex-1">
               {/* <h3>Fund this project</h3> */}
-              <Fund project={project} poolId={poolId} />
+              <Fund project={project} />
               <div className="mt-16 mx-6">
                 <h3>Project timeline</h3>
                 <Timeline />
