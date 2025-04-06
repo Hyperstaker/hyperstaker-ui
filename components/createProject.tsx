@@ -102,11 +102,7 @@ export default function CreateProject() {
     alloPoolId?: string;
     hyperfundAddress?: string;
     hyperstakerAddress?: string;
-  }>({
-    // ipfsHash: "dasd",
-    // alloProfileId: "fcsa",
-    // hypercertId: "string",
-  });
+  }>({});
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [stepStatus, setStepStatus] = useState("idle");
@@ -660,9 +656,7 @@ export default function CreateProject() {
             {...alloPoolForm.register("credentials")}
           />
           <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
-            <Button type="submit">
-              Next
-            </Button>
+            <Button type="submit">Next</Button>
           </Box>
         </form>
       ) : (
@@ -844,9 +838,7 @@ export default function CreateProject() {
           />
           <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
             <Button onClick={handleBack}>Back</Button>
-            <Button type="submit">
-              Create Project
-            </Button>
+            <Button type="submit">Create Project</Button>
           </Box>
         </form>
       )}

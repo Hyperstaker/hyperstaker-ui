@@ -7,7 +7,15 @@ import { waitForTransactionReceipt } from "@wagmi/core";
 import { Abi, encodeAbiParameters, decodeAbiParameters } from "viem";
 import { formatHypercertData, TransferRestrictions } from "@hypercerts-org/sdk";
 import { useHypercertClient } from "@/hooks/useHypercertClient";
-import { alloAbi, alloRegistryAbi, hyperfundFactoryAbi, contracts } from "@/components/data";
+import {
+  alloAbi,
+  alloRegistryAbi,
+  hyperfundFactoryAbi,
+  contracts,
+  hyperstrategyFactoryAbi,
+  hypercertMinterAbi,
+  hyperfundAbi,
+} from "@/components/data";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { ProjectConfigurationsSection } from "./ProjectConfigurationsSection"; // Add this import
@@ -15,6 +23,9 @@ import { ProjectConfigurationsSection } from "./ProjectConfigurationsSection"; /
 const testing = true;
 
 interface CreateHypercertProps {
+  ipfsHash: [string, Dispatch<SetStateAction<string>>];
+  alloProfileState: [string, Dispatch<SetStateAction<string>>];
+  hypercertState: [string, Dispatch<SetStateAction<string>>];
   onPrevious: () => void;
 }
 
@@ -81,13 +92,17 @@ export function CreateHypers({ onPrevious }: CreateHypercertProps) {
   } : {};
 
   const form = useForm<HypercertFormData>({
-    defaultValues
+    defaultValues,
   });
   const account = useAccount();
+  const contract = useWriteContract();
   const alloContract = useWriteContract();
   const { client } = useHypercertClient();
   const wagmiConfig = useConfig();
   const router = useRouter();
+  const [alloProfile] = alloProfileState;
+  const [ipfshash] = ipfsHash;
+  const [hypercertId] = hypercertState;
 
   // State for tracking completed steps within this component's scope
   const [localCompletedSteps, setLocalCompletedSteps] = useState<{
@@ -111,6 +126,7 @@ export function CreateHypers({ onPrevious }: CreateHypercertProps) {
   ];
 
   const onSubmit = async (data: HypercertFormData) => {
+    setIsSubmitting(true);
     console.log("Hypercert Data:", data);
 
     if (!account.chainId) {
@@ -300,8 +316,8 @@ export function CreateHypers({ onPrevious }: CreateHypercertProps) {
   };
 
   return (
-    <Paper 
-      p="xl" 
+    <Paper
+      p="xl"
       radius="lg"
       bg="transparent"
     >
@@ -309,7 +325,6 @@ export function CreateHypers({ onPrevious }: CreateHypercertProps) {
         <Stack gap="xl">
           <Title order={2} c="white">Create Hyperfund and Hyperstaker pool</Title>
           <ProjectConfigurationsSection />
-
           {/* <TextInput
             label="Project Goal (USD)"
             placeholder="Enter amount"
@@ -325,20 +340,17 @@ export function CreateHypers({ onPrevious }: CreateHypercertProps) {
             }}
           /> */}
 
-
           <Group justify="space-between">
-            <Button
-              variant="default"
-              onClick={onPrevious}
-            >
+            <Button variant="default" onClick={onPrevious}>
               Previous Step
             </Button>
             <Button
               variant="gradient"
               gradient={{ from: "blue", to: "cyan" }}
               type="submit"
+              loading={isSubmitting}
             >
-              Next Step
+              {isSubmitting ? "Creating..." : "Next Step"}
             </Button>
           </Group>
         </Stack>
@@ -412,4 +424,4 @@ export function CreateHypers({ onPrevious }: CreateHypercertProps) {
       </Modal>
     </Paper>
   );
-} 
+}
