@@ -3,8 +3,6 @@ import { ProjectBanner } from "./ProjectBanner";
 import { Heading } from "./ui/Heading";
 import { Skeleton } from "./ui/Skeleton";
 import { ImpactCategories } from "./ImpactCategories";
-import { Button } from "./ui/Button";
-import { type Address } from "viem";
 import Project from "../interfaces/Project";
 import Metadata from "../interfaces/Metadata";
 import Link from "next/link";
@@ -13,10 +11,14 @@ export default function ProjectItem({
   project,
   metadata,
   isLoading,
+  buttonText,
+  buttonLink,
 }: {
   project: Project;
   metadata: Metadata;
   isLoading: boolean;
+  buttonText: string;
+  buttonLink: string;
 }) {
   return (
     <div className="basis-10/12 mx-2">
@@ -30,8 +32,7 @@ export default function ProjectItem({
             url={project?.bannerUrl}
           />
           <ProjectAvatar
-            rounded="full"
-            className="-mt-8 ml-4"
+            className="-mt-8 ml-4 rounded-full"
             address={project?.recipient}
             url={project?.avatarUrl}
           />
@@ -53,10 +54,10 @@ export default function ProjectItem({
         </div>
 
         <Link
-          href={`/fund/${project.slug}`}
+          href={buttonLink}
           className="block mt-6 w-full px-4 py-3 text-lg font-medium text-center text-white bg-indigo-600 rounded-md"
         >
-          Fund this project
+          {buttonText}
         </Link>
       </article>
     </div>

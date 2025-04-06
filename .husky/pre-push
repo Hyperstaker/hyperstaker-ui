@@ -1,0 +1,8 @@
+# Run npm lint
+npm run lint || exit 1
+
+# Run npm build
+npm run build || exit 1
+
+# Run vercel build
+vercel build || exit 1

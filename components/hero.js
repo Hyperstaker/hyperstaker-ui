@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Container from "./container";
-import heroImg from "../public/img/hero.png";
 import Link from "next/link";
 import Partner from "./partner";
 const Hero = () => {
@@ -19,13 +18,13 @@ const Hero = () => {
 
             <div className="flex flex-col items-start space-y-3 sm:space-x-4 sm:space-y-0 sm:items-center sm:flex-row">
               <Link
-                href="https://docs.google.com/forms/d/e/1FAIpQLSfj4w6oKlv-vY54oIA3pmGl1yVpQFKXxdB8D1eaF1K5aAlHQg/viewform?usp=sf_link"
-                className="px-8 py-4 text-lg font-medium text-center text-white bg-indigo-800 rounded-md "
+                href="/create"
+                className="px-8 py-4 text-lg font-medium text-center text-white bg-indigo-600 rounded-md "
               >
-                Join the project waiting list
+                Create Project
               </Link>
               <Link
-                href="/projects"
+                href="/explore"
                 className="px-8 py-4 text-lg font-medium text-center text-white bg-indigo-600 rounded-md "
               >
                 Fund public goods
