@@ -81,9 +81,8 @@ export default function Page() {
 
   async function getProjectListings() {
     const res = await fetch("/api/projectListings", {
-      headers: {
-        "Cache-Control": "no-cache",
-        Pragma: "no-cache",
+      next: {
+        revalidate: 1,
       },
     });
     if (!res.ok) {
