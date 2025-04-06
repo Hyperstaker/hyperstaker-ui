@@ -72,7 +72,7 @@ export const FeaturesSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 w-full bg-[#0e1525]">
+    <section className="py-24 w-full bg-bg-base">
       <Container size="lg">
         <div className="mb-16 text-center">
           <Title

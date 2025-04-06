@@ -252,14 +252,12 @@ export function OnboardingFlow() {
   return (
     <Box style={{ 
       width: "100vw",
-      minHeight: "100vh",
-      backgroundColor: "#363636"
+      minHeight: "100vh"
     }}>
       <Container 
         size="xl"
         py={50}
         style={{
-          backgroundColor: "#1A1B1E",
           minHeight: "100vh",
           maxWidth: "1800px",
           width: "100%"

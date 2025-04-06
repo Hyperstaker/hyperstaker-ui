@@ -10,6 +10,7 @@ import { useHypercertClient } from "@/hooks/useHypercertClient";
 import { alloAbi, alloRegistryAbi, hyperfundFactoryAbi, contracts } from "@/components/data";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ProjectConfigurationsSection } from "./ProjectConfigurationsSection"; // Add this import
 
 const testing = true;
 
@@ -201,12 +202,13 @@ export function CreateHypers({ onPrevious }: CreateHypercertProps) {
     <Paper 
       p="xl" 
       radius="lg"
-      bg="dark.7"
-      style={{ border: "1px solid var(--mantine-color-dark-4)" }}
+      bg="transparent"
     >
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Stack gap="xl">
           <Title order={2} c="white">Create Hyperfund and Hyperstaker pool</Title>
+          <ProjectConfigurationsSection />
+
           {/* <TextInput
             label="Project Goal (USD)"
             placeholder="Enter amount"

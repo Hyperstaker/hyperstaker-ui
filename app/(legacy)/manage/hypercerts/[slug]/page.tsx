@@ -2,13 +2,48 @@
 import ManageHypercert from "@/components/manageHypercerts";
 import { useAccount } from "wagmi";
 import request from "graphql-request";
-import { useEffect, useState } from "react";
-import { graphql } from "@/lib/graphql";
+import { useEffect, useState, use } from "react";
 import { useConfig } from "wagmi";
 import { readContract } from "@wagmi/core";
 import { hyperfundAbi } from "@/components/data";
 
-export default function Page({ params }: { params: { slug: string } }) {
+// Define interface for the GraphQL response shape
+interface Hypercert {
+  contract: {
+    chain_id: string | number; // Adjust type as needed
+  };
+  hypercert_id: string;
+  fractions: {
+    count: number;
+    data: {
+      fraction_id: string;
+      units: string | number; // Adjust type as needed
+      metadata: {
+        id: string;
+        name: string;
+        description: string;
+        external_url: string;
+        impact_scope: string[];
+        impact_timeframe_from: number;
+        impact_timeframe_to: number;
+        work_timeframe_from: number;
+        work_timeframe_to: number;
+      } | null;
+      owner_address: string;
+    }[];
+  };
+  units: string | number; // Adjust type as needed
+  totalUnits?: number; // Added optional totalUnits
+}
+
+interface HypercertsResponse {
+  hypercerts: {
+    data: Hypercert[];
+  };
+}
+
+export default function Page(props: { params: Promise<{ slug: string }> }) {
+  const params = use(props.params);
   const account = useAccount();
   const [project, setProject] = useState<any>();
   const [hyperstaker, setHyperstaker] = useState<string>();
@@ -39,7 +74,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   }, [account]);
 
   async function getHypercertsOfUser(walletAddress: string) {
-    const query = graphql(`
+    const query = ` 
       query MyQuery {
         hypercerts(
           where: {hypercert_id: { eq: "${params.slug}"}}
@@ -73,23 +108,24 @@ export default function Page({ params }: { params: { slug: string } }) {
           }
         }
       }
-    `);
+    `;
 
-    const res = await request(
+    // Type the response using the defined interface
+    const res = await request<HypercertsResponse>(
       process.env.NEXT_PUBLIC_HYPERCERTS_API_URL_GRAPH as string,
       query
     );
 
-    res?.hypercerts.data?.map((d: any) => {
+    res?.hypercerts.data?.map((d: Hypercert) => { // Use Hypercert type
       let totalUnits = 0;
       d?.fractions?.data?.map(
         (i: any) => (totalUnits = totalUnits + Number(i.units))
       );
-      (d as any)["totalUnits"] = totalUnits;
+      d.totalUnits = totalUnits; // Use the added optional property
     });
 
     const _unstakedFractions: string[] = [];
-    res?.hypercerts.data?.map((d: any) => {
+    res?.hypercerts.data?.map((d: Hypercert) => { // Use Hypercert type
       d.fractions.data.map((f: any) => {
         if (f.owner_address == walletAddress) {
           _unstakedFractions.push(f.fraction_id.split("-")[2]);

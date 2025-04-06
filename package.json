@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -18,7 +18,7 @@
     "@mantine/hooks": "^7.5.3",
     "@mantine/modals": "^7.17.3",
     "@mantine/notifications": "^7.17.3",
-    "@prisma/client": "6.4.1",
+    "@prisma/client": "^6.5.0",
     "@rainbow-me/rainbowkit": "^2.0.0",
     "@tabler/icons-react": "^2.47.0",
     "@tanstack/react-query": "^5.20.5",
@@ -28,13 +28,13 @@
     "gql.tada": "^1.8.10",
     "graphql-request": "^7.1.0",
     "husky": "9.1.7",
-    "next": "14.1.0",
+    "next": "15.2.4",
     "next-themes": "^0.2.1",
     "pinata-web3": "^0.5.2",
     "pino-pretty": "^10.3.1",
-    "prisma": "^6.4.1",
-    "react": "^18",
-    "react-dom": "^18",
+    "prisma": "^6.5.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "react-hook-form": "^7.54.0",
     "tailwind-variants": "^0.2.0",
     "vercel": "39.2.6",
@@ -43,15 +43,19 @@
   },
   "devDependencies": {
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.1",
     "@typescript-eslint/eslint-plugin": "^7.0.1",
     "@typescript-eslint/parser": "^7.0.1",
     "autoprefixer": "^10.0.1",
     "eslint": "^8.56.0",
-    "eslint-config-next": "14.1.0",
+    "eslint-config-next": "15.2.4",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
+  },
+  "resolutions": {
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.1"
   }
 }
