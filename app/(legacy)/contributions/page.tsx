@@ -1,10 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import ProjectItem from "../../components/projectItem";
-
-import { graphql } from "@/lib/graphql";
+import ProjectItem from "../../../components/projectItem";
 import request from "graphql-request";
 import { useAccount } from "wagmi";
+import { graphql } from "@/lib/graphql";
 
 export default function Page() {
   const account = useAccount();
@@ -27,16 +26,18 @@ export default function Page() {
     const query = graphql(`
       query MyQuery {
           hypercerts(
-            where: {creator_address: {contains: "${walletAddress}"}}
+            where: { fractions: {owner_address: {contains: "${walletAddress}"}}}
           ) {
             data {
               contract {
                 chain_id
               }
               hypercert_id
+              creator_address
               fractions {
                 count
                 data {
+                  fraction_id
                   metadata {
                     id
                     name
@@ -70,12 +71,15 @@ export default function Page() {
       (d as any)["totalUnits"] = totalUnits;
     });
 
-    return res.hypercerts.data;
-  }
+    const filteredCerts = res?.hypercerts.data?.filter(
+      (i) => i.creator_address?.toLowerCase() != walletAddress.toLowerCase()
+    );
 
+    return filteredCerts;
+  }
   return (
     <div className="container mx-auto mt-5">
-      <div className="my-5 text-2xl flex justify-center">My Projects</div>
+      <div className="my-5 text-2xl flex justify-center">My Contributions</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-4">
         {campaigns &&
           campaigns.map((project, key) => (
@@ -100,8 +104,8 @@ export default function Page() {
                 },
               }}
               isLoading={false}
-              buttonText="Manage"
-              buttonLink={`/manage/${project.hypercert_id}`}
+              buttonText="Manage Hypercerts"
+              buttonLink={`/manage/hypercerts/${project.hypercert_id}`}
             />
           ))}
       </div>

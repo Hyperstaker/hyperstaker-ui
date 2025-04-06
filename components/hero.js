@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Container from "./container";
-import heroImg from "../public/img/hero.png";
 import Link from "next/link";
 import Partner from "./partner";
 const Hero = () => {

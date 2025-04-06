@@ -1,6 +1,3 @@
-import Image from "next/image";
-import { type ComponentProps } from "react";
-
 type Partner = {
   logo: string;
   name: string;
@@ -15,11 +12,11 @@ export default function Partner({
   return (
     <div className="pt-2 text-gray-400 dark:text-gray-400">
       <div className="flex items-center">
-        <Image
+        <img
           src={logo}
-          width="30"
-          height="30"
-          className={"object-cover"}
+          width={30}
+          height={30}
+          className="object-cover"
           alt="Hero Illustration"
           loading="eager"
         />

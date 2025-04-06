@@ -32,8 +32,7 @@ export default function ProjectItem({
             url={project?.bannerUrl}
           />
           <ProjectAvatar
-            rounded="full"
-            className="-mt-8 ml-4"
+            className="-mt-8 ml-4 rounded-full"
             address={project?.recipient}
             url={project?.avatarUrl}
           />
