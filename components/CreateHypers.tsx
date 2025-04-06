@@ -17,7 +17,7 @@ import {
   hyperfundAbi,
 } from "@/components/data";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { ProjectConfigurationsSection } from "./ProjectConfigurationsSection"; // Add this import
 
 const testing = true;
@@ -70,7 +70,12 @@ function StepBox({ isActive, isCompleted, children, ...props }: StepBoxProps) {
   );
 }
 
-export function CreateHypers({ onPrevious }: CreateHypercertProps) {
+export function CreateHypers({ 
+  onPrevious,
+  ipfsHash,
+  alloProfileState,
+  hypercertState
+}: CreateHypercertProps) {
   const defaultValues = testing ? {
     title: "Climate Action Project",
     description: "A project focused on reducing carbon emissions through innovative technology",
@@ -116,6 +121,7 @@ export function CreateHypers({ onPrevious }: CreateHypercertProps) {
   const [stepStatus, setStepStatus] = useState<"idle" | "processing" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Define the steps for the modal
   const steps = [
@@ -303,6 +309,8 @@ export function CreateHypers({ onPrevious }: CreateHypercertProps) {
         error instanceof Error ? error.message : "An unknown error occurred"
       );
       // Keep the modal open to show the error and retry button
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
