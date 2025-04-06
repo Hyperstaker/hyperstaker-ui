@@ -2,12 +2,13 @@
 
 import ManageProject from "@/components/manageProject";
 import { graphql } from "@/lib/graphql";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useAccount, useReadContract } from "wagmi";
 import request from "graphql-request";
 import { alloAbi, contracts } from "@/components/data";
 
-export default function Page({ params }: { params: { slug: string } }) {
+export default function Page(props: { params: Promise<{ slug: string }> }) {
+  const params = use(props.params);
   const account = useAccount();
   const [project, setProject] = useState<any>();
   const [hyperfund, setHyperfund] = useState<string>();

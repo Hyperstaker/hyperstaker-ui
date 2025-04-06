@@ -97,7 +97,7 @@ const RoadmapPhase: React.FC<RoadmapPhaseProps> = ({
   );
 };
 
-export const ProductRoadmapSection: React.FC = () => {
+export function ProductRoadmapSection() {
   const phases: RoadmapPhaseProps[] = [
     {
       status: "in-progress",
@@ -140,19 +140,14 @@ export const ProductRoadmapSection: React.FC = () => {
   ];
 
   return (
-    <section className="w-full py-24 bg-[#0e1525]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-16 text-center">
-          <Title 
-            className="text-4xl md:text-5xl font-bold mb-6"
-            style={{ color: "#a78bfa" }}
-          >
-            Product Roadmap
-          </Title>
-          <p className="text-gray-300 text-lg mb-8 max-w-[60%] mx-auto">
-            Our roadmap for making Hyperstaker the new standard for funding innovation through programmable impact and aligned incentives.
-          </p>
-        </div>
+    <section className="w-full py-24 bg-bg-base">
+      <div className="container mx-auto px-4 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+          Product Roadmap
+        </h2>
+        <p className="text-gray-300 text-lg mb-8 max-w-[60%] mx-auto">
+          Our roadmap for making Hyperstaker the new standard for funding innovation through programmable impact and aligned incentives.
+        </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {phases.map((phase, index) => (
@@ -168,4 +163,4 @@ export const ProductRoadmapSection: React.FC = () => {
       </div>
     </section>
   );
-};
+}

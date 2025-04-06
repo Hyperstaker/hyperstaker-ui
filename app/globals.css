@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base Element Styles (from legacy, using @apply) */
+h1 {
+  @apply mb-8 text-4xl font-bold;
+}
+h2 {
+  @apply mb-6 text-3xl md:text-4xl font-semibold;
+}
+h3 {
+  @apply mb-4 text-2xl md:text-3xl font-semibold;
+}
+h4 {
+  @apply mb-3 text-xl md:text-2xl font-medium;
+}
+h5 {
+  @apply mb-2 text-xl md:text-xl font-medium;
+}
+p {
+  @apply text-base leading-relaxed mb-4;
+}
+a {
+  /* Assumes 'text-custom-link' is defined in tailwind.config.ts */
+  @apply text-custom-link;
+}
+
+/* Smooth scrolling (from home) */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Utilities (from legacy) */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+} 

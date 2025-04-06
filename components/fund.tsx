@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { NativeSelect, rem, TextInput } from "@mantine/core";
 import {
   type BaseError,
@@ -26,38 +26,54 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
   const { data: hash, error, isPending, writeContract } = useWriteContract();
   const erc20Contract = useWriteContract();
 
+  // Get contract addresses for the current chain, if supported
+  const currentContracts = useMemo(() => {
+    if (chain?.id && contracts[chain.id as keyof typeof contracts]) {
+      return contracts[chain.id as keyof typeof contracts];
+    }
+    return null;
+  }, [chain?.id]);
+
+  const isUnsupportedNetwork = isConnected && !currentContracts;
+
   const transactionUrl =
     hash && chain ? getTransactionExplorerUrl(chain.id, hash) : undefined;
-  const [, setIsButtonEnabled] = useState<boolean>(false);
+  const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false);
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const amountValue = event.target.value;
     setAmount(amountValue);
-    setIsButtonEnabled(amountValue !== "");
+    setIsButtonEnabled(amountValue !== "" && !isUnsupportedNetwork);
   };
 
   const allowance = useReadContract({
     abi: erc20ContractABI,
-    address: contracts[chain?.id as keyof typeof contracts]
-      ?.usdc as `0x${string}`,
+    address: currentContracts?.usdc as `0x${string}` | undefined,
     functionName: "allowance",
     args: [
       address,
-      contracts[chain?.id as keyof typeof contracts]?.alloContract,
+      currentContracts?.alloContract,
     ],
+    query: {
+      enabled: !!currentContracts && !!address,
+    }
   });
 
   const checkAllowance = async () => {
-    return allowance.data;
+    const refreshedAllowance = await allowance.refetch();
+    return refreshedAllowance?.data;
   };
 
   const approveToken = async () => {
+    if (!currentContracts) {
+      console.error("Cannot approve token: Unsupported network or contracts not loaded.");
+      return;
+    }
     await erc20Contract.writeContractAsync({
       abi: erc20ContractABI,
-      address: contracts[chain?.id as keyof typeof contracts]
-        .usdc as `0x${string}`,
+      address: currentContracts.usdc as `0x${string}`,
       functionName: "approve",
       args: [
-        contracts[chain?.id as keyof typeof contracts].alloContract,
+        currentContracts.alloContract,
         amount,
       ],
     });
@@ -65,20 +81,38 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const value = amount;
-
-    const allowance = await checkAllowance();
-    if (Number(allowance) < Number(value)) {
-      await approveToken();
+    if (!currentContracts || isUnsupportedNetwork) {
+      console.error("Cannot submit: Unsupported network.");
+      return;
     }
 
-    writeContract({
-      abi: alloAbi,
-      address: contracts[chain?.id as keyof typeof contracts]
-        .alloContract as `0x${string}`,
-      functionName: "fundPool",
-      args: [poolId, value],
-    });
+    const value = amount;
+
+    const currentAllowance = await checkAllowance();
+    if (currentAllowance === undefined || typeof currentAllowance !== "string" && typeof currentAllowance !== "number" && typeof currentAllowance !== "bigint") {
+       console.error("Invalid allowance value:", currentAllowance);
+       return;
+    }
+    
+    if (BigInt(currentAllowance) < BigInt(value)) {
+      try {
+        await approveToken();
+      } catch (approvalError) {
+        console.error("Failed to approve token:", approvalError);
+        return;
+      }
+    }
+
+    try {
+      writeContract({
+        abi: alloAbi,
+        address: currentContracts.alloContract as `0x${string}`,
+        functionName: "fundPool",
+        args: [poolId, value],
+      });
+    } catch (fundError) {
+      console.error("Failed to initiate fundPool transaction:", fundError);
+    }
   }
   const handleTokenChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedToken(event.target.value);
@@ -131,16 +165,19 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
                 onChange={handleAmountChange}
                 placeholder={`Enter ${selectedToken} amount`}
               />
-              {isConnected && (
+              {isConnected && !isUnsupportedNetwork && (
                 <button
-                  className="p-2 mt-6 ml-2 text-white rounded-md bg-blue-500"
-                  disabled={isPending}
+                  className="p-2 mt-6 ml-2 text-white rounded-md bg-blue-500 disabled:opacity-50"
+                  disabled={isPending || !isButtonEnabled}
                   type="submit"
                 >
                   {isPending ? "Confirming..." : "Send"}
                 </button>
               )}
-              {!isConnected && <p>Connect your wallet to contiue</p>}
+              {!isConnected && <p className="mt-8 ml-2">Connect your wallet to continue</p>}
+              {isUnsupportedNetwork && (
+                <p className="mt-8 ml-2 text-red-500">Unsupported network. Please connect to Sepolia.</p>
+              )}
             </div>
           </>
         )}

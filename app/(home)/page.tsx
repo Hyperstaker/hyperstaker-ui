@@ -4,39 +4,27 @@ import { ThemeToggle } from "./_components/ThemeToggle";
 import { FeaturesSection } from "./_components/FeaturesSection";
 import { ValuePropositionSection } from "./_components/ValuePropositionSection";
 import { ProductRoadmapSection } from "./_components/ProductRoadmapSection";
-import { Footer } from "./_components/Footer"; // Add this import
+import { Footer } from "./_components/Footer";
+import { NavLink } from "./_components/NavLink";
+import { Header } from "../../components/Header";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#0e1525] text-white">
-      {/* Navigation */}
-      <header 
-        className="relative z-10 flex justify-between items-center py-6 px-8 border-b"
-        style={{ borderBottomColor: "#242b3d" }}
-      >
-        <div className="flex items-center">
-          <img 
-            src="/img/logo.png"
-            alt="Hyperstaker Logo"
-            width={32}
-            height={32}
-            className="w-8"
-          />
-          <span className="text-xl ml-2 font-bold text-white">Hyperstaker</span>
-        </div>
-
+    <div className="min-h-screen bg-bg-base text-white">
+      {/* Use the new Header component */}
+      <Header>
+        {/* Pass navigation and action buttons as children */}
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#" className="text-purple-400 hover:text-white transition-colors">Why?</a>
-          <a href="#features" className="text-purple-400 hover:text-white transition-colors">What?</a>
-          <a href="#why" className="text-purple-400 hover:text-white transition-colors">How?</a>
-          <a href="#roadmap" className="text-purple-400 hover:text-white transition-colors">Roadmap</a>
+          <NavLink href="#why">Why?</NavLink>
+          <NavLink href="#features">What?</NavLink>
+          <NavLink href="#why">How?</NavLink>
+          <NavLink href="#roadmap">Roadmap</NavLink>
         </nav>
-
         <div className="flex items-center gap-2">
           <GetStartedButton size="small" />
           <ThemeToggle />
         </div>
-      </header>
+      </Header>
 
       {/* Hero Section */}
       <main className="min-h-screen relative">
@@ -56,7 +44,7 @@ export default function Home() {
         >
           <div className="max-w-3xl mx-auto">
             <div className="mb-12">
-              <span className="inline-block px-4 py-2 rounded-full bg-purple-900/30 text-purple-300 text-sm font-medium mb-6 border border-[rgb(107,33,168)]">
+              <span className="inline-block px-4 py-2 rounded-full bg-[#150F38] text-purple-300 text-sm font-medium mb-6 border border-[rgb(107,33,168)]">
                 Retroactive Rewards for the Builders of Tomorrow
               </span>
 
@@ -147,6 +135,7 @@ export default function Home() {
         <div id="roadmap">
           <ProductRoadmapSection />
         </div>
+
       </main>
 
       {/* Footer */}

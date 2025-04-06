@@ -11,7 +11,7 @@ export function ProjectBanner(
   >
 ) {
   return (
-    <div className="overflow-hidden rounded-3xl">
+    <div className="overflow-hidden">
       <Banner src={props.url} fallbackSrc={profileImageUrl} />
     </div>
   );

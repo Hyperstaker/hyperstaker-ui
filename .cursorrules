@@ -10,6 +10,7 @@ rules:
   - No React import required
   - No PropTypes required (use TypeScript)
   - TypeScript explicit return types optional
+  - Always use double quotes " not single quotes '
   
   # TypeScript Standards
   - Use TypeScript for all new code

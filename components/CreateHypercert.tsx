@@ -145,12 +145,10 @@ export function CreateHypercert({
   };
 
   return (
-    <Paper
-      p="xl"
-      radius="lg"
-      bg="dark.7"
-      style={{ border: "1px solid var(--mantine-color-dark-4)" }}
-    >
+    <Paper 
+      p="xl" 
+      bg="transparent"
+>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Stack gap="xl">
           <Title order={2} c="white">
@@ -216,14 +214,6 @@ export function CreateHypercert({
             placeholder="Enter amount"
             required
             {...form.register("goal", { required: "Goal is required" })}
-            styles={{
-              label: { color: "var(--mantine-color-gray-4)" },
-              input: {
-                backgroundColor: "var(--mantine-color-dark-6)",
-                color: "var(--mantine-color-white)",
-                border: "1px solid var(--mantine-color-dark-4)",
-              },
-            }}
           />
 
           <TextInput
@@ -241,14 +231,6 @@ export function CreateHypercert({
                   .filter((i) => i !== "")
               );
             }}
-            styles={{
-              label: { color: "var(--mantine-color-gray-4)" },
-              input: {
-                backgroundColor: "var(--mantine-color-dark-6)",
-                color: "var(--mantine-color-white)",
-                border: "1px solid var(--mantine-color-dark-4)",
-              },
-            }}
           />
 
           <TextInput
@@ -263,14 +245,6 @@ export function CreateHypercert({
                   .map((i) => i.trim())
                   .filter((i) => i !== "")
               );
-            }}
-            styles={{
-              label: { color: "var(--mantine-color-gray-4)" },
-              input: {
-                backgroundColor: "var(--mantine-color-dark-6)",
-                color: "var(--mantine-color-white)",
-                border: "1px solid var(--mantine-color-dark-4)",
-              },
             }}
           />
 
@@ -288,14 +262,6 @@ export function CreateHypercert({
                   .filter((i) => i !== "")
               );
             }}
-            styles={{
-              label: { color: "var(--mantine-color-gray-4)" },
-              input: {
-                backgroundColor: "var(--mantine-color-dark-6)",
-                color: "var(--mantine-color-white)",
-                border: "1px solid var(--mantine-color-dark-4)",
-              },
-            }}
           />
 
           <TextInput
@@ -310,14 +276,6 @@ export function CreateHypercert({
                   .map((i) => i.trim())
                   .filter((i) => i !== "")
               );
-            }}
-            styles={{
-              label: { color: "var(--mantine-color-gray-4)" },
-              input: {
-                backgroundColor: "var(--mantine-color-dark-6)",
-                color: "var(--mantine-color-white)",
-                border: "1px solid var(--mantine-color-dark-4)",
-              },
             }}
           />
 
@@ -341,9 +299,8 @@ export function CreateHypercert({
           <DateInput
             label="Work End Date"
             required
-            onChange={(value) =>
-              value && form.setValue("workTimeframeEnd", value)
-            }
+            value={form.watch("workTimeframeEnd")}
+            onChange={(value) => value && form.setValue("workTimeframeEnd", value)}
             styles={{
               label: { color: "var(--mantine-color-gray-4)" },
               input: {
@@ -374,6 +331,8 @@ export function CreateHypercert({
           <DateInput
             label="Impact End Date"
             required
+            value={form.watch("impactTimeframeEnd")}
+            onChange={(value) => value && form.setValue("impactTimeframeEnd", value)}
             styles={{
               label: { color: "var(--mantine-color-gray-4)" },
               input: {
@@ -397,14 +356,6 @@ export function CreateHypercert({
                   .filter((i) => i !== "")
               );
             }}
-            styles={{
-              label: { color: "var(--mantine-color-gray-4)" },
-              input: {
-                backgroundColor: "var(--mantine-color-dark-6)",
-                color: "var(--mantine-color-white)",
-                border: "1px solid var(--mantine-color-dark-4)",
-              },
-            }}
           />
 
           <TextInput
@@ -421,14 +372,6 @@ export function CreateHypercert({
                   .filter((i) => i !== "")
               );
             }}
-            styles={{
-              label: { color: "var(--mantine-color-gray-4)" },
-              input: {
-                backgroundColor: "var(--mantine-color-dark-6)",
-                color: "var(--mantine-color-white)",
-                border: "1px solid var(--mantine-color-dark-4)",
-              },
-            }}
           />
 
           <TextInput
@@ -443,14 +386,6 @@ export function CreateHypercert({
                   .map((i) => i.trim())
                   .filter((i) => i !== "")
               );
-            }}
-            styles={{
-              label: { color: "var(--mantine-color-gray-4)" },
-              input: {
-                backgroundColor: "var(--mantine-color-dark-6)",
-                color: "var(--mantine-color-white)",
-                border: "1px solid var(--mantine-color-dark-4)",
-              },
             }}
           />
 
