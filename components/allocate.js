@@ -27,6 +27,8 @@ function AllocateForm({
       chainId: account.chainId,
     });
 
+    console.log("allocation history", allocationHistory)
+
     // Add useEffect to check approval status on load
     useEffect(() => {
         const checkInitialApproval = async () => {
@@ -52,13 +54,15 @@ function AllocateForm({
                     },
                     body: JSON.stringify({
                         query: `
-                            query GetAllocations($hyperfund: String!) {
-                                nonfinancialContributions(where: {hyperfund: $hyperfund}) {
-                                    items {
-                                        address
-                                        units
-                                    }
+                            query MyQuery {
+                              nonfinancialContributions(
+                                where: {hyperfund: "${hyperfund}"}
+                              ) {
+                                items {
+                                  address
+                                  units
                                 }
+                              }
                             }
                         `,
                         variables: {

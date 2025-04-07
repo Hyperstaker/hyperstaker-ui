@@ -58,7 +58,7 @@ export default function ManageProject({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ hypercertId: project.slug.split("-")[2] }),
+          body: JSON.stringify({ hypercertId: project.slug?.split("-")[2] }),
         });
 
         if (!response.ok) {
