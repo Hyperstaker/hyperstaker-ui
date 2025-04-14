@@ -18,7 +18,7 @@ import {
   hyperfundAbi,
   hyperstakerAbi,
 } from "./data";
-import { Abi, AbiFunction } from "viem";
+import { Abi } from "viem";
 import { useState } from "react";
 import { Modal } from "./ui/Modal";
 
