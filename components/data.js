@@ -292,6 +292,17 @@ const hypercertMinterAbi = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  {
+    inputs:[
+      {internalType:"uint256",name:"tokenID",type:"uint256"}
+    ],
+    name:"unitsOf",
+    outputs:[
+      {internalType:"uint256",name:"units",type:"uint256"}
+    ],
+    stateMutability:"view",
+    type:"function"
+  }
 ];
 
 const erc20ContractABI = [

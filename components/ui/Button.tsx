@@ -10,7 +10,7 @@ const button = tv({
         "bg-primary-600 hover:bg-primary-700 dark:bg-white dark:hover:bg-primary-500 dark:text-gray-900 text-white dark:disabled:bg-gray-500",
       ghost: "hover:bg-gray-100 dark:hover:bg-gray-800",
       default:
-        "bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-700",
+        "bg-gray-700 dark:bg-gray-700 hover:bg-gray-800 dark:hover:bg-gray-800",
       inverted: "bg-white text-black hover:bg-white/90",
       link: "bg-none hover:underline",
     },
@@ -33,7 +33,10 @@ export const Button = createComponent("button", button);
 
 export const IconButton = forwardRef<
   HTMLButtonElement,
-  ComponentPropsWithRef<typeof Button> & { icon: React.ElementType; size?: string }
+  ComponentPropsWithRef<typeof Button> & {
+    icon: React.ElementType;
+    size?: string;
+  }
 >(function IconButton({ children, icon, size, ...props }, ref) {
   return (
     <Button ref={ref} {...props} size={children ? size : "icon"}>

@@ -5,7 +5,12 @@ import { Skeleton } from "./ui/Skeleton";
 import { Button } from "./ui/Button";
 import Project from "../interfaces/Project";
 import Metadata from "../interfaces/Metadata";
-import { useWriteContract, useAccount, useConfig } from "wagmi";
+import {
+  useWriteContract,
+  useAccount,
+  useConfig,
+  useReadContracts,
+} from "wagmi";
 import { readContract } from "@wagmi/core";
 import {
   contracts,
@@ -13,7 +18,7 @@ import {
   hyperfundAbi,
   hyperstakerAbi,
 } from "./data";
-import { Abi } from "viem";
+import { Abi, AbiFunction } from "viem";
 import { useState } from "react";
 import { Modal } from "./ui/Modal";
 
@@ -42,6 +47,19 @@ export default function ManageHypercert({
   const hyperfundContract = useWriteContract();
   const hyperminterWrite = useWriteContract();
   const config = useConfig();
+
+  const callAbis = unstakedFractions.map((f) => {
+    return {
+      abi: hypercertMinterAbi,
+      address: contracts[account.chain?.id as keyof typeof contracts]
+        ?.hypercertMinterContract as `0x${string}`,
+      functionName: "unitsOf",
+      args: [BigInt(f)],
+    };
+  });
+  const fractionUnits = useReadContracts({
+    contracts: callAbis as any,
+  });
 
   const checkApproved = async (operator: `0x${string}`) => {
     if (account.chainId) {
@@ -236,7 +254,7 @@ export default function ManageHypercert({
                     </h2>
                     <div className="space-y-4">
                       {/* Example unstaked item - Replace with actual data mapping */}
-                      {unstakedFractions.map((f) => (
+                      {unstakedFractions.map((f, idx) => (
                         <div
                           className="flex items-center justify-between p-3 bg-gray-600 dark:bg-gray-800 rounded"
                           key={f}
@@ -244,6 +262,12 @@ export default function ManageHypercert({
                           <div>
                             <p className="font-medium">
                               Fraction ID: {f.slice(0, 5)}...{f.slice(-5)}
+                            </p>
+                            <p>
+                              Units:{" "}
+                              {fractionUnits.data
+                                ? (fractionUnits?.data[idx].result as bigint)
+                                : 0}
                             </p>
                           </div>
                           <div className="flex space-x-2">

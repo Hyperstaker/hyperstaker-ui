@@ -6,7 +6,7 @@ import Project from "../interfaces/Project";
 import Metadata from "../interfaces/Metadata";
 import { TextField } from "./ui/TextField";
 import { useForm } from "react-hook-form";
-import { useReadContract, useWriteContract, useAccount } from "wagmi";
+import { useWriteContract, useAccount, useReadContracts } from "wagmi";
 import { alloAbi, contracts, erc20ContractABI, hyperfundAbi } from "./data";
 import { Abi, encodeAbiParameters } from "viem";
 import { Button } from "./ui/Button";
@@ -39,15 +39,35 @@ export default function ManageProject({
   const [allocateHyperstaker, setAllocateHyperstaker] = useState(0);
   const [usdRaised, setUsdRaised] = useState(0);
   const [raisePercent, setRaisePercent] = useState(0);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const { chain } = useAccount();
 
-  const strategyBalance = useReadContract({
-    abi: erc20ContractABI,
-    address: contracts[chain?.id as keyof typeof contracts]
-      ?.usdc as `0x${string}`,
-    functionName: "balanceOf",
-    args: [strategyAddress],
+  const poolBalances = useReadContracts({
+    contracts: [
+      {
+        abi: erc20ContractABI,
+        address: contracts[chain?.id as keyof typeof contracts]
+          ?.usdc as `0x${string}`,
+        functionName: "balanceOf",
+        args: [strategyAddress],
+      },
+      {
+        abi: erc20ContractABI,
+        address: contracts[chain?.id as keyof typeof contracts]
+          ?.usdc as `0x${string}`,
+        functionName: "balanceOf",
+        args: [hyperstaker],
+      },
+      {
+        abi: erc20ContractABI,
+        address: contracts[chain?.id as keyof typeof contracts]
+          ?.usdc as `0x${string}`,
+        functionName: "balanceOf",
+        args: [hyperfund],
+      },
+    ],
   });
 
   useEffect(() => {
@@ -298,73 +318,124 @@ export default function ManageProject({
                 )}
               </div>
               <div className="mb-5">
-                <h4>Add Supported Assets</h4>
-                <div>
-                  <TextField
-                    label="Address"
-                    fullWidth
-                    margin="normal"
-                    {...assetForm.register("address", {
-                      required: true,
-                    })}
-                  />
-                </div>
-                <div>
-                  <TextField
-                    label="Multiplier"
-                    fullWidth
-                    margin="normal"
-                    {...assetForm.register("multiplier", {
-                      required: true,
-                    })}
-                  />
-                </div>
-                <div>
-                  <Button type="button" onClick={handleAddAddress}>
-                    Add Token
-                  </Button>
-                </div>
+                <Button
+                  type="button"
+                  onClick={() => setShowAdvanced((prev) => !prev)}
+                >
+                  {showAdvanced
+                    ? "Hide Advanced Configurations"
+                    : "Show Advanced Configurations"}
+                </Button>
               </div>
-              <div>
-                <h4>Allocate Funds</h4>
-                <p>
-                  Available Pool Funds:{" "}
-                  {(strategyBalance?.data
-                    ? parseInt(strategyBalance.data.toString())
-                    : 0) /
-                    10 ** 6}{" "}
-                  USD
-                </p>
+              {showAdvanced && (
                 <div>
-                  <TextField
-                    label="Amount to Allocate to Hyperfund (USD)"
-                    type="number"
-                    fullWidth
-                    margin="normal"
-                    value={allocateHyperfund}
-                    onChange={(e) =>
-                      setAllocateHyperfund(Number(e.target.value))
-                    }
-                  />
+                  <h4>Add Supported Assets</h4>
+                  <div>
+                    <TextField
+                      label="Address"
+                      fullWidth
+                      margin="normal"
+                      {...assetForm.register("address", {
+                        required: true,
+                      })}
+                    />
+                  </div>
+                  <div>
+                    <div className="relative">
+                      <TextField
+                        label={"Multiplier"}
+                        fullWidth
+                        margin="normal"
+                        {...assetForm.register("multiplier", {
+                          required: true,
+                        })}
+                      />
+                      <div className="absolute top-0 right-0">
+                        <span
+                          className="cursor-pointer"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                          onClick={() => setShowTooltip((prev) => !prev)}
+                        >
+                          ℹ️
+                        </span>
+                        {showTooltip && (
+                          <span className="absolute bg-gray-700 text-white text-xs rounded p-2 mt-1">
+                            The multiplier is the amount of hypercert fractions
+                            you can redeem for 1 unit of asset.
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <Button type="button" onClick={handleAddAddress}>
+                      Add Token
+                    </Button>
+                  </div>
+
+                  <h4 className="mt-5">Allocate Funds</h4>
+                  <p>
+                    Available pool funds to be allocated:{" "}
+                    {(poolBalances?.data
+                      ? parseInt(
+                          (poolBalances.data[0].result as bigint).toString()
+                        )
+                      : 0) /
+                      10 ** 6}{" "}
+                    USD
+                  </p>
+                  <p>
+                    Hyperstaker balance:{" "}
+                    {(poolBalances?.data
+                      ? parseInt(
+                          (poolBalances.data[1].result as bigint).toString()
+                        )
+                      : 0) /
+                      10 ** 6}{" "}
+                    USD
+                  </p>
+                  <p>
+                    Hyperfund balance:{" "}
+                    {(poolBalances?.data
+                      ? parseInt(
+                          (poolBalances.data[2].result as bigint).toString()
+                        )
+                      : 0) /
+                      10 ** 6}{" "}
+                    USD
+                  </p>
+                  <div>
+                    <TextField
+                      label="Amount to Allocate to Hyperfund (USD)"
+                      type="number"
+                      fullWidth
+                      margin="normal"
+                      value={allocateHyperfund}
+                      onChange={(e) =>
+                        setAllocateHyperfund(Number(e.target.value))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <TextField
+                      label="Amount to Allocate to Hyperstaker (USD)"
+                      type="number"
+                      fullWidth
+                      margin="normal"
+                      value={allocateHyperstaker}
+                      onChange={(e) =>
+                        setAllocateHyperstaker(Number(e.target.value))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Button type="button" onClick={handleAllocateFunds}>
+                      Allocate Funds
+                    </Button>
+                  </div>
                 </div>
-                <div>
-                  <TextField
-                    label="Amount to Allocate to Hyperstaker (USD)"
-                    type="number"
-                    fullWidth
-                    margin="normal"
-                    value={allocateHyperstaker}
-                    onChange={(e) =>
-                      setAllocateHyperstaker(Number(e.target.value))
-                    }
-                  />
-                </div>
-                <div>
-                  <Button type="button" onClick={handleAllocateFunds}>
-                    Allocate Funds
-                  </Button>
-                </div>
-              </div>
+              )}
 
               {/* <Skeleton isLoading={isLoading} className="w-[100px]">
                 <ImpactCategories tags={metadata?.data?.impactCategory} />
