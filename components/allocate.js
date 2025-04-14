@@ -27,8 +27,6 @@ function AllocateForm({
       chainId: account.chainId,
     });
 
-    console.log("allocation history", allocationHistory)
-
     // Add useEffect to check approval status on load
     useEffect(() => {
         const checkInitialApproval = async () => {
@@ -239,7 +237,7 @@ function AllocateForm({
                       </div>
                   </div>
               ))}
-              <div className="flex justify-center mt-5">
+              {addresses.length > 0 ? <div className="flex justify-center mt-5">
                   {!isApproved ? (
                       <Button type="button" onClick={handleApprove}>
                           Approve
@@ -249,12 +247,12 @@ function AllocateForm({
                           Allocate
                       </Button>
                   )}
-              </div>
+              </div> : null}
             </div>
         </form>
         <form>
           <div className="space-y-4 space-x-4">
-            <h4>Add Contributor</h4>
+            <h5>Add Contributor</h5>
             <TextField
                 label="Address"
                 fullWidth
