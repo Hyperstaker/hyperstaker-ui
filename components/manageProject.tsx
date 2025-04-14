@@ -379,7 +379,7 @@ export default function ManageProject({
                     Available pool funds to be allocated:{" "}
                     {(poolBalances?.data
                       ? parseInt(
-                          (poolBalances.data[0]?.result as bigint).toString()
+                          (poolBalances.data[0]?.result as bigint)?.toString()
                         )
                       : 0) /
                       10 ** 6}{" "}
@@ -389,7 +389,7 @@ export default function ManageProject({
                     Hyperstaker balance:{" "}
                     {(poolBalances?.data
                       ? parseInt(
-                          (poolBalances.data[1]?.result as bigint).toString()
+                          (poolBalances.data[1]?.result as bigint)?.toString()
                         )
                       : 0) /
                       10 ** 6}{" "}
@@ -399,7 +399,7 @@ export default function ManageProject({
                     Hyperfund balance:{" "}
                     {(poolBalances?.data
                       ? parseInt(
-                          (poolBalances.data[2]?.result as bigint).toString()
+                          (poolBalances.data[2]?.result as bigint)?.toString()
                         )
                       : 0) /
                       10 ** 6}{" "}
