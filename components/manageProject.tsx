@@ -443,14 +443,14 @@ export default function ManageProject({
           >
             Funds Raised
           </Button>
-          <Button
+          {/* <Button
             className={`w-full ${
               activeTab === "supportedAssets" ? "bg-primary-600" : ""
             }`}
             onClick={() => setActiveTab("supportedAssets")}
           >
             Add Supported Assets
-          </Button>
+          </Button> */}
           <Button
             className={`w-full ${
               activeTab === "allocateFunds" ? "bg-primary-600" : ""

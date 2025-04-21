@@ -134,7 +134,7 @@ export function CreateAlloProfile({
     }
 
     try {
-      const alloMetadataIPFSHash = ipfsUpload(alloProfileData);
+      const alloMetadataIPFSHash = await ipfsUpload(alloProfileData);
       const tx = await contract.writeContractAsync({
         // Allo registry contract
         address: contracts[account.chainId as keyof typeof contracts]
@@ -162,6 +162,7 @@ export function CreateAlloProfile({
       const profileId = txReceipt.logs[0]?.topics?.[1];
       if (profileId) {
         setAlloProfile(profileId);
+        await saveUserAlloProfile(account.address as string, profileId);
       }
     } catch (error) {
       console.error(error);
@@ -169,10 +170,39 @@ export function CreateAlloProfile({
     }
   };
 
+  const saveUserAlloProfile = async (
+    walletAddress: string,
+    alloProfileId: string
+  ) => {
+    try {
+      const response = await fetch("/api/user-allo-profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          walletAddress,
+          alloProfileId,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to save user allo profile");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error saving user allo profile:", error);
+      throw error;
+    }
+  };
+
   const onSubmit = async (data: AlloProfileFormData) => {
     setIsSubmitting(true);
     try {
       if (alloProfile) {
+        await saveUserAlloProfile(account.address as string, alloProfile);
         onNext();
       } else {
         await createAlloProfile(data);
@@ -194,9 +224,10 @@ export function CreateAlloProfile({
     >
       {!showCreateForm ? (
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
             if (alloProfile) {
+              await saveUserAlloProfile(account.address as string, alloProfile);
               onNext();
             }
           }}

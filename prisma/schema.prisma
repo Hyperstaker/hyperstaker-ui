@@ -19,7 +19,15 @@ model AlloProfiles {
   id          Int    @id @default(autoincrement())
   hypercertId String
   alloProfile String
-  alloPool Int @default(0)
+  alloPool    Int    @default(0)
 
   @@index([hypercertId])
+}
+
+model UserAlloProfiles {
+  id            Int    @id @default(autoincrement())
+  walletAddress String
+  alloProfileId String
+
+  @@index([walletAddress])
 }

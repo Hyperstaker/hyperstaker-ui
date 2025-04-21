@@ -245,15 +245,13 @@ function AllocateForm({
             <h5>Add Contributor</h5>
             <TextField
                 label="Address"
-                fullWidth
                 margin="normal"
                 {...allocateForm.register("address", {
                   required: true,
                 })}
               />
               <TextField
-                label="Amount"
-                fullWidth
+                label="Amount (Amount of Hypercert fraction to be allocated to contributor)"
                 margin="normal"
                 {...allocateForm.register("amount", {
                   required: true,

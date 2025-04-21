@@ -23,6 +23,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ alloPool: profile.alloPool });
   } catch (error) {
+    console.error("Error fetching allo pool: ", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
