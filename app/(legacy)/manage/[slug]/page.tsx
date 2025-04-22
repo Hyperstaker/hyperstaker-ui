@@ -97,35 +97,26 @@ export default function Page(props: { params: Promise<{ slug: string }> }) {
   }
 
   async function getHyperfund() {
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_HYPERINDEXER_ENDPOINT as unknown as URL,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: `
-          query MyQuery {
-            hyperstakerCreated(hypercert: "${params.slug.split("-")[2]}") {
-              hypercert
-              hyperstaker
-              manager
-            }
-            hyperfundCreated(hypercert: "${params.slug.split("-")[2]}") {
-              hypercert
-              hyperfund
-              manager
-            }
-          }
-        `,
-        }),
-      }
-    );
+    const response = await fetch("/api/getHyperstakerInfo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        hypercertId: params.slug.split("-")[2],
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch hyperstaker information");
+    }
 
     const data = await response.json();
-    setHyperstaker(data.data.hyperfundCreated.hyperfund);
-    return data.data.hyperfundCreated.hyperfund;
+    const hyperstakerInfo = data.hyperstakerInfo;
+    const hyperfundInfo = data.hyperfundInfo;
+
+    setHyperstaker(hyperstakerInfo.hyperstaker);
+    return hyperfundInfo.hyperfund;
   }
 
   return (

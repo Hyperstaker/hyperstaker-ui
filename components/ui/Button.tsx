@@ -10,7 +10,7 @@ const button = tv({
         "bg-primary-600 hover:bg-primary-700 dark:bg-white dark:hover:bg-primary-500 dark:text-gray-900 text-white dark:disabled:bg-gray-500",
       ghost: "hover:bg-gray-100 dark:hover:bg-gray-800",
       default:
-        "bg-gray-700 dark:bg-gray-700 hover:bg-gray-800 dark:hover:bg-gray-800",
+        "bg-gray-700 dark:bg-gray-700 hover:bg-gray-800 dark:hover:bg-gray-800 active:bg-gray-800",
       inverted: "bg-white text-black hover:bg-white/90",
       link: "bg-none hover:underline",
     },
@@ -23,6 +23,7 @@ const button = tv({
       true: "text-gray-400 pointer-events-none pointer-default opacity-50 border-none",
     },
   },
+
   defaultVariants: {
     variant: "default",
     size: "deafult",

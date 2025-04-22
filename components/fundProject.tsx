@@ -30,45 +30,31 @@ export default function FundProject({
 
   useEffect(() => {
     const updateDonations = async () => {
-      const nonFinancialUnits = await getTotalFinancialContributions(poolId);
+      const response = await fetch("/api/getTotalFinancialContributions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          poolId: poolId,
+        }),
+      });
 
-      setUsdRaised(nonFinancialUnits / 10 ** 6);
-      setRaisePercent((nonFinancialUnits * 100) / (project.totalUnits ?? 1));
+      if (!response.ok) {
+        throw new Error("Failed to fetch total financial contributions");
+      }
+
+      const data = await response.json();
+      const { units } = data;
+
+      setUsdRaised(units / 10 ** 6);
+      setRaisePercent((units * 100) / (project.totalUnits ?? 1));
     };
 
     if (poolId != 0) {
       updateDonations();
     }
   }, [poolId]);
-
-  async function getTotalFinancialContributions(poolId: number) {
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_HYPERINDEXER_ENDPOINT as unknown as URL,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: `
-          query MyQuery {
-            totalFinancialContributionsToPool(poolId: "${poolId}") {
-              totalHypercertUnits
-              poolId
-            }
-          }
-        `,
-        }),
-      }
-    );
-
-    const data = await response.json();
-    console.log(data);
-    // TODO: Add additional verification to ensure that fractions are still staked
-    const units =
-      data.data?.totalFinancialContributionsToPool?.totalHypercertUnits ?? 0;
-    return units;
-  }
 
   const content = [
     {

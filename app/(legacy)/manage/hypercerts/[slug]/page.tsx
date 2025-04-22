@@ -116,7 +116,8 @@ export default function Page(props: { params: Promise<{ slug: string }> }) {
       query
     );
 
-    res?.hypercerts.data?.map((d: Hypercert) => { // Use Hypercert type
+    res?.hypercerts.data?.map((d: Hypercert) => {
+      // Use Hypercert type
       let totalUnits = 0;
       d?.fractions?.data?.map(
         (i: any) => (totalUnits = totalUnits + Number(i.units))
@@ -125,7 +126,8 @@ export default function Page(props: { params: Promise<{ slug: string }> }) {
     });
 
     const _unstakedFractions: string[] = [];
-    res?.hypercerts.data?.map((d: Hypercert) => { // Use Hypercert type
+    res?.hypercerts.data?.map((d: Hypercert) => {
+      // Use Hypercert type
       d.fractions.data.map((f: any) => {
         if (f.owner_address == walletAddress) {
           _unstakedFractions.push(f.fraction_id.split("-")[2]);
@@ -139,50 +141,30 @@ export default function Page(props: { params: Promise<{ slug: string }> }) {
   }
 
   async function getHyperstaker(walletAddress: string) {
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_HYPERINDEXER_ENDPOINT as unknown as URL,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: `
-          query MyQuery {
-            stakeds(where: {from: "${walletAddress}", hypercertId: "${
-            params.slug.split("-")[2]
-          }"}) {
-              items {
-                from
-                fractionId
-                hypercertId
-                hyperstaker
-                id
-              }
-            }
-            hyperstakerCreated(hypercert: "${params.slug.split("-")[2]}") {
-              hypercert
-              hyperstaker
-              manager
-            }
-            hyperfundCreated(hypercert: "${params.slug.split("-")[2]}") {
-              hyperfund
-              hypercert
-              manager
-            }
-          }
-        `,
-        }),
-      }
-    );
+    const response = await fetch("/api/getStakedItems", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        hypercertId: params.slug.split("-")[2],
+        walletAddress: walletAddress,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch staked items");
+    }
 
     const data = await response.json();
+    const { stakedItems, hyperstakerInfo, hyperfundInfo } = data;
+
     // TODO: Add additional verification to ensure that fractions are still staked
-    const _stakedFractions = data.data.stakeds.items.map(
+    const _stakedFractions = stakedItems.map(
       (i: { fractionId: any }) => i.fractionId
     );
     setStakedFractions(Array.from(new Set(_stakedFractions)));
-    const _hyperfund = data.data.hyperfundCreated.hyperfund;
+    const _hyperfund = hyperfundInfo.hyperfund;
     setHyperfund(_hyperfund);
     const _nonFinancialContributions = await readContract(config, {
       abi: hyperfundAbi,
@@ -193,7 +175,7 @@ export default function Page(props: { params: Promise<{ slug: string }> }) {
 
     setNonfinancialContributions(_nonFinancialContributions as bigint);
 
-    return data.data.hyperstakerCreated?.hyperstaker;
+    return hyperstakerInfo.hyperstaker;
   }
 
   return (

@@ -17,31 +17,17 @@ import { useAccount, useConfig } from "wagmi";
 import { waitForTransactionReceipt } from "@wagmi/core";
 import { decodeAbiParameters } from "viem";
 import { Dispatch, SetStateAction, useState } from "react";
+import { HypercertFormData } from "./OnboardingFlow";
 
 const testing = true;
 
 interface CreateHypercertProps {
   onNext: () => void;
   onPrevious: () => void;
-  hypercertState: [string, Dispatch<SetStateAction<string>>];
-}
-
-interface HypercertFormData {
-  title: string;
-  description: string;
-  image?: string;
-  goal: string;
-  impactScope: string[];
-  excludedImpactScope: string[];
-  workScope: string[];
-  excludedWorkScope: string[];
-  workTimeframeStart: Date;
-  workTimeframeEnd: Date;
-  impactTimeframeStart: Date;
-  impactTimeframeEnd: Date;
-  contributorsList: string[];
-  rights: string[];
-  excludedRights: string[];
+  hypercertState: [
+    HypercertFormData | undefined,
+    Dispatch<SetStateAction<HypercertFormData | undefined>>
+  ];
 }
 
 export function CreateHypercert({
@@ -52,7 +38,7 @@ export function CreateHypercert({
   const account = useAccount();
   const { client } = useHypercertClient();
   const wagmiConfig = useConfig();
-  const [hypercertid, setHypercertId] = hypercertState;
+  const [hypercertData, setHypercertData] = hypercertState;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const defaultValues = testing
     ? {
@@ -80,60 +66,61 @@ export function CreateHypercert({
     defaultValues,
   });
 
-  const createHypercert = async (hypercertFormData: HypercertFormData) => {
-    if (hypercertid) {
-      return;
-    }
-    const metadata = formatHypercertData({
-      name: hypercertFormData.title,
-      description: hypercertFormData.description,
-      image: hypercertFormData.image ?? "",
-      version: "1.0",
-      impactScope: [...hypercertFormData.impactScope],
-      excludedImpactScope: [...hypercertFormData.excludedImpactScope],
-      workScope: [...hypercertFormData.workScope],
-      excludedWorkScope: hypercertFormData.excludedWorkScope as string[],
-      workTimeframeStart:
-        new Date(hypercertFormData.workTimeframeStart).getTime() / 1000,
-      workTimeframeEnd:
-        new Date(hypercertFormData.workTimeframeEnd).getTime() / 1000,
-      impactTimeframeStart:
-        new Date(hypercertFormData.impactTimeframeStart).getTime() / 1000,
-      impactTimeframeEnd:
-        new Date(hypercertFormData.impactTimeframeEnd).getTime() / 1000,
-      contributors: hypercertFormData.contributorsList
-        ? [account.address as string, ...hypercertFormData.contributorsList]
-        : [account.address as string],
-      rights: [...hypercertFormData.rights],
-      excludedRights: [...hypercertFormData.excludedRights],
-    });
+  // const createHypercert = async (hypercertFormData: HypercertFormData) => {
+  //   if (hypercertid) {
+  //     return;
+  //   }
+  //   const metadata = formatHypercertData({
+  //     name: hypercertFormData.title,
+  //     description: hypercertFormData.description,
+  //     image: hypercertFormData.image ?? "",
+  //     version: "1.0",
+  //     impactScope: [...hypercertFormData.impactScope],
+  //     excludedImpactScope: [...hypercertFormData.excludedImpactScope],
+  //     workScope: [...hypercertFormData.workScope],
+  //     excludedWorkScope: hypercertFormData.excludedWorkScope as string[],
+  //     workTimeframeStart:
+  //       new Date(hypercertFormData.workTimeframeStart).getTime() / 1000,
+  //     workTimeframeEnd:
+  //       new Date(hypercertFormData.workTimeframeEnd).getTime() / 1000,
+  //     impactTimeframeStart:
+  //       new Date(hypercertFormData.impactTimeframeStart).getTime() / 1000,
+  //     impactTimeframeEnd:
+  //       new Date(hypercertFormData.impactTimeframeEnd).getTime() / 1000,
+  //     contributors: hypercertFormData.contributorsList
+  //       ? [account.address as string, ...hypercertFormData.contributorsList]
+  //       : [account.address as string],
+  //     rights: [...hypercertFormData.rights],
+  //     excludedRights: [...hypercertFormData.excludedRights],
+  //   });
 
-    if (!metadata.data) {
-      throw new Error("Metadata is null");
-    }
+  //   if (!metadata.data) {
+  //     throw new Error("Metadata is null");
+  //   }
 
-    const txId = await client.mintHypercert({
-      metaData: metadata.data,
-      totalUnits: BigInt(hypercertFormData.goal) * BigInt(1000000),
-      transferRestriction: TransferRestrictions.AllowAll,
-    });
+  //   const txId = await client.mintHypercert({
+  //     metaData: metadata.data,
+  //     totalUnits: BigInt(hypercertFormData.goal) * BigInt(1000000),
+  //     transferRestriction: TransferRestrictions.AllowAll,
+  //   });
 
-    const txReceipt = await waitForTransactionReceipt(wagmiConfig, {
-      hash: txId,
-      confirmations: 3,
-    });
+  //   const txReceipt = await waitForTransactionReceipt(wagmiConfig, {
+  //     hash: txId,
+  //     confirmations: 3,
+  //   });
 
-    // Extract hypercertId from transaction receipt events
-    const hypercertId = decodeAbiParameters(
-      [{ name: "id", type: "uint256" }],
-      txReceipt.logs[0]?.topics[1] as `0x${string}`
-    )[0];
+  //   // Extract hypercertId from transaction receipt events
+  //   const hypercertId = decodeAbiParameters(
+  //     [{ name: "id", type: "uint256" }],
+  //     txReceipt.logs[0]?.topics[1] as `0x${string}`
+  //   )[0];
 
-    setHypercertId(hypercertId.toString());
-  };
+  //   setHypercertId(hypercertId.toString());
+  // };
 
   const onSubmit = async (data: HypercertFormData) => {
     setIsSubmitting(true);
+    setHypercertData(data);
     try {
       // await createHypercert(data);
       onNext();
@@ -218,62 +205,70 @@ export function CreateHypercert({
             placeholder="Comma-separated list"
             required
             description="Inside the Changescape impact scope is used to refer thematically to projects by category. For example, the UN Sustainable Development Goals (SDGs) or the Ecological Benefits Framework (EBF). Because the Hypercerts data is only aspirational, it would be premature to immutably publish indicators, which are instead reserved to be published only once verified inside Change Credits."
-            {...form.register("impactScope")}
-            onChange={(e) => {
-              form.setValue(
-                "impactScope",
-                e.target.value
-                  .split(",")
-                  .map((i) => i.trim())
-                  .filter((i) => i !== "")
-              );
-            }}
+            {...(form.register("impactScope"),
+            {
+              onChange: (e) => {
+                form.setValue(
+                  "impactScope",
+                  e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter((i) => i !== "")
+                );
+              },
+            })}
           />
 
           <TextInput
             label="Excluded Impact Scope"
             placeholder="Comma-separated list"
-            {...form.register("excludedImpactScope")}
-            onChange={(e) => {
-              form.setValue(
-                "excludedImpactScope",
-                e.target.value
-                  .split(",")
-                  .map((i) => i.trim())
-                  .filter((i) => i !== "")
-              );
-            }}
+            {...(form.register("excludedImpactScope"),
+            {
+              onChange: (e) => {
+                form.setValue(
+                  "excludedImpactScope",
+                  e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter((i) => i !== "")
+                );
+              },
+            })}
           />
 
           <TextInput
             label="Work Scope"
             placeholder="Comma-separated list"
             required
-            {...form.register("workScope")}
-            onChange={(e) => {
-              form.setValue(
-                "workScope",
-                e.target.value
-                  .split(",")
-                  .map((i) => i.trim())
-                  .filter((i) => i !== "")
-              );
-            }}
+            {...(form.register("workScope"),
+            {
+              onChange: (e) => {
+                form.setValue(
+                  "workScope",
+                  e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter((i) => i !== "")
+                );
+              },
+            })}
           />
 
           <TextInput
             label="Excluded Work Scope"
             placeholder="Comma-separated list"
-            {...form.register("excludedWorkScope")}
-            onChange={(e) => {
-              form.setValue(
-                "excludedWorkScope",
-                e.target.value
-                  .split(",")
-                  .map((i) => i.trim())
-                  .filter((i) => i !== "")
-              );
-            }}
+            {...(form.register("excludedWorkScope"),
+            {
+              onChange: (e) => {
+                form.setValue(
+                  "excludedWorkScope",
+                  e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter((i) => i !== "")
+                );
+              },
+            })}
           />
 
           <DateInput
@@ -347,47 +342,53 @@ export function CreateHypercert({
           <TextInput
             label="Contributors"
             placeholder="Comma-separated list of addresses"
-            {...form.register("contributorsList")}
-            onChange={(e) => {
-              form.setValue(
-                "contributorsList",
-                e.target.value
-                  .split(",")
-                  .map((i) => i.trim())
-                  .filter((i) => i !== "")
-              );
-            }}
+            {...(form.register("contributorsList"),
+            {
+              onChange: (e) => {
+                form.setValue(
+                  "contributorsList",
+                  e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter((i) => i !== "")
+                );
+              },
+            })}
           />
 
           <TextInput
             label="Rights"
             placeholder="Comma-separated list"
             required
-            {...form.register("rights")}
-            onChange={(e) => {
-              form.setValue(
-                "rights",
-                e.target.value
-                  .split(",")
-                  .map((i) => i.trim())
-                  .filter((i) => i !== "")
-              );
-            }}
+            {...(form.register("rights"),
+            {
+              onChange: (e) => {
+                form.setValue(
+                  "rights",
+                  e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter((i) => i !== "")
+                );
+              },
+            })}
           />
 
           <TextInput
             label="Excluded Rights"
             placeholder="Comma-separated list"
-            {...form.register("excludedRights")}
-            onChange={(e) => {
-              form.setValue(
-                "excludedRights",
-                e.target.value
-                  .split(",")
-                  .map((i) => i.trim())
-                  .filter((i) => i !== "")
-              );
-            }}
+            {...(form.register("excludedRights"),
+            {
+              onChange: (e) => {
+                form.setValue(
+                  "excludedRights",
+                  e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter((i) => i !== "")
+                );
+              },
+            })}
           />
 
           <Group justify="space-between">

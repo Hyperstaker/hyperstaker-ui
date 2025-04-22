@@ -122,14 +122,18 @@ export default function ManageHypercert({
     }
   };
 
-  const handleRetireFraction = async (fractionId: string, token: string) => {
+  const handleRetireFraction = async (fractionId: string) => {
     try {
       await setApprovalForAll(hyperfund as `0x${string}`);
       const tx = await hyperfundContract.writeContractAsync({
         address: hyperfund as `0x${string}`,
         abi: hyperfundAbi as Abi,
         functionName: "redeem",
-        args: [fractionId, token],
+        args: [
+          fractionId,
+          contracts[account.chainId as keyof typeof contracts]
+            .usdc as `0x${string}`,
+        ],
       });
 
       setTxHash(tx);
@@ -280,12 +284,7 @@ export default function ManageHypercert({
                             <Button
                               variant="outline"
                               onClick={() => {
-                                const tokenAddress = prompt(
-                                  "Enter token address:"
-                                );
-                                if (tokenAddress) {
-                                  handleRetireFraction(f, tokenAddress);
-                                }
+                                handleRetireFraction(f);
                               }}
                             >
                               Retire

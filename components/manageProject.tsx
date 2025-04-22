@@ -1,7 +1,6 @@
 "use client";
 import { ProjectAvatar } from "./ProjectAvatar";
 import { ProjectBanner } from "./ProjectBanner";
-import { Skeleton } from "./ui/Skeleton";
 import Project from "../interfaces/Project";
 import Metadata from "../interfaces/Metadata";
 import { TextField } from "./ui/TextField";
@@ -40,7 +39,7 @@ export default function ManageProject({
   const [usdRaised, setUsdRaised] = useState(0);
   const [raisePercent, setRaisePercent] = useState(0);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [activeTab, setActiveTab] = useState("about");
 
   const { chain } = useAccount();
 
@@ -109,31 +108,20 @@ export default function ManageProject({
   }, [poolId]);
 
   async function getTotalFinancialContributions(poolId: number) {
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_HYPERINDEXER_ENDPOINT as unknown as URL,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: `
-          query MyQuery {
-            totalFinancialContributionsToPool(poolId: "${poolId}") {
-              totalHypercertUnits
-              poolId
-            }
-          }
-        `,
-        }),
-      }
-    );
+    const response = await fetch("/api/getTotalFinancialContributions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ poolId }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch financial contributions");
+    }
 
     const data = await response.json();
-    // TODO: Add additional verification to ensure that fractions are still staked
-    const units =
-      data.data?.totalFinancialContributionsToPool?.totalHypercertUnits ?? 0;
-    return units;
+    return data.units;
   }
 
   const handleAddAddress = async () => {
@@ -233,220 +221,257 @@ export default function ManageProject({
     }
   };
 
-  return (
-    <div className="basis-10/12 mx-auto">
-      {/* data-testid={`project-${project.id}`} */}
-      <article className=" group rounded-2xl border border-gray-200 p-2 hover:border-primary-500 dark:border-gray-700 dark:hover:border-primary-500">
-        <div className="opacity-70 transition-opacity group-hover:opacity-100">
-          <ProjectBanner
-            profileId={project?.recipient}
-            url={project?.bannerUrl}
+  const aboutTab = (
+    <div className="p-4">
+      <h3 className="text-xl font-semibold mb-4">About</h3>
+      <div className="mb-6">
+        <p className="text-md dark:text-gray-300">
+          {project?.longDescription || project?.shortDescription}
+        </p>
+      </div>
+
+      <div className="mb-6">
+        <h4 className="text-lg font-medium mb-2">Project Details</h4>
+        <div className="space-y-2">
+          <p className="text-sm dark:text-gray-300">
+            <span className="font-medium">Recipient:</span> {project?.recipient}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4">
+        {isListed === null ? (
+          <p>Loading...</p>
+        ) : (
+          <Button
+            className="w-full"
+            onClick={isListed ? handleUnlistProject : handleListOnMarketplace}
+          >
+            {isListed ? "Unlist Project" : "List on Marketplace"}
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+
+  const fundsRaisedTab = (
+    <div className="p-4">
+      <h3 className="text-xl font-semibold mb-4">Funds Raised</h3>
+      <div className="space-y-4">
+        <h5>
+          Progress <span className="float-right">{raisePercent}%</span>
+        </h5>
+        <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+          <div
+            style={{ width: `${raisePercent}%` }}
+            className="bg-blue-600 h-2.5 rounded-full"
+          ></div>
+        </div>
+        <div className="grid grid-cols-3 gap-4 mt-4">
+          <div>
+            <div className="text-sm font-medium text-gray-100">
+              Past Funding
+            </div>
+            <div className="text-2xl font-bold text-gray-200">
+              {usdRaised} USD
+            </div>
+          </div>
+          <div>
+            <div className="text-sm font-medium text-gray-100">Target</div>
+            <div className="text-2xl font-bold text-gray-300">
+              {(project.totalUnits ?? 0) / 10 ** 6} USD
+            </div>
+          </div>
+          <div>
+            <div className="text-sm font-medium text-gray-200">Retro split</div>
+            <div className="text-2xl font-bold text-gray-300">20%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const supportedAssetsTab = (
+    <div className="p-4">
+      <h3 className="text-xl font-semibold mb-4">Add Supported Assets</h3>
+      <div className="space-y-4">
+        <TextField
+          label="Address"
+          fullWidth
+          margin="normal"
+          {...assetForm.register("address", { required: true })}
+        />
+        <div className="relative">
+          <TextField
+            label="Multiplier"
+            fullWidth
+            margin="normal"
+            {...assetForm.register("multiplier", { required: true })}
           />
+          <div className="absolute top-0 right-0">
+            <span
+              className="cursor-pointer"
+              onMouseEnter={() => setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+              onClick={() => setShowTooltip((prev) => !prev)}
+            >
+              ℹ️
+            </span>
+            {showTooltip && (
+              <span className="absolute bg-gray-700 text-white text-xs rounded p-2 mt-1">
+                The multiplier is the amount of hypercert fractions you can
+                redeem for 1 unit of asset.
+              </span>
+            )}
+          </div>
+        </div>
+        <Button type="button" onClick={handleAddAddress}>
+          Add Token
+        </Button>
+      </div>
+    </div>
+  );
+
+  const allocateFundsTab = (
+    <div className="p-4">
+      <h3 className="text-xl font-semibold mb-4">Allocate Funds</h3>
+      <div className="space-y-4">
+        <p>
+          Available pool funds to be allocated:{" "}
+          {(poolBalances?.data
+            ? parseInt((poolBalances.data[0]?.result as bigint)?.toString())
+            : 0) /
+            10 ** 6}{" "}
+          USD
+        </p>
+        <p>
+          Hyperstaker balance:{" "}
+          {(poolBalances?.data
+            ? parseInt((poolBalances.data[1]?.result as bigint)?.toString())
+            : 0) /
+            10 ** 6}{" "}
+          USD
+        </p>
+        <p>
+          Hyperfund balance:{" "}
+          {(poolBalances?.data
+            ? parseInt((poolBalances.data[2]?.result as bigint)?.toString())
+            : 0) /
+            10 ** 6}{" "}
+          USD
+        </p>
+        <TextField
+          label="Amount to Allocate to Hyperfund (USD)"
+          type="number"
+          fullWidth
+          margin="normal"
+          value={allocateHyperfund}
+          onChange={(e) => setAllocateHyperfund(Number(e.target.value))}
+        />
+        <TextField
+          label="Amount to Allocate to Hyperstaker (USD)"
+          type="number"
+          fullWidth
+          margin="normal"
+          value={allocateHyperstaker}
+          onChange={(e) => setAllocateHyperstaker(Number(e.target.value))}
+        />
+        <Button type="button" onClick={handleAllocateFunds}>
+          Allocate Funds
+        </Button>
+      </div>
+    </div>
+  );
+
+  const contributorsTab = (
+    <div className="p-4">
+      <AllocateForm hyperfund={hyperfund} />
+    </div>
+  );
+
+  const getTabContent = () => {
+    switch (activeTab) {
+      case "about":
+        return aboutTab;
+      case "fundsRaised":
+        return fundsRaisedTab;
+      case "supportedAssets":
+        return supportedAssetsTab;
+      case "allocateFunds":
+        return allocateFundsTab;
+      case "contributors":
+        return contributorsTab;
+      default:
+        return aboutTab;
+    }
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <ProjectBanner
+          profileId={project?.recipient}
+          url={project?.bannerUrl}
+          className="w-full h-48 object-cover rounded-t-2xl"
+        />
+        <div className="relative -mt-16 text-center">
           <ProjectAvatar
-            className="-mt-8 ml-4 rounded-full"
+            className="rounded-full mx-auto w-24 h-24 border-4 border-white dark:border-gray-800"
             address={project?.recipient}
             url={project?.avatarUrl}
           />
+          <h2 className="text-2xl font-bold mt-4">{project?.name}</h2>
         </div>
-        <div className="px-4">
-          <div className="flex">
-            <div className="p-2 mr-16  flex-1">
-              <h3>{project?.name}</h3>
-              <div className="mb-2">
-                <p className="h-10 text-sm dark:text-gray-300">
-                  <Skeleton isLoading={isLoading} className="w-full">
-                    {project?.longDescription || project?.longDescription}
-                  </Skeleton>
-                </p>
-              </div>
-              <div className="mb-24">
-                <Skeleton isLoading={isLoading} className="w-full">
-                  <div className="">
-                    <h5 className="mt-8">
-                      Funds raised{" "}
-                      <span className="float-right">{raisePercent}%</span>
-                    </h5>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                      <div
-                        style={{ width: raisePercent.toString() + "%" }}
-                        className="mb-4 bg-blue-600 h-2.5 rounded-full"
-                      ></div>
-                      <div className="flex justify-between items-center mb-4">
-                        <div>
-                          <div className="text-sm font-medium text-gray-100">
-                            Past Funding
-                          </div>
-                          <div className="text-2xl font-bold text-gray-200">
-                            {usdRaised} USD
-                          </div>
-                        </div>
+      </div>
 
-                        <div>
-                          <div className="text-sm font-medium text-gray-100">
-                            Target
-                          </div>
-                          <div className="text-2xl font-bold text-gray-300">
-                            {(project.totalUnits ?? 0) / 10 ** 6} USD
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-sm font-medium text-gray-200">
-                            Retro split
-                          </div>
-                          <div className="text-2xl font-bold text-gray-300">
-                            20%
-                          </div>
-                        </div>
-                      </div>
-                      <div className="clear-both"></div>
-                    </div>
-                    <div className="clear-both"></div>
-                  </div>
-                </Skeleton>
-              </div>
-              <div className="mb-5">
-                {isListed === null ? (
-                  <p>Loading...</p>
-                ) : isListed ? (
-                  <Button type="button" onClick={handleUnlistProject}>
-                    Unlist Project
-                  </Button>
-                ) : (
-                  <Button type="button" onClick={handleListOnMarketplace}>
-                    List on Marketplace
-                  </Button>
-                )}
-              </div>
-              <div className="mb-5">
-                <Button
-                  type="button"
-                  onClick={() => setShowAdvanced((prev) => !prev)}
-                >
-                  {showAdvanced
-                    ? "Hide Advanced Configurations"
-                    : "Show Advanced Configurations"}
-                </Button>
-              </div>
-              {showAdvanced && (
-                <div>
-                  <h4>Add Supported Assets</h4>
-                  <div>
-                    <TextField
-                      label="Address"
-                      fullWidth
-                      margin="normal"
-                      {...assetForm.register("address", {
-                        required: true,
-                      })}
-                    />
-                  </div>
-                  <div>
-                    <div className="relative">
-                      <TextField
-                        label={"Multiplier"}
-                        fullWidth
-                        margin="normal"
-                        {...assetForm.register("multiplier", {
-                          required: true,
-                        })}
-                      />
-                      <div className="absolute top-0 right-0">
-                        <span
-                          className="cursor-pointer"
-                          onMouseEnter={() => setShowTooltip(true)}
-                          onMouseLeave={() => setShowTooltip(false)}
-                          onClick={() => setShowTooltip((prev) => !prev)}
-                        >
-                          ℹ️
-                        </span>
-                        {showTooltip && (
-                          <span className="absolute bg-gray-700 text-white text-xs rounded p-2 mt-1">
-                            The multiplier is the amount of hypercert fractions
-                            you can redeem for 1 unit of asset.
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <Button type="button" onClick={handleAddAddress}>
-                      Add Token
-                    </Button>
-                  </div>
-
-                  <h4 className="mt-5">Allocate Funds</h4>
-                  <p>
-                    Available pool funds to be allocated:{" "}
-                    {(poolBalances?.data
-                      ? parseInt(
-                          (poolBalances.data[0]?.result as bigint)?.toString()
-                        )
-                      : 0) /
-                      10 ** 6}{" "}
-                    USD
-                  </p>
-                  <p>
-                    Hyperstaker balance:{" "}
-                    {(poolBalances?.data
-                      ? parseInt(
-                          (poolBalances.data[1]?.result as bigint)?.toString()
-                        )
-                      : 0) /
-                      10 ** 6}{" "}
-                    USD
-                  </p>
-                  <p>
-                    Hyperfund balance:{" "}
-                    {(poolBalances?.data
-                      ? parseInt(
-                          (poolBalances.data[2]?.result as bigint)?.toString()
-                        )
-                      : 0) /
-                      10 ** 6}{" "}
-                    USD
-                  </p>
-                  <div>
-                    <TextField
-                      label="Amount to Allocate to Hyperfund (USD)"
-                      type="number"
-                      fullWidth
-                      margin="normal"
-                      value={allocateHyperfund}
-                      onChange={(e) =>
-                        setAllocateHyperfund(Number(e.target.value))
-                      }
-                    />
-                  </div>
-                  <div>
-                    <TextField
-                      label="Amount to Allocate to Hyperstaker (USD)"
-                      type="number"
-                      fullWidth
-                      margin="normal"
-                      value={allocateHyperstaker}
-                      onChange={(e) =>
-                        setAllocateHyperstaker(Number(e.target.value))
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Button type="button" onClick={handleAllocateFunds}>
-                      Allocate Funds
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {/* <Skeleton isLoading={isLoading} className="w-[100px]">
-                <ImpactCategories tags={metadata?.data?.impactCategory} />
-              </Skeleton> */}
-            </div>
-            <div className="flex-1">
-              <AllocateForm hyperfund={hyperfund} />
-            </div>
-          </div>
+      <div className="flex gap-6">
+        <div className="w-64 space-y-2">
+          <Button
+            className={`w-full ${
+              activeTab === "about" ? "bg-primary-600" : ""
+            }`}
+            onClick={() => setActiveTab("about")}
+          >
+            About
+          </Button>
+          <Button
+            className={`w-full ${
+              activeTab === "fundsRaised" ? "bg-primary-600" : ""
+            }`}
+            onClick={() => setActiveTab("fundsRaised")}
+          >
+            Funds Raised
+          </Button>
+          {/* <Button
+            className={`w-full ${
+              activeTab === "supportedAssets" ? "bg-primary-600" : ""
+            }`}
+            onClick={() => setActiveTab("supportedAssets")}
+          >
+            Add Supported Assets
+          </Button> */}
+          <Button
+            className={`w-full ${
+              activeTab === "allocateFunds" ? "bg-primary-600" : ""
+            }`}
+            onClick={() => setActiveTab("allocateFunds")}
+          >
+            Allocate Funds
+          </Button>
+          <Button
+            className={`w-full ${
+              activeTab === "contributors" ? "bg-primary-600" : ""
+            }`}
+            onClick={() => setActiveTab("contributors")}
+          >
+            Contributors
+          </Button>
         </div>
-      </article>
+
+        <div className="flex-1 bg-[#1e293b] rounded-2xl border border-gray-200 dark:border-gray-700">
+          {getTabContent()}
+        </div>
+      </div>
 
       <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
         <div className="p-6">
@@ -454,7 +479,9 @@ export default function ManageProject({
             Transaction Successful!
           </h3>
           <p className="text-gray-600 mb-4">Transaction Hash:</p>
-          <p className="break-all text-sm bg-gray-100 p-2 rounded">{txHash}</p>
+          <p className="break-all text-sm bg-gray-100 p-2 rounded text-gray-600">
+            {txHash}
+          </p>
           <Button className="mt-4" onClick={() => setShowSuccessModal(false)}>
             Close
           </Button>

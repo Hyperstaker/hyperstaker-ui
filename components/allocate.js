@@ -45,44 +45,34 @@ function AllocateForm({
             if (!hyperfund) return;
             
             try {
-                const response = await fetch(process.env.NEXT_PUBLIC_HYPERINDEXER_ENDPOINT, {
+                const response = await fetch("/api/getNonFinancialContributions", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        query: `
-                            query MyQuery {
-                              nonfinancialContributions(
-                                where: {hyperfund: "${hyperfund}"}
-                              ) {
-                                items {
-                                  address
-                                  units
-                                }
-                              }
-                            }
-                        `,
-                        variables: {
-                            hyperfund: hyperfund.toLowerCase()
-                        }
+                        hyperfund: hyperfund
                     })
                 });
 
+                if (!response.ok) {
+                    throw new Error("Failed to fetch non-financial contributions");
+                }
+
                 const data = await response.json();
-                if (data.data?.nonfinancialContributions?.items) {
+                const contributions = data.contributions;
+
+                if (contributions) {
                     // Get unique addresses
                     const uniqueAddresses = [...new Set(
-                        data.data.nonfinancialContributions.items.map(item => item.address)
+                        contributions.map(item => item.address)
                     )];
                     setAddresses(uniqueAddresses);
 
                     // Process allocation history
                     const history = uniqueAddresses.map(address => {
-                        const contributions = data.data.nonfinancialContributions.items
-                            .filter(item => item.address === address);
-                        const totalAllocated = contributions
-                            .reduce((sum, item) => sum + parseInt(item.units), 0);
+                        const contribution = contributions.find(item => item.address === address);
+                        const totalAllocated = contribution ? parseInt(contribution.units) : 0;
                         
                         return {
                             address,
@@ -221,7 +211,7 @@ function AllocateForm({
       <div>
         <form>
             <div className="space-y-4 space-x-4">
-              <h4>Allocate funds to contributors</h4>
+              <h3 className="text-xl font-semibold mb-4">Allocate funds to contributors</h3>
               {addresses.map(address => (
                   <div key={address} className="flex justify-between">
                       <label>{address}</label>
@@ -255,15 +245,13 @@ function AllocateForm({
             <h5>Add Contributor</h5>
             <TextField
                 label="Address"
-                fullWidth
                 margin="normal"
                 {...allocateForm.register("address", {
                   required: true,
                 })}
               />
               <TextField
-                label="Amount"
-                fullWidth
+                label="Amount (Amount of Hypercert fraction to be allocated to contributor)"
                 margin="normal"
                 {...allocateForm.register("amount", {
                   required: true,
@@ -278,7 +266,7 @@ function AllocateForm({
           </div>
         </form>
         <div className="mt-8">
-            <h4>Allocation History</h4>
+        <h3 className="text-xl font-semibold mb-4">Allocation History</h3>
             <div className="overflow-x-auto">
                 <table className="min-w-full table-auto mt-4">
                     <thead>
