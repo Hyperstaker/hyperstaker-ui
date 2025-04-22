@@ -18,6 +18,24 @@ import { CreateAlloProfile } from "./CreateAlloProfile";
 import { CreateHypercert } from "./CreateHypercert";
 import { CreateHypers } from "./CreateHypers";
 
+export interface HypercertFormData {
+  title: string;
+  description: string;
+  image?: string;
+  goal: string;
+  impactScope: string[];
+  excludedImpactScope: string[];
+  workScope: string[];
+  excludedWorkScope: string[];
+  workTimeframeStart: Date;
+  workTimeframeEnd: Date;
+  impactTimeframeStart: Date;
+  impactTimeframeEnd: Date;
+  contributorsList: string[];
+  rights: string[];
+  excludedRights: string[];
+}
+
 const steps = [
   {
     title: "Create your project",
@@ -171,7 +189,7 @@ function StepsProgress({ currentStep }: { currentStep: number }) {
 export function OnboardingFlow() {
   const ipfsHash = useState<string>("");
   const alloProfile = useState<string>("");
-  const hypercertId = useState<string>("");
+  const hypercertId = useState<HypercertFormData>();
   const [currentStep, setCurrentStep] = useState(-1);
 
   const handlePreviousStep = () => {
@@ -274,11 +292,13 @@ export function OnboardingFlow() {
   }
 
   return (
-    <Box style={{ 
-      width: "100vw",
-      minHeight: "100vh"
-    }}>
-      <Container 
+    <Box
+      style={{
+        width: "100vw",
+        minHeight: "100vh",
+      }}
+    >
+      <Container
         size="xl"
         py={50}
         style={{

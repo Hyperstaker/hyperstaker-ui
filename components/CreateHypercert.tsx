@@ -17,31 +17,17 @@ import { useAccount, useConfig } from "wagmi";
 import { waitForTransactionReceipt } from "@wagmi/core";
 import { decodeAbiParameters } from "viem";
 import { Dispatch, SetStateAction, useState } from "react";
+import { HypercertFormData } from "./OnboardingFlow";
 
 const testing = true;
 
 interface CreateHypercertProps {
   onNext: () => void;
   onPrevious: () => void;
-  hypercertState: [string, Dispatch<SetStateAction<string>>];
-}
-
-interface HypercertFormData {
-  title: string;
-  description: string;
-  image?: string;
-  goal: string;
-  impactScope: string[];
-  excludedImpactScope: string[];
-  workScope: string[];
-  excludedWorkScope: string[];
-  workTimeframeStart: Date;
-  workTimeframeEnd: Date;
-  impactTimeframeStart: Date;
-  impactTimeframeEnd: Date;
-  contributorsList: string[];
-  rights: string[];
-  excludedRights: string[];
+  hypercertState: [
+    HypercertFormData | undefined,
+    Dispatch<SetStateAction<HypercertFormData | undefined>>
+  ];
 }
 
 export function CreateHypercert({
@@ -52,7 +38,7 @@ export function CreateHypercert({
   const account = useAccount();
   const { client } = useHypercertClient();
   const wagmiConfig = useConfig();
-  const [hypercertid, setHypercertId] = hypercertState;
+  const [hypercertData, setHypercertData] = hypercertState;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const defaultValues = testing
     ? {
@@ -80,60 +66,61 @@ export function CreateHypercert({
     defaultValues,
   });
 
-  const createHypercert = async (hypercertFormData: HypercertFormData) => {
-    if (hypercertid) {
-      return;
-    }
-    const metadata = formatHypercertData({
-      name: hypercertFormData.title,
-      description: hypercertFormData.description,
-      image: hypercertFormData.image ?? "",
-      version: "1.0",
-      impactScope: [...hypercertFormData.impactScope],
-      excludedImpactScope: [...hypercertFormData.excludedImpactScope],
-      workScope: [...hypercertFormData.workScope],
-      excludedWorkScope: hypercertFormData.excludedWorkScope as string[],
-      workTimeframeStart:
-        new Date(hypercertFormData.workTimeframeStart).getTime() / 1000,
-      workTimeframeEnd:
-        new Date(hypercertFormData.workTimeframeEnd).getTime() / 1000,
-      impactTimeframeStart:
-        new Date(hypercertFormData.impactTimeframeStart).getTime() / 1000,
-      impactTimeframeEnd:
-        new Date(hypercertFormData.impactTimeframeEnd).getTime() / 1000,
-      contributors: hypercertFormData.contributorsList
-        ? [account.address as string, ...hypercertFormData.contributorsList]
-        : [account.address as string],
-      rights: [...hypercertFormData.rights],
-      excludedRights: [...hypercertFormData.excludedRights],
-    });
+  // const createHypercert = async (hypercertFormData: HypercertFormData) => {
+  //   if (hypercertid) {
+  //     return;
+  //   }
+  //   const metadata = formatHypercertData({
+  //     name: hypercertFormData.title,
+  //     description: hypercertFormData.description,
+  //     image: hypercertFormData.image ?? "",
+  //     version: "1.0",
+  //     impactScope: [...hypercertFormData.impactScope],
+  //     excludedImpactScope: [...hypercertFormData.excludedImpactScope],
+  //     workScope: [...hypercertFormData.workScope],
+  //     excludedWorkScope: hypercertFormData.excludedWorkScope as string[],
+  //     workTimeframeStart:
+  //       new Date(hypercertFormData.workTimeframeStart).getTime() / 1000,
+  //     workTimeframeEnd:
+  //       new Date(hypercertFormData.workTimeframeEnd).getTime() / 1000,
+  //     impactTimeframeStart:
+  //       new Date(hypercertFormData.impactTimeframeStart).getTime() / 1000,
+  //     impactTimeframeEnd:
+  //       new Date(hypercertFormData.impactTimeframeEnd).getTime() / 1000,
+  //     contributors: hypercertFormData.contributorsList
+  //       ? [account.address as string, ...hypercertFormData.contributorsList]
+  //       : [account.address as string],
+  //     rights: [...hypercertFormData.rights],
+  //     excludedRights: [...hypercertFormData.excludedRights],
+  //   });
 
-    if (!metadata.data) {
-      throw new Error("Metadata is null");
-    }
+  //   if (!metadata.data) {
+  //     throw new Error("Metadata is null");
+  //   }
 
-    const txId = await client.mintHypercert({
-      metaData: metadata.data,
-      totalUnits: BigInt(hypercertFormData.goal) * BigInt(1000000),
-      transferRestriction: TransferRestrictions.AllowAll,
-    });
+  //   const txId = await client.mintHypercert({
+  //     metaData: metadata.data,
+  //     totalUnits: BigInt(hypercertFormData.goal) * BigInt(1000000),
+  //     transferRestriction: TransferRestrictions.AllowAll,
+  //   });
 
-    const txReceipt = await waitForTransactionReceipt(wagmiConfig, {
-      hash: txId,
-      confirmations: 3,
-    });
+  //   const txReceipt = await waitForTransactionReceipt(wagmiConfig, {
+  //     hash: txId,
+  //     confirmations: 3,
+  //   });
 
-    // Extract hypercertId from transaction receipt events
-    const hypercertId = decodeAbiParameters(
-      [{ name: "id", type: "uint256" }],
-      txReceipt.logs[0]?.topics[1] as `0x${string}`
-    )[0];
+  //   // Extract hypercertId from transaction receipt events
+  //   const hypercertId = decodeAbiParameters(
+  //     [{ name: "id", type: "uint256" }],
+  //     txReceipt.logs[0]?.topics[1] as `0x${string}`
+  //   )[0];
 
-    setHypercertId(hypercertId.toString());
-  };
+  //   setHypercertId(hypercertId.toString());
+  // };
 
   const onSubmit = async (data: HypercertFormData) => {
     setIsSubmitting(true);
+    setHypercertData(data);
     try {
       // await createHypercert(data);
       onNext();

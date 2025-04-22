@@ -32,31 +32,19 @@ import {
 import { useRouter } from "next/navigation";
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { ProjectConfigurationsSection } from "./ProjectConfigurationsSection"; // Add this import
+import { HypercertFormData } from "./OnboardingFlow";
+import { form } from "viem/chains";
 
 const testing = true;
 
 interface CreateHypercertProps {
   ipfsHash: [string, Dispatch<SetStateAction<string>>];
   alloProfileState: [string, Dispatch<SetStateAction<string>>];
-  hypercertState: [string, Dispatch<SetStateAction<string>>];
+  hypercertState: [
+    HypercertFormData | undefined,
+    Dispatch<SetStateAction<HypercertFormData | undefined>>
+  ];
   onPrevious: () => void;
-}
-
-interface HypercertFormData {
-  goal: string;
-  title: string;
-  description: string;
-  impactScope: string[];
-  excludedImpactScope: string[];
-  workScope: string[];
-  excludedWorkScope: string[];
-  workTimeframeStart: Date;
-  workTimeframeEnd: Date;
-  impactTimeframeStart: Date;
-  impactTimeframeEnd: Date;
-  contributorsList: string[];
-  rights: string[];
-  excludedRights: string[];
 }
 
 // Helper component for styling steps inside the modal (copied from createProject.tsx)
@@ -114,9 +102,9 @@ export function CreateHypers({
       }
     : {};
 
-  const form = useForm<HypercertFormData>({
-    defaultValues,
-  });
+  // const form = useForm<HypercertFormData>({
+  //   defaultValues,
+  // });
   const account = useAccount();
   const contract = useWriteContract();
   const alloContract = useWriteContract();
@@ -125,7 +113,7 @@ export function CreateHypers({
   const router = useRouter();
   const [alloProfile] = alloProfileState;
   const [ipfshash] = ipfsHash;
-  const [hypercertId] = hypercertState;
+  const [hypercertData] = hypercertState;
 
   // State for tracking completed steps within this component's scope
   const [localCompletedSteps, setLocalCompletedSteps] = useState<{
@@ -476,18 +464,17 @@ export function CreateHypers({
     // E.g., maybe only retry from the failed step? Needs more complex state management.
     // For now, just restart the whole process.
     setLocalCompletedSteps({}); // Clear completed steps for a full retry
-    onSubmit(form.getValues()); // Resubmit with current form values
+    onSubmit(hypercertData as HypercertFormData); // Resubmit with current form values
   };
 
   return (
     <Paper p="xl" radius="lg" bg="transparent">
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Stack gap="xl">
-          <Title order={2} c="white">
-            Create Hyperfund and Hyperstaker pool
-          </Title>
-          <ProjectConfigurationsSection />
-          {/* <TextInput
+      <Stack gap="xl">
+        <Title order={2} c="white">
+          Create Hyperfund and Hyperstaker pool
+        </Title>
+        <ProjectConfigurationsSection />
+        {/* <TextInput
             label="Project Goal (USD)"
             placeholder="Enter amount"
             required
@@ -502,21 +489,21 @@ export function CreateHypers({
             }}
           /> */}
 
-          <Group justify="space-between">
-            <Button variant="default" onClick={onPrevious}>
-              Previous Step
-            </Button>
-            <Button
-              variant="gradient"
-              gradient={{ from: "blue", to: "cyan" }}
-              type="submit"
-              loading={isSubmitting}
-            >
-              {isSubmitting ? "Creating..." : "Next Step"}
-            </Button>
-          </Group>
-        </Stack>
-      </form>
+        <Group justify="space-between">
+          <Button variant="default" onClick={onPrevious}>
+            Previous Step
+          </Button>
+          <Button
+            variant="gradient"
+            gradient={{ from: "blue", to: "cyan" }}
+            onClick={() => onSubmit(hypercertData as HypercertFormData)}
+            loading={isSubmitting}
+            disabled={hypercertData == undefined}
+          >
+            {isSubmitting ? "Creating..." : "Next Step"}
+          </Button>
+        </Group>
+      </Stack>
 
       {/* Progress Modal */}
       <Modal
