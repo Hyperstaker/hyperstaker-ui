@@ -1,18 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import ProjectItem from "../../../components/projectItem";
-import request from "graphql-request";
 import { useAccount } from "wagmi";
-// Import types
-import type {
-  HypercertData,
-  HypercertQueryResponse,
-  HypercertFraction,
-} from "../../types/hypercerts";
 import { AlloProfile } from "@/app/types/allo";
-import { ProjectBanner } from "@/components/ProjectBanner";
-import { ProjectAvatar } from "@/components/ProjectAvatar";
-import { Button } from "@/components/ui/Button";
 import OrganisationProjects from "@/components/organisationProjects";
 
 export default function Page() {
@@ -48,71 +37,6 @@ export default function Page() {
         setIsLoading(false);
       });
   }, [account.address]);
-
-  async function getHypercertsOfUser(
-    walletAddress: string
-  ): Promise<HypercertData[] | null> {
-    const query = ` 
-      query MyQuery {
-        hypercerts(
-          where: {creator_address: {contains: "${walletAddress}"}}
-        ) {
-          data {
-            contract {
-              chain_id
-            }
-            hypercert_id
-            fractions {
-              count
-              data {
-                metadata {
-                  id
-                  name
-                  description
-                  external_url
-                  impact_scope
-                  impact_timeframe_from
-                  impact_timeframe_to
-                  work_timeframe_from
-                  work_timeframe_to
-                }
-                units
-              }
-            }
-            units
-          }
-        }
-      }
-    `;
-
-    try {
-      const res = await request<HypercertQueryResponse>(
-        process.env.NEXT_PUBLIC_HYPERCERTS_API_URL_GRAPH as string,
-        query
-      );
-
-      const hypercertsData = res?.hypercerts?.data;
-      if (!hypercertsData) {
-        return null;
-      }
-
-      hypercertsData.forEach((d: HypercertData) => {
-        let totalUnits = 0;
-        d?.fractions?.data?.forEach(
-          (i: HypercertFraction) => (totalUnits += Number(i.units))
-        );
-        d.totalUnits = totalUnits;
-      });
-
-      return hypercertsData;
-    } catch (err) {
-      console.error(
-        `Failed to fetch hypercerts for address ${walletAddress}:`,
-        err
-      );
-      return null;
-    }
-  }
 
   async function getUserAlloProfiles() {
     try {

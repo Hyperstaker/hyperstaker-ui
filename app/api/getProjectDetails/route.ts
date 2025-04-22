@@ -64,7 +64,7 @@ export async function POST(req: Request) {
 
     const hypercertsData = res?.hypercerts?.data;
     if (!hypercertsData) {
-      return null;
+      return NextResponse.json({ hypercertsData });
     }
 
     hypercertsData.forEach((d: HypercertData) => {

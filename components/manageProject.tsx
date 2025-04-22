@@ -1,7 +1,6 @@
 "use client";
 import { ProjectAvatar } from "./ProjectAvatar";
 import { ProjectBanner } from "./ProjectBanner";
-import { Skeleton } from "./ui/Skeleton";
 import Project from "../interfaces/Project";
 import Metadata from "../interfaces/Metadata";
 import { TextField } from "./ui/TextField";
