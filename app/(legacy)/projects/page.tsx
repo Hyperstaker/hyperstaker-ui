@@ -90,40 +90,6 @@ export default function Page() {
           )}
           {!isLoading && !error && profiles.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-4">
-              {/* {profiles.map(
-            (project) =>
-              project.fractions?.data?.[0]?.metadata && (
-                <ProjectItem
-                  key={project.hypercert_id}
-                  project={{
-                    id: project.fractions.data[0].metadata.id,
-                    recipient: account.address as string,
-                    name:
-                      project.fractions.data[0].metadata.name ??
-                      "Unnamed Project",
-                    shortDescription:
-                      project.fractions.data[0].metadata.description?.split(
-                        "."
-                      )[0] ?? "",
-                    longDescription:
-                      project.fractions.data[0].metadata.description ?? "",
-                    avatarUrl: "/img/default-logo.png",
-                    bannerUrl: "/img/default-banner.jpg",
-                    slug: project.hypercert_id,
-                  }}
-                  metadata={{
-                    data: {
-                      bio: project.fractions.data[0].metadata.description ?? "",
-                      impactCategory:
-                        project.fractions.data[0].metadata.impact_scope ?? [],
-                    },
-                  }}
-                  isLoading={false}
-                  buttonText="Manage"
-                  buttonLink={`/manage/${project.hypercert_id}`}
-                />
-              )
-          )} */}
               {profiles.map((profile) => (
                 <div
                   key={profile.id}

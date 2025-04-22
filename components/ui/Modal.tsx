@@ -36,7 +36,7 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
       <div className="fixed inset-0 z-50 overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4">
           <div
-            className="relative transform overflow-hidden rounded-lg bg-white p-6 text-left shadow-xl transition-all w-full max-w-md"
+            className="relative transform overflow-hidden rounded-lg bg-gray-900 p-6 text-left shadow-xl transition-all w-full max-w-md border border-gray-700"
             onClick={(e) => e.stopPropagation()}
           >
             {children}
