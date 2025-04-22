@@ -4,7 +4,10 @@ export async function POST(request: Request) {
   try {
     const { alloProfileIds, chainId } = await request.json();
     if (alloProfileIds.length == 0) {
-      throw new Error("empty alloprofile array");
+      return NextResponse.json(
+        { message: "No allo profile found for user" },
+        { status: 400 }
+      );
     }
 
     const payload = `query MyQuery {

@@ -218,62 +218,70 @@ export function CreateHypercert({
             placeholder="Comma-separated list"
             required
             description="Inside the Changescape impact scope is used to refer thematically to projects by category. For example, the UN Sustainable Development Goals (SDGs) or the Ecological Benefits Framework (EBF). Because the Hypercerts data is only aspirational, it would be premature to immutably publish indicators, which are instead reserved to be published only once verified inside Change Credits."
-            {...form.register("impactScope")}
-            onChange={(e) => {
-              form.setValue(
-                "impactScope",
-                e.target.value
-                  .split(",")
-                  .map((i) => i.trim())
-                  .filter((i) => i !== "")
-              );
-            }}
+            {...(form.register("impactScope"),
+            {
+              onChange: (e) => {
+                form.setValue(
+                  "impactScope",
+                  e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter((i) => i !== "")
+                );
+              },
+            })}
           />
 
           <TextInput
             label="Excluded Impact Scope"
             placeholder="Comma-separated list"
-            {...form.register("excludedImpactScope")}
-            onChange={(e) => {
-              form.setValue(
-                "excludedImpactScope",
-                e.target.value
-                  .split(",")
-                  .map((i) => i.trim())
-                  .filter((i) => i !== "")
-              );
-            }}
+            {...(form.register("excludedImpactScope"),
+            {
+              onChange: (e) => {
+                form.setValue(
+                  "excludedImpactScope",
+                  e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter((i) => i !== "")
+                );
+              },
+            })}
           />
 
           <TextInput
             label="Work Scope"
             placeholder="Comma-separated list"
             required
-            {...form.register("workScope")}
-            onChange={(e) => {
-              form.setValue(
-                "workScope",
-                e.target.value
-                  .split(",")
-                  .map((i) => i.trim())
-                  .filter((i) => i !== "")
-              );
-            }}
+            {...(form.register("workScope"),
+            {
+              onChange: (e) => {
+                form.setValue(
+                  "workScope",
+                  e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter((i) => i !== "")
+                );
+              },
+            })}
           />
 
           <TextInput
             label="Excluded Work Scope"
             placeholder="Comma-separated list"
-            {...form.register("excludedWorkScope")}
-            onChange={(e) => {
-              form.setValue(
-                "excludedWorkScope",
-                e.target.value
-                  .split(",")
-                  .map((i) => i.trim())
-                  .filter((i) => i !== "")
-              );
-            }}
+            {...(form.register("excludedWorkScope"),
+            {
+              onChange: (e) => {
+                form.setValue(
+                  "excludedWorkScope",
+                  e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter((i) => i !== "")
+                );
+              },
+            })}
           />
 
           <DateInput
@@ -347,47 +355,53 @@ export function CreateHypercert({
           <TextInput
             label="Contributors"
             placeholder="Comma-separated list of addresses"
-            {...form.register("contributorsList")}
-            onChange={(e) => {
-              form.setValue(
-                "contributorsList",
-                e.target.value
-                  .split(",")
-                  .map((i) => i.trim())
-                  .filter((i) => i !== "")
-              );
-            }}
+            {...(form.register("contributorsList"),
+            {
+              onChange: (e) => {
+                form.setValue(
+                  "contributorsList",
+                  e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter((i) => i !== "")
+                );
+              },
+            })}
           />
 
           <TextInput
             label="Rights"
             placeholder="Comma-separated list"
             required
-            {...form.register("rights")}
-            onChange={(e) => {
-              form.setValue(
-                "rights",
-                e.target.value
-                  .split(",")
-                  .map((i) => i.trim())
-                  .filter((i) => i !== "")
-              );
-            }}
+            {...(form.register("rights"),
+            {
+              onChange: (e) => {
+                form.setValue(
+                  "rights",
+                  e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter((i) => i !== "")
+                );
+              },
+            })}
           />
 
           <TextInput
             label="Excluded Rights"
             placeholder="Comma-separated list"
-            {...form.register("excludedRights")}
-            onChange={(e) => {
-              form.setValue(
-                "excludedRights",
-                e.target.value
-                  .split(",")
-                  .map((i) => i.trim())
-                  .filter((i) => i !== "")
-              );
-            }}
+            {...(form.register("excludedRights"),
+            {
+              onChange: (e) => {
+                form.setValue(
+                  "excludedRights",
+                  e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter((i) => i !== "")
+                );
+              },
+            })}
           />
 
           <Group justify="space-between">

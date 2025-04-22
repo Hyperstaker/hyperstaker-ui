@@ -57,7 +57,7 @@ export default function Page() {
       });
 
       if (!indexerResponse.ok) {
-        const error = await response.json();
+        const error = await indexerResponse.json();
         throw new Error(error.message || "Failed to fetch user allo profile");
       }
 
@@ -82,7 +82,7 @@ export default function Page() {
             My Organisations
           </div>
           {isLoading && <p className="text-center">Loading your projects...</p>}
-          {error && <p className="text-center text-red-500">{error}</p>}
+          {error && <p className="text-center">No Organisations found</p>}
           {!isLoading && !error && profiles.length === 0 && (
             <p className="text-center">
               You haven&apos;t created any projects yet.

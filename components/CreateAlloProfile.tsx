@@ -389,16 +389,18 @@ export function CreateAlloProfile({
               label="Member Addresses"
               description="Enter the addresses of the members of your project. This will be used to create a profile and a pool for your project on Allo Protocol."
               placeholder="Comma-separated list of addresses"
-              {...form.register("members")}
-              onChange={(e) => {
-                form.setValue(
-                  "members",
-                  e.target.value
-                    .split(",")
-                    .map((i) => i.trim())
-                    .filter((item) => item !== "")
-                );
-              }}
+              {...(form.register("members"),
+              {
+                onChange: (e) => {
+                  form.setValue(
+                    "members",
+                    e.target.value
+                      .split(",")
+                      .map((i) => i.trim())
+                      .filter((item) => item !== "")
+                  );
+                },
+              })}
               styles={{
                 label: { color: "var(--mantine-color-gray-4)" },
                 input: {
@@ -412,16 +414,18 @@ export function CreateAlloProfile({
             <TextInput
               label="Required Credentials"
               placeholder="Comma-separated list of credentials"
-              {...form.register("credentials")}
-              onChange={(e) => {
-                form.setValue(
-                  "credentials",
-                  e.target.value
-                    .split(",")
-                    .map((i) => i.trim())
-                    .filter((item) => item !== "")
-                );
-              }}
+              {...(form.register("credentials"),
+              {
+                onChange: (e) => {
+                  form.setValue(
+                    "credentials",
+                    e.target.value
+                      .split(",")
+                      .map((i) => i.trim())
+                      .filter((item) => item !== "")
+                  );
+                },
+              })}
               styles={{
                 label: { color: "var(--mantine-color-gray-4)" },
                 input: {
