@@ -70,12 +70,11 @@ function AllocateForm({
                     setAddresses(uniqueAddresses);
 
                     // Process allocation history
-                    const history = uniqueAddresses.map(address => {
-                        const contribution = contributions.find(item => item.address === address);
+                    const history = contributions.map(contribution => {
                         const totalAllocated = contribution ? parseInt(contribution.units) : 0;
                         
                         return {
-                            address,
+                            address: contribution.address,
                             allocated: (totalAllocated).toString(),
                             redeemed: "0.0"
                         };
@@ -88,7 +87,7 @@ function AllocateForm({
         };
 
         fetchAllocations();
-    }, [hyperfund]);
+    }, [hyperfund, showSuccessModal]);
 
     const handleInputChange = (address, value) => {
         setInputs(prev => ({ ...prev, [address]: value }));
@@ -151,15 +150,18 @@ function AllocateForm({
                 contracts
             })
 
-            allocateForm.reset();
-            setInputs({})
-            setTxHash(tx);
-            setShowSuccessModal(true);
+            if (tx) {
+                allocateForm.reset();
+                setInputs({})
+                setTxHash(tx);
+                setShowSuccessModal(true);
+            }
         } catch {
             try {
-                addresses.map(async (a) => {
+                // Wait for all transactions to complete using Promise.all
+                const transactions = addresses.map(async (a) => {
                     if (parseInt(inputs[a]) > 0) {
-                        allocateSingle.writeContractAsync({
+                        return await allocateSingle.writeContractAsync({
                             address: hyperfund,
                             abi: hyperfundAbi,
                             functionName: "nonfinancialContribution",
@@ -169,10 +171,14 @@ function AllocateForm({
                             ]
                         })
                     }
-                });
+                    return null;
+                }).filter(tx => tx !== null);
+
+                const finishedTransactions = await Promise.all(transactions);
 
                 allocateForm.reset();
                 setInputs({})
+                setTxHash(finishedTransactions[0]);
                 setShowSuccessModal(true);
             } catch (e) {
                 console.error("Transaction failed: ", e);
@@ -303,11 +309,11 @@ function AllocateForm({
 
         <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
         <div className="p-6">
-          <h3 className="text-black text-lg font-medium mb-4">
+          <h3 className=" text-lg font-medium mb-4">
             Transaction Successful!
           </h3>
-          <p className="text-gray-600 mb-4">Transaction Hash:</p>
-          <p className="break-all text-sm bg-gray-100 p-2 rounded">{txHash}</p>
+          <p className="mb-4">Transaction Hash:</p>
+          <p className="break-all text-sm bg-gray-700 p-2 rounded">{txHash}</p>
           <Button className="mt-4" onClick={() => setShowSuccessModal(false)}>
             Close
           </Button>

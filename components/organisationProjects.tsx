@@ -23,8 +23,6 @@ export default function OrganisationProjects({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
-  console.log(projects);
-
   useEffect(() => {
     const getHypercertIds = async () => {
       const response = await fetch("/api/getProjectDetails", {
@@ -38,7 +36,6 @@ export default function OrganisationProjects({
       });
 
       const hypercertData = await response.json();
-      console.log(hypercertData);
       return hypercertData.hypercertsData;
     };
 
