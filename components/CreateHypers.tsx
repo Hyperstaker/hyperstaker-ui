@@ -236,7 +236,13 @@ export function CreateHypers({
             .hyperstakerFactoryContract as `0x${string}`,
           abi: hyperfundFactoryAbi as Abi,
           functionName: "createHyperfund",
-          args: [BigInt(currentHypercertId), account.address as `0x${string}`],
+          args: [
+            BigInt(currentHypercertId),
+            account.address as `0x${string}`,
+            account.address as `0x${string}`,
+            account.address as `0x${string}`,
+            account.address as `0x${string}`,
+          ],
         });
 
         console.log("Waiting for Hyperfund tx receipt:", tx);
@@ -298,7 +304,13 @@ export function CreateHypers({
             .hyperstakerFactoryContract as `0x${string}`,
           abi: hyperfundFactoryAbi as Abi, // Assuming same factory ABI? Double check.
           functionName: "createHyperstaker",
-          args: [BigInt(currentHypercertId), account.address as `0x${string}`],
+          args: [
+            BigInt(currentHypercertId),
+            account.address as `0x${string}`,
+            account.address as `0x${string}`,
+            account.address as `0x${string}`,
+            account.address as `0x${string}`,
+          ],
         });
 
         console.log("Waiting for Hyperstaker tx receipt:", tx);

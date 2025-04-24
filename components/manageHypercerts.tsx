@@ -97,8 +97,9 @@ export default function ManageHypercert({
   const handleStakeFraction = async (fractionId: string) => {
     try {
       setIsStaking(fractionId);
-      await delay(2000); // 2 second delay
+
       await setApprovalForAll(hyperstaker as `0x${string}`);
+      await delay(2000); // 2 second delay
       const tx = await hyperstakerContract.writeContractAsync({
         address: hyperstaker as `0x${string}`,
         abi: hyperstakerAbi as Abi,
@@ -134,8 +135,9 @@ export default function ManageHypercert({
   const handleRetireFraction = async (fractionId: string) => {
     try {
       setIsRetiring(fractionId);
-      await delay(2000); // 2 second delay
+
       await setApprovalForAll(hyperfund as `0x${string}`);
+      await delay(2000); // 2 second delay
       const tx = await hyperfundContract.writeContractAsync({
         address: hyperfund as `0x${string}`,
         abi: hyperfundAbi as Abi,
@@ -292,12 +294,10 @@ export default function ManageHypercert({
                               variant="outline"
                               className="bg-gray-800 hover:bg-gray-700"
                               onClick={() => handleStakeFraction(f)}
-                              // disabled={isStaking === f}
-                              disabled={true}
+                              disabled={isStaking === f}
+                              // disabled={true}
                             >
-                              {isStaking === f
-                                ? "Confirming..."
-                                : "Stake (Coming Soon)"}
+                              {isStaking === f ? "Confirming..." : "Stake"}
                             </Button>
                             {nonFinancialContributions?.toString() != "0" && (
                               <Button
@@ -339,11 +339,11 @@ export default function ManageHypercert({
       </article>
       <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
         <div className="p-6">
-          <h3 className="text-black text-lg font-medium mb-4">
-            Transaction Successful!
-          </h3>
-          <p className="text-gray-600 mb-4">Transaction Hash:</p>
-          <p className="break-all text-sm bg-gray-100 p-2 rounded">{txHash}</p>
+          <h3 className="text-lg font-medium mb-4">Transaction Successful!</h3>
+          <p className="text-gray-200 mb-4">Transaction Hash:</p>
+          <p className="break-all text-sm bg-gray-800 p-2 rounded text-gray-200">
+            {txHash}
+          </p>
           <Button className="mt-4" onClick={() => setShowSuccessModal(false)}>
             Close
           </Button>

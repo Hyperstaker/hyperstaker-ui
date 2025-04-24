@@ -213,6 +213,14 @@ function AllocateForm({
         };
     }, { allocated: 0, redeemed: 0 });
 
+    const allocationhistoryComponent = allocationHistory.map((item, index) => (
+      <tr key={index} className="border-b">
+          <td className="px-4 py-2">{String(item.address)}</td>
+          <td className="px-4 py-2 text-right">{String(item.allocated)}</td>
+          <td className="px-4 py-2 text-right">{String(item.redeemed)}</td>
+      </tr>
+  ))
+
     return (
       <div>
         <form>
@@ -283,23 +291,17 @@ function AllocateForm({
                         </tr>
                     </thead>
                     <tbody>
-                        {allocationHistory.map((item, index) => (
-                            <tr key={index} className="border-b">
-                                <td className="px-4 py-2">{item.address}</td>
-                                <td className="px-4 py-2 text-right">{item.allocated}</td>
-                                <td className="px-4 py-2 text-right">{item.redeemed}</td>
-                            </tr>
-                        ))}
+                        {allocationhistoryComponent}
                     </tbody>
                     <tfoot className="bg-gray-600">
                         <tr>
                             <td className="px-4 py-2 font-bold">Totals</td>
-                            <td className="px-4 py-2 text-right font-bold">{totals.allocated.toFixed(1)}</td>
-                            <td className="px-4 py-2 text-right font-bold">{totals.redeemed.toFixed(1)}</td>
+                            <td className="px-4 py-2 text-right font-bold">{String(totals.allocated.toFixed(1))}</td>
+                            <td className="px-4 py-2 text-right font-bold">{String(totals.redeemed.toFixed(1))}</td>
                         </tr>
                         <tr className="bg-gray-600">
                             <td colSpan="3" className="px-4 py-2 text-right font-bold">
-                                Amount to redeem in Pool: {(totals.allocated - totals.redeemed).toFixed(1)}
+                                Amount to redeem in Pool: {String((totals.allocated - totals.redeemed).toFixed(1))}
                             </td>
                         </tr>
                     </tfoot>
