@@ -31,6 +31,8 @@ Contact us on X (formerly Twitter) or Discord to talk
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+
+To get this up and running clone the repo, and in addition to installed packages, make sure to run `npx prisma generate`
 <br>
 
 ### Partners
