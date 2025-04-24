@@ -510,7 +510,7 @@ export default function CreateProject() {
       setStepStatus("success");
       setTimeout(() => {
         setIsModalOpen(false);
-        router.push("/projects");
+        router.push("/organizations");
       }, 2000);
     } catch (error) {
       console.error("Error creating project:", error);

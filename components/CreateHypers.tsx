@@ -468,7 +468,7 @@ export function CreateHypers({
 
       setTimeout(() => {
         setIsModalOpen(false);
-        router.push("/projects"); // Navigate to projects page after success
+        router.push("/organizations"); // Navigate to projects page after success
       }, 2000); // Keep modal open for 2 seconds to show success message
     } catch (error) {
       console.error("Error during project creation steps:", error);
