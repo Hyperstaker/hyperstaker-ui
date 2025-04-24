@@ -266,7 +266,7 @@ export function CreateAlloProfile({
             </Group>
             <Stack align="center" gap="xs">
               <Text size="sm" c="dimmed">
-                If you don't have an Allo Profile ID, we can create one for you now.
+                If you don&apos;t have an Allo Profile ID, we can create one for you now.
               </Text>
               <Button variant="link" onClick={() => setShowCreateForm(true)}>
                 Create one
