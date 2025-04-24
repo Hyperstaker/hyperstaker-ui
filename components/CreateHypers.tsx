@@ -246,10 +246,7 @@ export function CreateHypers({
         console.log("Hyperfund tx receipt:", txReceipt);
 
         // NOTE: Double check the log index and event signature if this fails
-        const hyperfundAddress = decodeAbiParameters(
-          [{ name: "hyperfundAddress", type: "address" }], // Typo? Check contract event name ('hypperfundAddress' vs 'hyperfundAddress')
-          txReceipt.logs[2]?.topics?.[1] as `0x${string}` // Assuming index 2 is correct
-        )[0];
+        const hyperfundAddress = txReceipt.logs[2]?.address as `0x${string}`;
 
         if (!hyperfundAddress) {
           throw new Error("Failed to get Hyperfund address from transaction");
@@ -260,6 +257,24 @@ export function CreateHypers({
           ...stateRef.current,
           hyperfundAddress: currentHyperfundAddress,
         };
+
+        if (hyperfundAddress) {
+          stateRef.current = {
+            ...stateRef.current,
+            hyperfundAddress: hyperfundAddress,
+          };
+
+          await contract.writeContractAsync({
+            address: hyperfundAddress as `0x${string}`,
+            abi: hyperfundAbi as Abi,
+            functionName: "allowlistToken",
+            args: [
+              contracts[account.chainId as keyof typeof contracts]
+                .usdc as `0x${string}`,
+              1,
+            ],
+          });
+        }
         setLocalCompletedSteps(stateRef.current); // Update state
         console.log(
           "Step 2 Complete. Hyperfund Address:",
@@ -293,10 +308,7 @@ export function CreateHypers({
         console.log("Hyperstaker tx receipt:", txReceipt);
 
         // NOTE: Double check the log index and event signature if this fails
-        const hyperstakerAddress = decodeAbiParameters(
-          [{ name: "hyperstakerAddress", type: "address" }],
-          txReceipt.logs[2]?.topics?.[1] as `0x${string}` // Assuming index 2 is correct
-        )[0];
+        const hyperstakerAddress = txReceipt.logs[2]?.address as `0x${string}`;
 
         if (!hyperstakerAddress) {
           throw new Error("Failed to get Hyperstaker address from transaction");
@@ -372,7 +384,7 @@ export function CreateHypers({
 
           // Pool metadata
           const metadata = {
-            pointer: ipfsHash ?? "",
+            pointer: ipfshash ?? "",
             protocol: "1",
           };
           const tx = await contract.writeContractAsync({

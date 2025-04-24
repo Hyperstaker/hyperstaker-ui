@@ -475,11 +475,9 @@ export default function ManageProject({
 
       <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
         <div className="p-6">
-          <h3 className="text-black text-lg font-medium mb-4">
-            Transaction Successful!
-          </h3>
-          <p className="text-gray-600 mb-4">Transaction Hash:</p>
-          <p className="break-all text-sm bg-gray-100 p-2 rounded text-gray-600">
+          <h3 className="text-lg font-medium mb-4">Transaction Successful!</h3>
+          <p className="text-gray-200 mb-4">Transaction Hash:</p>
+          <p className="break-all text-sm bg-gray-700 p-2 rounded text-gray-100">
             {txHash}
           </p>
           <Button className="mt-4" onClick={() => setShowSuccessModal(false)}>

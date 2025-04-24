@@ -47,6 +47,8 @@ export default function ManageHypercert({
   const hyperfundContract = useWriteContract();
   const hyperminterWrite = useWriteContract();
   const config = useConfig();
+  const [isStaking, setIsStaking] = useState<string>("");
+  const [isRetiring, setIsRetiring] = useState<string>("");
 
   const callAbis = unstakedFractions.map((f) => {
     return {
@@ -89,8 +91,13 @@ export default function ManageHypercert({
     }
   };
 
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
   const handleStakeFraction = async (fractionId: string) => {
     try {
+      setIsStaking(fractionId);
+      await delay(2000); // 2 second delay
       await setApprovalForAll(hyperstaker as `0x${string}`);
       const tx = await hyperstakerContract.writeContractAsync({
         address: hyperstaker as `0x${string}`,
@@ -103,6 +110,8 @@ export default function ManageHypercert({
       setShowSuccessModal(true);
     } catch (error) {
       console.error("Transaction failed:", error);
+    } finally {
+      setIsStaking("");
     }
   };
 
@@ -124,6 +133,8 @@ export default function ManageHypercert({
 
   const handleRetireFraction = async (fractionId: string) => {
     try {
+      setIsRetiring(fractionId);
+      await delay(2000); // 2 second delay
       await setApprovalForAll(hyperfund as `0x${string}`);
       const tx = await hyperfundContract.writeContractAsync({
         address: hyperfund as `0x${string}`,
@@ -140,6 +151,8 @@ export default function ManageHypercert({
       setShowSuccessModal(true);
     } catch (error) {
       console.error("Transaction failed:", error);
+    } finally {
+      setIsRetiring("");
     }
   };
 
@@ -277,18 +290,25 @@ export default function ManageHypercert({
                           <div className="flex space-x-2">
                             <Button
                               variant="outline"
+                              className="bg-gray-800 hover:bg-gray-700"
                               onClick={() => handleStakeFraction(f)}
+                              // disabled={isStaking === f}
+                              disabled={true}
                             >
-                              Stake
+                              {isStaking === f
+                                ? "Confirming..."
+                                : "Stake (Coming Soon)"}
                             </Button>
-                            <Button
-                              variant="outline"
-                              onClick={() => {
-                                handleRetireFraction(f);
-                              }}
-                            >
-                              Retire
-                            </Button>
+                            {nonFinancialContributions?.toString() != "0" && (
+                              <Button
+                                variant="outline"
+                                className="bg-gray-800 hover:bg-gray-700"
+                                onClick={() => handleRetireFraction(f)}
+                                disabled={isRetiring === f}
+                              >
+                                {isRetiring === f ? "Confirming..." : "Retire"}
+                              </Button>
+                            )}
                           </div>
                         </div>
                       ))}
