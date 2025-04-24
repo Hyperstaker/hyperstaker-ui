@@ -236,6 +236,9 @@ export function CreateAlloProfile({
             <Title order={2} c="white">
               Enter your Allo Profile ID
             </Title>
+            <Text size="sm" c="dimmed">
+              An Allo Profile is a unique, on-chain identifier for your project or organization within the Allo Protocol ecosystem. Think of it like a GitHub Organization profile - it represents your entity and allows you to manage funding pools and build reputation. You can learn more in the <a href="https://docs.allo.gitcoin.co/overview/registry" target="_blank" rel="noopener noreferrer">Allo documentation</a>. This profile can be used across many applications in the web3 ecosystem such as <a href="https://grants.gitcoin.co/" target="_blank" rel="noopener noreferrer">Gitcoin Grants rounds</a> and <a href="https://gap.karmahq.xyz/" target="_blank" rel="noopener noreferrer">KarmaGap</a>.
+            </Text>
             <TextInput
               label="Existing Allo Profile ID"
               placeholder="Enter existing profile ID if available"
@@ -261,9 +264,14 @@ export function CreateAlloProfile({
                 Next Step
               </Button>
             </Group>
-            <Button variant="link" onClick={() => setShowCreateForm(true)}>
-              Dont have an Allo Profile ID? Create one
-            </Button>
+            <Stack align="center" gap="xs">
+              <Text size="sm" c="dimmed">
+                If you don't have an Allo Profile ID, we can create one for you now.
+              </Text>
+              <Button variant="link" onClick={() => setShowCreateForm(true)}>
+                Create one
+              </Button>
+            </Stack>
           </Stack>
         </form>
       ) : (

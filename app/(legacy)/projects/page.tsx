@@ -40,11 +40,13 @@ export default function Page() {
 
   async function getUserAlloProfiles() {
     try {
+      console.log("account.address is ", account.address)
       const response = await fetch(
         `/api/user-allo-profile?walletAddress=${account.address}`
       );
       const alloProfileIds = await response.json();
-
+console.log("alloProfileIds is ", alloProfileIds)
+console.log("account.chainId is ", account.chainId)
       const indexerResponse = await fetch("/api/alloProfiles", {
         method: "POST",
         headers: {
