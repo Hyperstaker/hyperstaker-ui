@@ -10,33 +10,19 @@ import {
   FileInput,
 } from "@mantine/core";
 import { Dispatch, SetStateAction, useState } from "react";
-import { useForm } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import { useAccount, useWriteContract, useConfig } from "wagmi";
 import { alloRegistryAbi, contracts } from "./data";
 import { Abi } from "viem";
 import { waitForTransactionReceipt } from "@wagmi/core";
+import { AlloProfileFormData } from "./OnboardingFlow";
 
 interface CreateAlloProfileProps {
   onNext: () => void;
   onPrevious: () => void;
   alloProfileState: [string, Dispatch<SetStateAction<string>>];
   ipfsHash: [string, Dispatch<SetStateAction<string>>];
-}
-
-const testing = true;
-
-interface AlloProfileFormData {
-  title: string;
-  description: string;
-  website: string;
-  projectTwitter: string;
-  projectGithub: string;
-  logoImg: File | null;
-  bannerImg: File | null;
-  logoImgData: string;
-  bannerImgData: string;
-  credentials: string[];
-  members: string[];
+  alloForm: UseFormReturn<AlloProfileFormData, any, AlloProfileFormData>;
 }
 
 export function CreateAlloProfile({
@@ -44,6 +30,7 @@ export function CreateAlloProfile({
   onPrevious,
   alloProfileState,
   ipfsHash,
+  alloForm,
 }: CreateAlloProfileProps) {
   const [alloProfile, setAlloProfile] = alloProfileState;
   const [, setIpfsHash] = ipfsHash;
@@ -53,30 +40,7 @@ export function CreateAlloProfile({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
-  const defaultValues = testing
-    ? {
-        title: "Climate Action DAO",
-        description:
-          "A decentralized organization focused on funding and supporting climate change initiatives through blockchain technology. We coordinate resources, validate impact, and ensure transparent distribution of funds to high-impact environmental projects.",
-        website: "https://climateactiondao.org",
-        projectTwitter: "@ClimateActionDAO",
-        projectGithub: "https://github.com/climateactiondao",
-        logoImg: null,
-        bannerImg: null,
-        logoImgData: "",
-        bannerImgData: "",
-        credentials: ["GitcoinPassport", "ProofOfHumanity", "ENS"],
-        members: [
-          "0x1234567890123456789012345678901234567890",
-          "0x0987654321098765432109876543210987654321",
-          "0xabcdef0123456789abcdef0123456789abcdef01",
-        ],
-      }
-    : {};
-
-  const form = useForm<AlloProfileFormData>({
-    defaultValues,
-  });
+  const form = alloForm;
 
   const handleLogoUpload = (file: File | null) => {
     if (!file) return;
@@ -237,11 +201,41 @@ export function CreateAlloProfile({
               Enter your Allo Profile ID
             </Title>
             <Text size="sm" c="dimmed">
-              An Allo Profile is a unique, on-chain identifier for your project or organization within the Allo Protocol ecosystem. Think of it like a GitHub Organization profile - it represents your entity and allows you to manage funding pools and build reputation. You can learn more in the <a href="https://docs.allo.gitcoin.co/overview/registry" target="_blank" rel="noopener noreferrer">Allo documentation</a>. This profile can be used across many applications in the web3 ecosystem such as <a href="https://grants.gitcoin.co/" target="_blank" rel="noopener noreferrer">Gitcoin Grants rounds</a> and <a href="https://gap.karmahq.xyz/" target="_blank" rel="noopener noreferrer">KarmaGap</a>.
+              An Allo Profile is a unique, on-chain identifier for your project
+              or organization within the Allo Protocol ecosystem. Think of it
+              like a GitHub Organization profile - it represents your entity and
+              allows you to manage funding pools and build reputation. You can
+              learn more in the{" "}
+              <a
+                href="https://docs.allo.gitcoin.co/overview/registry"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Allo documentation
+              </a>
+              . This profile can be used across many applications in the web3
+              ecosystem such as{" "}
+              <a
+                href="https://grants.gitcoin.co/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Gitcoin Grants rounds
+              </a>{" "}
+              and{" "}
+              <a
+                href="https://gap.karmahq.xyz/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                KarmaGap
+              </a>
+              .
             </Text>
             <TextInput
               label="Existing Allo Profile ID"
               placeholder="Enter existing profile ID if available"
+              value={alloProfile}
               onChange={(e) => setAlloProfile(e.target.value)}
               styles={{
                 label: { color: "var(--mantine-color-gray-4)" },
@@ -266,7 +260,8 @@ export function CreateAlloProfile({
             </Group>
             <Stack align="center" gap="xs">
               <Text size="sm" c="dimmed">
-                If you don&apos;t have an Allo Profile ID, we can create one for you now.
+                If you don&apos;t have an Allo Profile ID, we can create one for
+                you now.
               </Text>
               <Button variant="link" onClick={() => setShowCreateForm(true)}>
                 Create one

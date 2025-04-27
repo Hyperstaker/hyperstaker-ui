@@ -13,10 +13,11 @@ import {
   Timeline,
 } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CreateAlloProfile } from "./CreateAlloProfile";
 import { CreateHypercert } from "./CreateHypercert";
 import { CreateHypers } from "./CreateHypers";
+import { useForm } from "react-hook-form";
 
 export interface HypercertFormData {
   title: string;
@@ -38,12 +39,12 @@ export interface HypercertFormData {
 
 const steps = [
   {
-    title: "Create your project",
-    description: "Your profile & pool",
+    title: "Create Organisation",
+    description: "Your allo profile",
     completed: false,
   },
   {
-    title: "Create your Hypercert",
+    title: "Create your Project",
     description: "Your impact certificate",
     completed: false,
   },
@@ -186,11 +187,40 @@ function StepsProgress({ currentStep }: { currentStep: number }) {
   );
 }
 
+export interface AlloProfileFormData {
+  title: string;
+  description: string;
+  website: string;
+  projectTwitter: string;
+  projectGithub: string;
+  logoImg: File | null;
+  bannerImg: File | null;
+  logoImgData: string;
+  bannerImgData: string;
+  credentials: string[];
+  members: string[];
+}
+
 export function OnboardingFlow() {
   const ipfsHash = useState<string>("");
   const alloProfile = useState<string>("");
   const hypercertId = useState<HypercertFormData>();
   const [currentStep, setCurrentStep] = useState(-1);
+
+  const hypercertForm = useForm<HypercertFormData>({});
+  const alloProfileForm = useForm<AlloProfileFormData>({});
+
+  // Add this useEffect to check for the "alloprofile" query param on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const alloProfileParam = params.get("alloprofile");
+      if (alloProfileParam) {
+        alloProfile[1](alloProfileParam); // set the state
+        setCurrentStep(1);
+      }
+    }
+  }, []);
 
   const handlePreviousStep = () => {
     setCurrentStep((prev) => Math.max(-1, prev - 1));
@@ -205,6 +235,7 @@ export function OnboardingFlow() {
             onPrevious={handlePreviousStep}
             alloProfileState={alloProfile}
             ipfsHash={ipfsHash}
+            alloForm={alloProfileForm}
           />
         );
       case 1:
@@ -213,6 +244,7 @@ export function OnboardingFlow() {
             onNext={() => setCurrentStep(2)}
             onPrevious={handlePreviousStep}
             hypercertState={hypercertId}
+            hypercertForm={hypercertForm}
           />
         );
       case 2:
