@@ -193,22 +193,10 @@ export default function FundProject({
                             20% of prev RPGF
                           </div> */}
                         </div>
-                        <div>
-                          <div className="text-sm font-medium text-gray-200">
-                            Retro split
-                          </div>
-                          <div className="text-2xl font-bold text-gray-300">
-                            20%
-                          </div>
-                        </div>
                       </div>
                       <div className="clear-both"></div>
                     </div>
                     <div className="clear-both"></div>
-
-                    <button className="disabled mt-40 bg-zinc-400 text-red w-full py-3 rounded-lg font-medium hover:bg-zinc-200">
-                      Stake hypercerts (coming soon)
-                    </button>
                   </div>
                 </Skeleton>
               </div>

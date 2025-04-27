@@ -1,5 +1,13 @@
 import React, { useState, useMemo } from "react";
-import { NativeSelect, rem, TextInput } from "@mantine/core";
+import {
+  NativeSelect,
+  rem,
+  TextInput,
+  Slider,
+  Button,
+  Group,
+} from "@mantine/core";
+import { ethers } from "ethers";
 import {
   type BaseError,
   useWaitForTransactionReceipt,
@@ -7,6 +15,7 @@ import {
   useWriteContract,
   useReadContract,
 } from "wagmi";
+import { IconExternalLink } from "@tabler/icons-react";
 
 import Project from "../interfaces/Project";
 import { getTransactionExplorerUrl } from "../explorer";
@@ -19,12 +28,19 @@ interface FundProps {
 
 const coinData = [{ value: "USDC", label: "USDC" }];
 
+const presetAmounts = [5, 10, 20, 50, 100];
+
 const Fund: React.FC<FundProps> = ({ project, poolId }) => {
   const { address, chain, isConnected } = useAccount();
   const [selectedToken, setSelectedToken] = useState<string>("USDC");
   const [amount, setAmount] = useState<string>("");
-  const { data: hash, error, isPending, writeContract } = useWriteContract();
-  const erc20Contract = useWriteContract();
+  const {
+    data: hash,
+    error,
+    isPending,
+    writeContract,
+    writeContractAsync,
+  } = useWriteContract();
 
   // Get contract addresses for the current chain, if supported
   const currentContracts = useMemo(() => {
@@ -39,23 +55,45 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
   const transactionUrl =
     hash && chain ? getTransactionExplorerUrl(chain.id, hash) : undefined;
   const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false);
+
+  // Parse project goal (assume project.goal is in USDC, as a number)
+  const projectGoal = (project.totalUnits ?? 0) / 10 ** 6; // fallback if not set
+
+  // Helper to parse and format amount
+  const parseAmount = (val: string | number) => {
+    const n = typeof val === "string" ? parseFloat(val) : val;
+    return isNaN(n) ? 0 : n;
+  };
+
+  // Update amount and slider together
+  const handlePresetClick = (val: number) => {
+    setAmount(val.toString());
+    setIsButtonEnabled(true);
+  };
+
+  const handleSliderChange = (val: number) => {
+    setAmount(val.toString());
+    setIsButtonEnabled(val > 0 && !isUnsupportedNetwork);
+  };
+
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const amountValue = event.target.value;
     setAmount(amountValue);
-    setIsButtonEnabled(amountValue !== "" && !isUnsupportedNetwork);
+    setIsButtonEnabled(
+      amountValue !== "" &&
+        parseAmount(amountValue) > 0 &&
+        !isUnsupportedNetwork
+    );
   };
 
   const allowance = useReadContract({
     abi: erc20ContractABI,
     address: currentContracts?.usdc as `0x${string}` | undefined,
     functionName: "allowance",
-    args: [
-      address,
-      currentContracts?.alloContract,
-    ],
+    args: [address, currentContracts?.alloContract],
     query: {
       enabled: !!currentContracts && !!address,
-    }
+    },
   });
 
   const checkAllowance = async () => {
@@ -63,19 +101,18 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
     return refreshedAllowance?.data;
   };
 
-  const approveToken = async () => {
+  const approveToken = async (amount: string) => {
     if (!currentContracts) {
-      console.error("Cannot approve token: Unsupported network or contracts not loaded.");
+      console.error(
+        "Cannot approve token: Unsupported network or contracts not loaded."
+      );
       return;
     }
-    await erc20Contract.writeContractAsync({
+    await writeContractAsync({
       abi: erc20ContractABI,
       address: currentContracts.usdc as `0x${string}`,
       functionName: "approve",
-      args: [
-        currentContracts.alloContract,
-        amount,
-      ],
+      args: [currentContracts.alloContract, amount],
     });
   };
 
@@ -86,17 +123,23 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
       return;
     }
 
-    const value = amount;
+    const value = ethers.parseUnits(amount, 6); // 6 decimals in USDC
 
     const currentAllowance = await checkAllowance();
-    if (currentAllowance === undefined || typeof currentAllowance !== "string" && typeof currentAllowance !== "number" && typeof currentAllowance !== "bigint") {
-       console.error("Invalid allowance value:", currentAllowance);
-       return;
+    if (
+      currentAllowance === undefined ||
+      (typeof currentAllowance !== "string" &&
+        typeof currentAllowance !== "number" &&
+        typeof currentAllowance !== "bigint")
+    ) {
+      console.error("Invalid allowance value:", currentAllowance);
+      return;
     }
-    
+
     if (BigInt(currentAllowance) < BigInt(value)) {
       try {
-        await approveToken();
+        await approveToken(value.toString());
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (approvalError) {
         console.error("Failed to approve token:", approvalError);
         return;
@@ -145,10 +188,37 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
           <>
             <h4>Prospectively fund this project</h4>
             <p>
-              Hyperstaker as allocated 20% of it&apos;s level 1 hypercert to
-              this round, and half of this will go to early stage funders, and
-              they will be distributed relative to the amount donated.
+              Hyperstaker has allocated 50% of it&apos;s hypercert to the donors
+              of this round, and the other half of this will go to the project
+              contributors. The hypercert will be distributed relative to the
+              amount donated.
             </p>
+            {/* Preset donation buttons */}
+            <Group mb="xs">
+              {presetAmounts.map((val) => (
+                <Button
+                  key={val}
+                  variant={parseAmount(amount) === val ? "filled" : "outline"}
+                  onClick={() => handlePresetClick(val)}
+                  size="sm"
+                >
+                  ${val}
+                </Button>
+              ))}
+            </Group>
+            {/* Slider for donation amount */}
+            <div style={{ margin: "16px 0" }}>
+              <Slider
+                min={0}
+                max={projectGoal}
+                step={1}
+                value={parseAmount(amount)}
+                onChange={handleSliderChange}
+                label={(val) => `$${val}`}
+                style={{ width: 300 }}
+              />
+            </div>
+            {/* Custom amount input */}
             <div className="flex flex-row">
               <input
                 type="hidden"
@@ -159,11 +229,15 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
               />
               <TextInput
                 type="number"
-                label="How much would you like to donate?"
+                label="Custom amount"
                 rightSection={select}
                 rightSectionWidth={92}
                 onChange={handleAmountChange}
+                value={amount}
+                min={0}
+                max={projectGoal}
                 placeholder={`Enter ${selectedToken} amount`}
+                style={{ width: 300 }}
               />
               {isConnected && !isUnsupportedNetwork && (
                 <button
@@ -174,9 +248,13 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
                   {isPending ? "Confirming..." : "Send"}
                 </button>
               )}
-              {!isConnected && <p className="mt-8 ml-2">Connect your wallet to continue</p>}
+              {!isConnected && (
+                <p className="mt-8 ml-2">Connect your wallet to continue</p>
+              )}
               {isUnsupportedNetwork && (
-                <p className="mt-8 ml-2 text-red-500">Unsupported network. Please connect to Sepolia.</p>
+                <p className="mt-8 ml-2 text-red-500">
+                  Unsupported network. Please connect to Sepolia.
+                </p>
               )}
             </div>
           </>
@@ -188,8 +266,20 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
             <div>
               {transactionUrl && (
                 <span>
-                  <a href={transactionUrl}></a>View your transactions here:{" "}
-                  {hash}
+                  <a
+                    href={transactionUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="View transaction on explorer"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 4,
+                    }}
+                  >
+                    <IconExternalLink size={20} />
+                    <span>View your transaction</span>
+                  </a>
                 </span>
               )}
             </div>
@@ -205,7 +295,6 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
           </div>
         )}
         {isConfirming && <div>Waiting for confirmation...</div>}
-        {isConfirmed && <div>Transaction confirmed.</div>}
         {error && (
           <div>Error: {(error as BaseError).shortMessage || error.message}</div>
         )}
