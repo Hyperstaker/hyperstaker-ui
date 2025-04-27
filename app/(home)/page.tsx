@@ -58,7 +58,7 @@ export default function Home() {
 
               <div className="flex flex-wrap justify-center gap-4">
                 <GetStartedButton />
-                <a href="/projects/create" className="px-6 py-3 bg-transparent border border-gray-700 text-gray-300 font-medium rounded-md hover:bg-gray-800 transition-colors">
+                <a href="/organizations/create" className="px-6 py-3 bg-transparent border border-gray-700 text-gray-300 font-medium rounded-md hover:bg-gray-800 transition-colors">
                   Find contributors
                 </a>
               </div>

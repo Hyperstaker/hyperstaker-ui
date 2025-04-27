@@ -163,7 +163,7 @@ export default function OrganisationProjects({
               <Button
                 onClick={() => {
                   setIsModalOpen(false);
-                  router.push("/projects/create");
+                  router.push("/organizations/create");
                 }}
               >
                 Create

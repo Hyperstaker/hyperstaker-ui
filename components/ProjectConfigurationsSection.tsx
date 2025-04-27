@@ -4,19 +4,11 @@ import { Table, Badge, Text, Title } from "@mantine/core";
 const configurations = [
   { 
     name: "Contributor hypercerts transferrable", 
-    configValue: { type: "badge", value: "No", color: "red" }, 
-  },
-  { 
-    name: "Single Hypercert for all contributors", 
-    configValue: { type: "badge", value: "Yes", color: "green" }, 
+    configValue: { type: "badge", value: "Yes", color: "gray" }, 
   },
   { 
     name: "Percent of a Hypercert for non-financial contributors", 
     configValue: { type: "badge", value: "100%", color: "gray" }, 
-  },
-  { 
-    name: "Do users need to retire Hypercerts when staking to receive retro funding?", 
-    configValue: { type: "badge", value: "Yes", color: "green" }, 
   },
   { 
     name: "Multiplier (ratio per token to unit of Hypercert conversion)", 
