@@ -136,7 +136,7 @@ export function CreateHypercert({
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Stack gap="xl">
           <Title order={2} c="white">
-            Create Hypercert
+            Create Project
           </Title>
           <Text>
             A hypercert is a digital certificate that represents a contribution
@@ -144,7 +144,7 @@ export function CreateHypercert({
             individuals and organizations.
           </Text>
           <TextInput
-            label="Hypercert Title"
+            label="Project Title"
             placeholder="Enter your hypercert title"
             required
             error={form.formState.errors.title?.message}

@@ -495,8 +495,11 @@ export function CreateHypers({
     <Paper p="xl" radius="lg" bg="transparent">
       <Stack gap="xl">
         <Title order={2} c="white">
-          Create Hyperfund and Hyperstaker pool
+          Create Project
         </Title>
+        <Text>
+          This will create a Hypercert, a Hyperfund and Hyperstaker pool, and an Allo Pool.
+        </Text>
         <ProjectConfigurationsSection />
         {/* <TextInput
             label="Project Goal (USD)"

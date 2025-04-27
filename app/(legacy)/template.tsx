@@ -12,7 +12,7 @@ import ThemeChanger from "../../components/DarkSwitch";
 export default function Template({ children }: { children: React.ReactNode }) {
   const navigation = [
     { page: "Home", url: "/" },
-    { page: "Organizations", url: "/organizations" },
+    { page: "My Orgs", url: "/organizations" },
     { page: "Explore", url: "/explore" },
     {page: "My Contributions", url: "/contributions"}
   ];
