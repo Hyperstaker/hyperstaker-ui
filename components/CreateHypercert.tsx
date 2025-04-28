@@ -1,5 +1,3 @@
-import { useHypercertClient } from "@/hooks/useHypercertClient";
-import { formatHypercertData, TransferRestrictions } from "@hypercerts-org/sdk";
 import {
   TextInput,
   Text,
@@ -12,14 +10,9 @@ import {
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import "@mantine/dates/styles.css";
-import { useForm } from "react-hook-form";
-import { useAccount, useConfig } from "wagmi";
-import { waitForTransactionReceipt } from "@wagmi/core";
-import { decodeAbiParameters } from "viem";
+import { useForm, UseFormReturn } from "react-hook-form";
 import { Dispatch, SetStateAction, useState } from "react";
 import { HypercertFormData } from "./OnboardingFlow";
-
-const testing = true;
 
 interface CreateHypercertProps {
   onNext: () => void;
@@ -28,43 +21,20 @@ interface CreateHypercertProps {
     HypercertFormData | undefined,
     Dispatch<SetStateAction<HypercertFormData | undefined>>
   ];
+  hypercertForm: UseFormReturn<HypercertFormData, any, HypercertFormData>;
 }
 
 export function CreateHypercert({
   onNext,
   onPrevious,
   hypercertState,
+  hypercertForm,
 }: CreateHypercertProps) {
-  const account = useAccount();
-  const { client } = useHypercertClient();
-  const wagmiConfig = useConfig();
   const [hypercertData, setHypercertData] = hypercertState;
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const defaultValues = testing
-    ? {
-        goal: "100000",
-        impactScope: ["Climate Change", "Clean Energy", "Carbon Reduction"],
-        excludedImpactScope: ["Fossil Fuels"],
-        workScope: ["Research", "Development", "Implementation"],
-        excludedWorkScope: ["Marketing"],
-        workTimeframeStart: new Date(Date.now() + 19 * 24 * 60 * 60 * 1000),
-        workTimeframeEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
-        impactTimeframeStart: new Date(Date.now() + 19 * 24 * 60 * 60 * 1000),
-        impactTimeframeEnd: new Date(
-          Date.now() + 2 * 365 * 24 * 60 * 60 * 1000
-        ), // 2 years from now
-        contributorsList: [
-          "0x1234567890123456789012345678901234567890",
-          "0x0987654321098765432109876543210987654321",
-        ],
-        rights: ["Commercial Use", "Distribution", "Modification"],
-        excludedRights: ["Patent Rights"],
-      }
-    : {};
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
-  const form = useForm<HypercertFormData>({
-    defaultValues,
-  });
+  const form = hypercertForm;
 
   // const createHypercert = async (hypercertFormData: HypercertFormData) => {
   //   if (hypercertid) {
@@ -219,177 +189,186 @@ export function CreateHypercert({
             })}
           />
 
-          <TextInput
-            label="Excluded Impact Scope"
-            placeholder="Comma-separated list"
-            {...(form.register("excludedImpactScope"),
-            {
-              onChange: (e) => {
-                form.setValue(
-                  "excludedImpactScope",
-                  e.target.value
-                    .split(",")
-                    .map((i) => i.trim())
-                    .filter((i) => i !== "")
-                );
-              },
-            })}
-          />
+          <Button
+            variant="subtle"
+            color="blue"
+            onClick={() => setShowAdvanced((prev) => !prev)}
+            mt="md"
+          >
+            {showAdvanced
+              ? "Hide Advanced Configurations"
+              : "Advanced Configurations"}
+          </Button>
 
-          <TextInput
-            label="Work Scope"
-            placeholder="Comma-separated list"
-            required
-            {...(form.register("workScope"),
-            {
-              onChange: (e) => {
-                form.setValue(
-                  "workScope",
-                  e.target.value
-                    .split(",")
-                    .map((i) => i.trim())
-                    .filter((i) => i !== "")
-                );
-              },
-            })}
-          />
+          {showAdvanced && (
+            <>
+              <TextInput
+                label="Excluded Impact Scope"
+                placeholder="Comma-separated list"
+                {...(form.register("excludedImpactScope"),
+                {
+                  onChange: (e) => {
+                    form.setValue(
+                      "excludedImpactScope",
+                      e.target.value
+                        .split(",")
+                        .map((i) => i.trim())
+                        .filter((i) => i !== "")
+                    );
+                  },
+                })}
+              />
 
-          <TextInput
-            label="Excluded Work Scope"
-            placeholder="Comma-separated list"
-            {...(form.register("excludedWorkScope"),
-            {
-              onChange: (e) => {
-                form.setValue(
-                  "excludedWorkScope",
-                  e.target.value
-                    .split(",")
-                    .map((i) => i.trim())
-                    .filter((i) => i !== "")
-                );
-              },
-            })}
-          />
+              <TextInput
+                label="Work Scope"
+                placeholder="Comma-separated list"
+                {...(form.register("workScope"),
+                {
+                  onChange: (e) => {
+                    form.setValue(
+                      "workScope",
+                      e.target.value
+                        .split(",")
+                        .map((i) => i.trim())
+                        .filter((i) => i !== "")
+                    );
+                  },
+                })}
+              />
 
-          <DateInput
-            label="Work Start Date"
-            required
-            value={form.watch("workTimeframeStart")}
-            onChange={(value) =>
-              value && form.setValue("workTimeframeStart", value)
-            }
-            styles={{
-              label: { color: "var(--mantine-color-gray-4)" },
-              input: {
-                backgroundColor: "var(--mantine-color-dark-6)",
-                color: "var(--mantine-color-white)",
-                border: "1px solid var(--mantine-color-dark-4)",
-              },
-            }}
-          />
+              <TextInput
+                label="Excluded Work Scope"
+                placeholder="Comma-separated list"
+                {...(form.register("excludedWorkScope"),
+                {
+                  onChange: (e) => {
+                    form.setValue(
+                      "excludedWorkScope",
+                      e.target.value
+                        .split(",")
+                        .map((i) => i.trim())
+                        .filter((i) => i !== "")
+                    );
+                  },
+                })}
+              />
 
-          <DateInput
-            label="Work End Date"
-            required
-            value={form.watch("workTimeframeEnd")}
-            onChange={(value) =>
-              value && form.setValue("workTimeframeEnd", value)
-            }
-            styles={{
-              label: { color: "var(--mantine-color-gray-4)" },
-              input: {
-                backgroundColor: "var(--mantine-color-dark-6)",
-                color: "var(--mantine-color-white)",
-                border: "1px solid var(--mantine-color-dark-4)",
-              },
-            }}
-          />
+              <DateInput
+                label="Work Start Date"
+                value={form.watch("workTimeframeStart")}
+                onChange={(value) =>
+                  value && form.setValue("workTimeframeStart", value)
+                }
+                styles={{
+                  label: { color: "var(--mantine-color-gray-4)" },
+                  input: {
+                    backgroundColor: "var(--mantine-color-dark-6)",
+                    color: "var(--mantine-color-white)",
+                    border: "1px solid var(--mantine-color-dark-4)",
+                  },
+                }}
+              />
 
-          <DateInput
-            label="Impact Start Date"
-            required
-            value={form.watch("impactTimeframeStart")}
-            onChange={(value) =>
-              value && form.setValue("impactTimeframeStart", value)
-            }
-            styles={{
-              label: { color: "var(--mantine-color-gray-4)" },
-              input: {
-                backgroundColor: "var(--mantine-color-dark-6)",
-                color: "var(--mantine-color-white)",
-                border: "1px solid var(--mantine-color-dark-4)",
-              },
-            }}
-          />
+              <DateInput
+                label="Work End Date"
+                value={form.watch("workTimeframeEnd")}
+                onChange={(value) =>
+                  value && form.setValue("workTimeframeEnd", value)
+                }
+                styles={{
+                  label: { color: "var(--mantine-color-gray-4)" },
+                  input: {
+                    backgroundColor: "var(--mantine-color-dark-6)",
+                    color: "var(--mantine-color-white)",
+                    border: "1px solid var(--mantine-color-dark-4)",
+                  },
+                }}
+              />
 
-          <DateInput
-            label="Impact End Date"
-            required
-            value={form.watch("impactTimeframeEnd")}
-            onChange={(value) =>
-              value && form.setValue("impactTimeframeEnd", value)
-            }
-            styles={{
-              label: { color: "var(--mantine-color-gray-4)" },
-              input: {
-                backgroundColor: "var(--mantine-color-dark-6)",
-                color: "var(--mantine-color-white)",
-                border: "1px solid var(--mantine-color-dark-4)",
-              },
-            }}
-          />
+              <DateInput
+                label="Impact Start Date"
+                value={form.watch("impactTimeframeStart")}
+                onChange={(value) =>
+                  value && form.setValue("impactTimeframeStart", value)
+                }
+                styles={{
+                  label: { color: "var(--mantine-color-gray-4)" },
+                  input: {
+                    backgroundColor: "var(--mantine-color-dark-6)",
+                    color: "var(--mantine-color-white)",
+                    border: "1px solid var(--mantine-color-dark-4)",
+                  },
+                }}
+              />
 
-          <TextInput
-            label="Contributors"
-            placeholder="Comma-separated list of addresses"
-            {...(form.register("contributorsList"),
-            {
-              onChange: (e) => {
-                form.setValue(
-                  "contributorsList",
-                  e.target.value
-                    .split(",")
-                    .map((i) => i.trim())
-                    .filter((i) => i !== "")
-                );
-              },
-            })}
-          />
+              <DateInput
+                label="Impact End Date"
+                value={form.watch("impactTimeframeEnd")}
+                onChange={(value) =>
+                  value && form.setValue("impactTimeframeEnd", value)
+                }
+                styles={{
+                  label: { color: "var(--mantine-color-gray-4)" },
+                  input: {
+                    backgroundColor: "var(--mantine-color-dark-6)",
+                    color: "var(--mantine-color-white)",
+                    border: "1px solid var(--mantine-color-dark-4)",
+                  },
+                }}
+              />
 
-          <TextInput
-            label="Rights"
-            placeholder="Comma-separated list"
-            required
-            {...(form.register("rights"),
-            {
-              onChange: (e) => {
-                form.setValue(
-                  "rights",
-                  e.target.value
-                    .split(",")
-                    .map((i) => i.trim())
-                    .filter((i) => i !== "")
-                );
-              },
-            })}
-          />
+              <TextInput
+                label="Contributors"
+                placeholder="Comma-separated list of addresses"
+                {...(form.register("contributorsList"),
+                {
+                  onChange: (e) => {
+                    form.setValue(
+                      "contributorsList",
+                      e.target.value
+                        .split(",")
+                        .map((i) => i.trim())
+                        .filter((i) => i !== "")
+                    );
+                  },
+                })}
+              />
 
-          <TextInput
-            label="Excluded Rights"
-            placeholder="Comma-separated list"
-            {...(form.register("excludedRights"),
-            {
-              onChange: (e) => {
-                form.setValue(
-                  "excludedRights",
-                  e.target.value
-                    .split(",")
-                    .map((i) => i.trim())
-                    .filter((i) => i !== "")
-                );
-              },
-            })}
-          />
+              <TextInput
+                label="Rights"
+                placeholder="Comma-separated list"
+                {...(form.register("rights"),
+                {
+                  onChange: (e) => {
+                    form.setValue(
+                      "rights",
+                      e.target.value
+                        .split(",")
+                        .map((i) => i.trim())
+                        .filter((i) => i !== "")
+                    );
+                  },
+                })}
+              />
+
+              <TextInput
+                label="Excluded Rights"
+                placeholder="Comma-separated list"
+                {...(form.register("excludedRights"),
+                {
+                  onChange: (e) => {
+                    form.setValue(
+                      "excludedRights",
+                      e.target.value
+                        .split(",")
+                        .map((i) => i.trim())
+                        .filter((i) => i !== "")
+                    );
+                  },
+                })}
+              />
+            </>
+          )}
 
           <Group justify="space-between">
             <Button variant="default" onClick={onPrevious}>

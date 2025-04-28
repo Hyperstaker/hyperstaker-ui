@@ -1,5 +1,4 @@
 import {
-  TextInput,
   Text,
   Paper,
   Title,
@@ -12,9 +11,7 @@ import {
   BoxProps,
   Center,
 } from "@mantine/core";
-import { DateInput } from "@mantine/dates";
 import "@mantine/dates/styles.css";
-import { useForm } from "react-hook-form";
 import { useAccount, useWriteContract, useConfig } from "wagmi";
 import { waitForTransactionReceipt } from "@wagmi/core";
 import { Abi, encodeAbiParameters, decodeAbiParameters } from "viem";
@@ -22,7 +19,6 @@ import { formatHypercertData, TransferRestrictions } from "@hypercerts-org/sdk";
 import { useHypercertClient } from "@/hooks/useHypercertClient";
 import {
   alloAbi,
-  alloRegistryAbi,
   hyperfundFactoryAbi,
   contracts,
   hyperstrategyFactoryAbi,
@@ -30,12 +26,9 @@ import {
   hyperfundAbi,
 } from "@/components/data";
 import { useRouter } from "next/navigation";
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import { useState, Dispatch, SetStateAction } from "react";
 import { ProjectConfigurationsSection } from "./ProjectConfigurationsSection"; // Add this import
 import { HypercertFormData } from "./OnboardingFlow";
-import { form } from "viem/chains";
-
-const testing = true;
 
 interface CreateHypercertProps {
   ipfsHash: [string, Dispatch<SetStateAction<string>>];
@@ -77,31 +70,6 @@ export function CreateHypers({
   alloProfileState,
   hypercertState,
 }: CreateHypercertProps) {
-  const defaultValues = testing
-    ? {
-        title: "Climate Action Project",
-        description:
-          "A project focused on reducing carbon emissions through innovative technology",
-        goal: "100000",
-        impactScope: ["Climate Change", "Carbon Reduction", "Renewable Energy"],
-        excludedImpactScope: ["Fossil Fuels"],
-        workScope: ["Research", "Development", "Implementation"],
-        excludedWorkScope: ["Marketing"],
-        workTimeframeStart: new Date(),
-        workTimeframeEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
-        impactTimeframeStart: new Date(),
-        impactTimeframeEnd: new Date(
-          Date.now() + 2 * 365 * 24 * 60 * 60 * 1000
-        ), // 2 years from now
-        contributorsList: [
-          "0x1234567890123456789012345678901234567890",
-          "0x0987654321098765432109876543210987654321",
-        ],
-        rights: ["Commercial Use", "Distribution", "Modification"],
-        excludedRights: ["Patent Rights"],
-      }
-    : {};
-
   // const form = useForm<HypercertFormData>({
   //   defaultValues,
   // });
@@ -169,23 +137,26 @@ export function CreateHypers({
           description: data.description,
           image: "https://placehold.co/600x400", // Placeholder, consider adding image upload
           version: "1.0",
-          impactScope: data.impactScope,
-          excludedImpactScope: data.excludedImpactScope,
-          workScope: data.workScope,
-          excludedWorkScope: data.excludedWorkScope,
+          impactScope: data.impactScope ?? [],
+          excludedImpactScope: data.excludedImpactScope ?? [],
+          workScope: data.workScope ?? [],
+          excludedWorkScope: data.excludedWorkScope ?? [],
           workTimeframeStart:
-            new Date(data.workTimeframeStart).getTime() / 1000,
-          workTimeframeEnd: new Date(data.workTimeframeEnd).getTime() / 1000,
+            new Date(data.workTimeframeStart ?? 0).getTime() / 1000,
+          workTimeframeEnd:
+            new Date(data.workTimeframeEnd ?? 0).getTime() / 1000,
           impactTimeframeStart:
-            new Date(data.impactTimeframeStart).getTime() / 1000,
+            new Date(data.impactTimeframeStart ?? 0).getTime() / 1000,
           impactTimeframeEnd:
-            new Date(data.impactTimeframeEnd).getTime() / 1000,
+            new Date(data.impactTimeframeEnd ?? 0).getTime() / 1000,
           contributors: data.contributorsList
             ? [account.address as string, ...data.contributorsList]
             : [account.address as string],
-          rights: [...data.rights],
-          excludedRights: [...data.excludedRights],
+          rights: data.rights ?? [],
+          excludedRights: data.excludedRights ?? [],
         });
+
+        console.log(metadata);
 
         if (!metadata.data) {
           throw new Error("Metadata is null");
@@ -498,7 +469,8 @@ export function CreateHypers({
           Create Project
         </Title>
         <Text>
-          This will create a Hypercert, a Hyperfund and Hyperstaker pool, and an Allo Pool.
+          This will create a Hypercert, a Hyperfund and Hyperstaker pool, and an
+          Allo Pool.
         </Text>
         <ProjectConfigurationsSection />
         {/* <TextInput
