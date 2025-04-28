@@ -93,7 +93,9 @@ export default function OrganisationProjects({
             </h2>
 
             <Button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => {
+                window.location.href = `/organizations/create?alloprofile=${profile.id}`;
+              }}
               className="absolute right-0 top-0"
             >
               Create Project
@@ -101,77 +103,6 @@ export default function OrganisationProjects({
           </div>
         </div>
       </div>
-
-      {/* Create Project Modal */}
-      <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="text-gray-100">
-          {/* Close Button */}
-          <button
-            onClick={() => setIsModalOpen(false)}
-            className="absolute top-4 right-4 p-2 hover:bg-gray-800 rounded-full transition-colors"
-            aria-label="Close modal"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-gray-400 hover:text-gray-200"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-
-          <div className="mb-4">
-            <h2 className="text-xl font-semibold mb-2">Create New Project</h2>
-            <p className="text-sm text-gray-300">
-              Follow these steps to create a new project:
-            </p>
-          </div>
-
-          <div className="mt-4 space-y-4">
-            <div className="p-4 bg-gray-800 rounded-lg border border-gray-700">
-              <p className="text-sm text-gray-300 mb-2">Your Profile ID:</p>
-              <code className="block p-2 bg-gray-900 rounded text-sm break-all text-gray-100">
-                {profile.id}
-              </code>
-            </div>
-
-            <ol className="list-decimal list-inside space-y-2 text-sm text-gray-300">
-              <li>Copy your profile ID using the button below</li>
-              <li>
-                Click &quot;Create&quot; to go to the project creation page
-              </li>
-              <li>
-                Paste the profile ID in the &quot;Enter your Allo Profile
-                ID&quot; section
-              </li>
-              <li>Follow the remaining steps to create your project</li>
-            </ol>
-
-            <div className="flex gap-3 justify-end mt-6">
-              <Button
-                onClick={handleCopyProfileId}
-                variant="secondary"
-                className="bg-gray-700 hover:bg-gray-600 text-gray-100"
-              >
-                {isCopied ? "Copied!" : "Copy Profile ID"}
-              </Button>
-              <Button
-                onClick={() => {
-                  setIsModalOpen(false);
-                  router.push("/organizations/create");
-                }}
-              >
-                Create
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Modal>
 
       <div className="grid grid-cols-12 gap-8 mt-8">
         {/* Left Column - Organization Details */}
