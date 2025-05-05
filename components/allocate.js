@@ -60,8 +60,9 @@ function AllocateForm({
                 }
 
                 const data = await response.json();
+              
                 const contributions = data.contributions;
-
+                const fractionRedeemeds = data.fractionRedeemeds;
                 if (contributions) {
                     // Get unique addresses
                     const uniqueAddresses = [...new Set(
@@ -72,11 +73,12 @@ function AllocateForm({
                     // Process allocation history
                     const history = contributions.map(contribution => {
                         const totalAllocated = contribution ? parseInt(contribution.units) : 0;
+                        const totalRedeemed = fractionRedeemeds.find(redeemed => redeemed.address === contribution.address && redeemed.amount == contribution.units)?.amount || 0;
                         
                         return {
                             address: contribution.address,
                             allocated: (totalAllocated).toString(),
-                            redeemed: "0.0"
+                            redeemed: (totalRedeemed).toString()
                         };
                     });
                     setAllocationHistory(history);
@@ -175,6 +177,7 @@ function AllocateForm({
                 }).filter(tx => tx !== null);
 
                 const finishedTransactions = await Promise.all(transactions);
+                console.log(finishedTransactions);
 
                 allocateForm.reset();
                 setInputs({})
@@ -265,10 +268,11 @@ function AllocateForm({
                 })}
               />
               <TextField
-                label="Amount (Amount of Hypercert fraction to be allocated to contributor)"
+                label={`Fraction Amount (Amount of Hypercert fraction to be allocated to contributor, equivalent to ${allocateForm.watch("amount") * 0.000001} USD)`}
                 margin="normal"
                 {...allocateForm.register("amount", {
                   required: true,
+                  
                 })}
               />
               <div className="flex justify-center mt-5">
@@ -311,11 +315,18 @@ function AllocateForm({
 
         <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
         <div className="p-6">
-          <h3 className=" text-lg font-medium mb-4">
+          <h3 className="text-lg font-medium mb-4 text-green-500">
             Transaction Successful!
           </h3>
-          <p className="mb-4">Transaction Hash:</p>
-          <p className="break-all text-sm bg-gray-700 p-2 rounded">{txHash}</p>
+          <p className="text-gray-200 mb-4">Transaction Hash:</p>
+          <a 
+            href={`https://sepolia.etherscan.io/tx/${txHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="break-all text-sm bg-gray-700 p-2 rounded text-blue-400 hover:text-blue-300 block mb-4"
+          >
+            {txHash}
+          </a>
           <Button className="mt-4" onClick={() => setShowSuccessModal(false)}>
             Close
           </Button>

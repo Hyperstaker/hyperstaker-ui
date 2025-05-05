@@ -31,6 +31,7 @@ export default function ManageProject({
 }) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [txHash, setTxHash] = useState("");
+  const [txStatus, setTxStatus] = useState("");
   const assetForm = useForm();
   const contract = useWriteContract();
   const [isListed, setIsListed] = useState<boolean | null>(null);
@@ -126,6 +127,7 @@ export default function ManageProject({
 
   const handleAddAddress = async () => {
     try {
+      setTxStatus("pending");
       const newAsset = assetForm.getValues("address");
       const multiplier = assetForm.getValues("multiplier");
 
@@ -138,9 +140,12 @@ export default function ManageProject({
 
       assetForm.reset();
       setTxHash(tx);
+      setTxStatus("success");
       setShowSuccessModal(true);
     } catch (error) {
       console.error("Transaction failed:", error);
+      setTxStatus("failed");
+      setShowSuccessModal(true);
     }
   };
 
@@ -192,6 +197,7 @@ export default function ManageProject({
 
   const handleAllocateFunds = async () => {
     try {
+      setTxStatus("pending");
       const allocationData = encodeAbiParameters(
         [
           { name: "recipients", type: "address[]" },
@@ -215,9 +221,12 @@ export default function ManageProject({
 
       assetForm.reset();
       setTxHash(tx);
+      setTxStatus("success");
       setShowSuccessModal(true);
     } catch (error) {
       console.error("Error allocating funds:", error);
+      setTxStatus("failed");
+      setShowSuccessModal(true);
     }
   };
 
@@ -475,11 +484,44 @@ export default function ManageProject({
 
       <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
         <div className="p-6">
-          <h3 className="text-lg font-medium mb-4">Transaction Successful!</h3>
-          <p className="text-gray-200 mb-4">Transaction Hash:</p>
-          <p className="break-all text-sm bg-gray-700 p-2 rounded text-gray-100">
-            {txHash}
-          </p>
+          {txStatus === "success" ? (
+            <>
+              <h3 className="text-lg font-medium mb-4 text-green-500">
+                Transaction Successful!
+              </h3>
+              <p className="text-gray-200 mb-4">Transaction Hash:</p>
+              <a
+                href={`https://sepolia.etherscan.io/tx/${txHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="break-all text-sm bg-gray-700 p-2 rounded text-blue-400 hover:text-blue-300 block mb-4"
+              >
+                {txHash}
+              </a>
+            </>
+          ) : txStatus === "failed" ? (
+            <>
+              <h3 className="text-lg font-medium mb-4 text-red-500">
+                Transaction Failed
+              </h3>
+              <p className="text-gray-200 mb-4">Please try again</p>
+              <Button
+                className="mt-4 bg-red-500 hover:bg-red-600"
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  if (activeTab === "supportedAssets") {
+                    handleAddAddress();
+                  } else if (activeTab === "allocateFunds") {
+                    handleAllocateFunds();
+                  }
+                }}
+              >
+                Retry
+              </Button>
+            </>
+          ) : (
+            <h3 className="text-lg font-medium mb-4">Transaction Pending...</h3>
+          )}
           <Button className="mt-4" onClick={() => setShowSuccessModal(false)}>
             Close
           </Button>

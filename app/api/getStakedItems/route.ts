@@ -28,6 +28,15 @@ export async function POST(request: Request) {
                   id
                 }
               }
+              unstakeds(where: {to: "${walletAddress}", hypercertId: "${hypercertId}"}) {
+                items {
+                  to
+                  fractionId
+                  hypercertId
+                  hyperstaker
+                  id
+                }
+              }
               hyperstakerCreated(hypercert: "${hypercertId}") {
                 hypercert
                 hyperstaker
@@ -50,6 +59,7 @@ export async function POST(request: Request) {
     const data = await response.json();
 
     return NextResponse.json({
+      unstakedItems: data.data?.unstakeds?.items || [],
       stakedItems: data.data?.stakeds?.items || [],
       hyperstakerInfo: data.data?.hyperstakerCreated,
       hyperfundInfo: data.data?.hyperfundCreated,

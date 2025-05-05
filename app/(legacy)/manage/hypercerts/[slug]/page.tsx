@@ -68,9 +68,11 @@ export default function Page(props: { params: Promise<{ slug: string }> }) {
       setProject(Array.from(uniqueHypercerts.values())[0]);
     });
 
-    getHyperstaker(account.address as string).then((hyperstaker) => {
-      setHyperstaker(hyperstaker);
-    });
+    if (account.address) {
+      getHyperstaker(account.address as string).then((hyperstaker) => {
+        setHyperstaker(hyperstaker);
+      });
+    }
   }, [account]);
 
   async function getHypercertsOfUser(walletAddress: string) {
@@ -157,12 +159,27 @@ export default function Page(props: { params: Promise<{ slug: string }> }) {
     }
 
     const data = await response.json();
-    const { stakedItems, hyperstakerInfo, hyperfundInfo } = data;
+    const { stakedItems, unstakedItems, hyperstakerInfo, hyperfundInfo } = data;
 
     // TODO: Add additional verification to ensure that fractions are still staked
-    const _stakedFractions = stakedItems.map(
+    const _stakedFractions = stakedItems?.map(
       (i: { fractionId: any }) => i.fractionId
     );
+    const _unstakedFractions = unstakedItems?.map(
+      (i: { fractionId: any }) => i.fractionId
+    );
+
+    _stakedFractions?.map((f: any, i: number) => {
+      _unstakedFractions?.map((u: any, id: number) => {
+        if (f == u) {
+          _stakedFractions.splice(i, 1);
+          _unstakedFractions.splice(id, 1);
+          return;
+        }
+      });
+    });
+
+    console.log(_stakedFractions);
     setStakedFractions(Array.from(new Set(_stakedFractions)));
     const _hyperfund = hyperfundInfo.hyperfund;
     setHyperfund(_hyperfund);

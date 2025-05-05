@@ -27,6 +27,17 @@ export async function POST(request: Request) {
                   units
                 }
               }
+              fractionRedeemeds(
+                where: {hyperfund: "${hyperfund.toLowerCase()}"}
+              ) {
+                items {
+                  address
+                  amount
+                  fraction
+                  hyperfund
+                  token
+                }
+              }
             }
           `,
         variables: {
@@ -43,6 +54,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       contributions: data.data?.nonfinancialContributions?.items || [],
+      fractionRedeemeds: data.data?.fractionRedeemeds?.items || [],
     });
   } catch (error) {
     console.error("Error fetching non-financial contributions:", error);

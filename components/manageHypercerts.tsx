@@ -43,6 +43,7 @@ export default function ManageHypercert({
   const account = useAccount();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [txHash, setTxHash] = useState("");
+  const [txStatus, setTxStatus] = useState("");
   const hyperstakerContract = useWriteContract();
   const hyperfundContract = useWriteContract();
   const hyperminterWrite = useWriteContract();
@@ -97,6 +98,9 @@ export default function ManageHypercert({
   const handleStakeFraction = async (fractionId: string) => {
     try {
       setIsStaking(fractionId);
+      setTxStatus("pending");
+
+      console.log(hyperstaker);
 
       await setApprovalForAll(hyperstaker as `0x${string}`);
       await delay(2000); // 2 second delay
@@ -108,9 +112,12 @@ export default function ManageHypercert({
       });
 
       setTxHash(tx);
+      setTxStatus("success");
       setShowSuccessModal(true);
     } catch (error) {
       console.error("Transaction failed:", error);
+      setTxStatus("failed");
+      setShowSuccessModal(true);
     } finally {
       setIsStaking("");
     }
@@ -118,6 +125,7 @@ export default function ManageHypercert({
 
   const handleUnStakeFraction = async (fractionId: string) => {
     try {
+      setTxStatus("pending");
       const tx = await hyperstakerContract.writeContractAsync({
         address: hyperstaker as `0x${string}`,
         abi: hyperstakerAbi as Abi,
@@ -126,15 +134,19 @@ export default function ManageHypercert({
       });
 
       setTxHash(tx);
+      setTxStatus("success");
       setShowSuccessModal(true);
     } catch (error) {
       console.error("Transaction failed:", error);
+      setTxStatus("failed");
+      setShowSuccessModal(true);
     }
   };
 
   const handleRetireFraction = async (fractionId: string) => {
     try {
       setIsRetiring(fractionId);
+      setTxStatus("pending");
 
       await setApprovalForAll(hyperfund as `0x${string}`);
       await delay(2000); // 2 second delay
@@ -150,9 +162,12 @@ export default function ManageHypercert({
       });
 
       setTxHash(tx);
+      setTxStatus("success");
       setShowSuccessModal(true);
     } catch (error) {
       console.error("Transaction failed:", error);
+      setTxStatus("failed");
+      setShowSuccessModal(true);
     } finally {
       setIsRetiring("");
     }
@@ -339,14 +354,46 @@ export default function ManageHypercert({
       </article>
       <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
         <div className="p-6">
-          <h3 className="text-lg font-medium mb-4">Transaction Successful!</h3>
-          <p className="text-gray-200 mb-4">Transaction Hash:</p>
-          <p className="break-all text-sm bg-gray-800 p-2 rounded text-gray-200">
-            {txHash}
-          </p>
-          <Button className="mt-4" onClick={() => setShowSuccessModal(false)}>
-            Close
-          </Button>
+          {txStatus === "success" ? (
+            <>
+              <h3 className="text-lg font-medium mb-4 text-green-500">
+                Transaction Successful!
+              </h3>
+              <p className="text-gray-200 mb-4">Transaction Hash:</p>
+              <a
+                href={`https://sepolia.etherscan.io/tx/${txHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="break-all text-sm bg-gray-700 p-2 rounded text-blue-400 hover:text-blue-300 block mb-4"
+              >
+                {txHash}
+              </a>
+            </>
+          ) : txStatus === "failed" ? (
+            <>
+              <h3 className="text-lg font-medium mb-4 text-red-500">
+                Transaction Failed
+              </h3>
+              <p className="text-gray-200 mb-4">Please try again</p>
+              <Button
+                className="mt-4 bg-red-500 hover:bg-red-600"
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  // Note: We can't automatically retry since we don't know which action failed
+                  // The user will need to retry manually
+                }}
+              >
+                Close
+              </Button>
+            </>
+          ) : (
+            <h3 className="text-lg font-medium mb-4">Transaction Pending...</h3>
+          )}
+          {txStatus === "success" && (
+            <Button className="mt-4" onClick={() => setShowSuccessModal(false)}>
+              Close
+            </Button>
+          )}
         </div>
       </Modal>
     </div>
