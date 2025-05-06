@@ -419,7 +419,7 @@ export default function CreateProject() {
               hyperstrategyAddress,
               initializationData,
               contracts[account.chainId as keyof typeof contracts]
-                .usdc as `0x${string}`, // USDC on Sepolia
+                .usdc as `0x${string}`, // USDC
               BigInt(0), // amount
               metadata,
               [], // managers array

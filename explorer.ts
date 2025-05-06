@@ -9,6 +9,8 @@ export function getTransactionExplorerUrl(
     5: "https://goerli.etherscan.io/tx/", // Goerli Testnet
     42: "https://kovan.etherscan.io/tx/", // Kovan Testnet
     11155111: "https://sepolia.etherscan.io/tx/", // Sepolia Testnet
+
+    42220: "https://explorer.celo.org/tx/", // Celo Mainnet
   };
 
   if (chainId && networkMap[chainId]) {

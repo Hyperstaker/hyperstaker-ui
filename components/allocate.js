@@ -7,6 +7,7 @@ import { contracts, hyperfundAbi, hypercertMinterAbi } from "./data";
 import { Modal } from "./ui/Modal";
 import {useWriteContract, usePublicClient, useAccount } from "wagmi";
 import {getContract} from "viem"
+import { getTransactionExplorerUrl } from "@/explorer";
 
 function AllocateForm({
   hyperfund,
@@ -320,7 +321,7 @@ function AllocateForm({
           </h3>
           <p className="text-gray-200 mb-4">Transaction Hash:</p>
           <a 
-            href={`https://sepolia.etherscan.io/tx/${txHash}`}
+            href={`${getTransactionExplorerUrl(account.chainId, txHash)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="break-all text-sm bg-gray-700 p-2 rounded text-blue-400 hover:text-blue-300 block mb-4"

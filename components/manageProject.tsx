@@ -12,6 +12,7 @@ import { Button } from "./ui/Button";
 import AllocateForm from "./allocate.js";
 import { useState, useEffect } from "react";
 import { Modal } from "./ui/Modal";
+import { getTransactionExplorerUrl } from "@/explorer";
 
 export default function ManageProject({
   project,
@@ -491,7 +492,7 @@ export default function ManageProject({
               </h3>
               <p className="text-gray-200 mb-4">Transaction Hash:</p>
               <a
-                href={`https://sepolia.etherscan.io/tx/${txHash}`}
+                href={getTransactionExplorerUrl(chain?.id, txHash) ?? ""}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="break-all text-sm bg-gray-700 p-2 rounded text-blue-400 hover:text-blue-300 block mb-4"

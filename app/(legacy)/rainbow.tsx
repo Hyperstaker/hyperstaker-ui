@@ -11,16 +11,16 @@ import {
   // mainnet,
   // optimism,
   // polygon,
-  sepolia,
+  celo,
   // zora,
 } from "wagmi/chains";
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 
-const customSepolia: Chain = {
-  ...sepolia,
+const customCelo: Chain = {
+  ...celo,
   rpcUrls: {
     default: {
-      http: ["https://ethereum-sepolia-rpc.publicnode.com"],
+      http: ["https://forno.celo.org"],
     },
   },
 };
@@ -28,8 +28,8 @@ const config = getDefaultConfig({
   appName: "RainbowKit App",
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_ID as string,
   chains: [
-    customSepolia,
-    ...(process.env.NEXT_PUBLIC_WALLETCONNECT_ID === "true" ? [sepolia] : []),
+    customCelo,
+    ...(process.env.NEXT_PUBLIC_WALLETCONNECT_ID === "true" ? [celo] : []),
   ],
   ssr: true,
 });

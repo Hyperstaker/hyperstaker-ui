@@ -253,7 +253,7 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
               )}
               {isUnsupportedNetwork && (
                 <p className="mt-8 ml-2 text-red-500">
-                  Unsupported network. Please connect to Sepolia.
+                  Unsupported network. Please connect to Celo.
                 </p>
               )}
             </div>
