@@ -32,6 +32,7 @@ export default function OrganisationProjects({
         },
         body: JSON.stringify({
           alloProfileId: profile.id,
+          chainId: profile.chainId,
         }),
       });
 

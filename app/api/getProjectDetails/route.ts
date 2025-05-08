@@ -11,7 +11,7 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
-    const { alloProfileId } = await req.json();
+    const { alloProfileId, chainId } = await req.json();
 
     if (!alloProfileId) {
       throw new Error("Invalid input body");
@@ -26,7 +26,9 @@ export async function POST(req: Request) {
         hypercerts(
           where: {hypercert_id: {in: [${hypercertIds.map(
             (h) =>
-              `"11155111-0xa16DFb32Eb140a6f3F2AC68f41dAd8c7e83C4941-${h.hypercertId}"`
+              `"${
+                chainId || 11155111
+              }-0xa16DFb32Eb140a6f3F2AC68f41dAd8c7e83C4941-${h.hypercertId}"`
           )}]}}
         ) {
           data {

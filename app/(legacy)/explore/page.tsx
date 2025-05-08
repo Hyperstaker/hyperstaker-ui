@@ -8,6 +8,7 @@ import type {
   HypercertQueryResponse,
   HypercertFraction,
 } from "../../types/hypercerts";
+import { useAccount } from "wagmi";
 
 // Remove duplicated type definitions
 /*
@@ -18,6 +19,7 @@ interface HypercertQueryResponse { ... }
 */
 
 export default function Page() {
+  const { chain } = useAccount();
   const [campaigns, setCampaigns] = useState<HypercertData[]>([]);
   // Add loading and error states
   const [isLoading, setIsLoading] = useState(true);
@@ -66,7 +68,9 @@ export default function Page() {
         hypercerts(
           where: {
             hypercert_id: {
-              eq: "11155111-0xa16DFb32Eb140a6f3F2AC68f41dAd8c7e83C4941-${id}"
+              eq: "${
+                chain?.id || 11155111
+              }-0xa16DFb32Eb140a6f3F2AC68f41dAd8c7e83C4941-${id}"
             }
           }
         ) {
