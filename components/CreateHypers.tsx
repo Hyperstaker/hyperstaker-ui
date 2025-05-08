@@ -395,7 +395,7 @@ export function CreateHypers({
           // Extract alloPoolId from transaction receipt events
           const _alloPoolId = decodeAbiParameters(
             [{ name: "poolId", type: "uint256" }],
-            txReceipt.logs[5]?.topics?.[1] as `0x${string}`
+            txReceipt.logs[6]?.topics?.[1] as `0x${string}`
           )[0];
 
           alloPoolId = _alloPoolId.toString();

@@ -20,6 +20,7 @@
     "@mantine/notifications": "^7.17.3",
     "@prisma/client": "^6.5.0",
     "@rainbow-me/rainbowkit": "^2.0.0",
+    "@safe-global/api-kit": "^3.0.1",
     "@tabler/icons-react": "^2.47.0",
     "@tanstack/react-query": "^5.20.5",
     "clsx": "^2.1.0",
