@@ -61,7 +61,7 @@ export default function Page() {
     }
 
     fetchCampaigns();
-  }, []);
+  }, [chainId]);
 
   // Renamed function and adjusted return type
   async function getHypercertById(id: string): Promise<HypercertData[] | null> {
@@ -70,7 +70,7 @@ export default function Page() {
           where: {
             hypercert_id: {
               eq: "${chainId || 11155111}-${
-      contracts[chainId as keyof typeof contracts]
+      contracts[(chainId as keyof typeof contracts) || 11155111]
         .hypercertMinterContract as `0x${string}`
     }-${id}"
             }
