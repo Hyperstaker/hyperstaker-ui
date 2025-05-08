@@ -24,6 +24,7 @@ export default function Page(props: { params: Promise<{ slug: string }> }) {
       filteredTotal?.forEach((item: any) => {
         uniqueHypercerts.set(item.hypercert_id, item);
       });
+
       setProject(Array.from(uniqueHypercerts.values())[0]);
       // Fetch alloPool from the new API route
       const alloPoolRes = await fetch(
@@ -47,45 +48,53 @@ export default function Page(props: { params: Promise<{ slug: string }> }) {
   });
 
   async function getHypercertsOfUser(walletAddress: string) {
-    const query = graphql(`
-      query MyQuery {
-        hypercerts(
-          where: {fractions: {owner_address: {eq: "${walletAddress}"}}, hypercert_id: { eq: "${params.slug}"}}
-        ) {
-          data {
-            contract {
-              chain_id
-            }
-            hypercert_id
-            fractions {
-              count
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_HYPERCERTS_API_URL_GRAPH}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: `
+          query MyQuery {
+            hypercerts(
+              where: {fractions: {owner_address: {eq: "${walletAddress}"}}, hypercert_id: { eq: "${params.slug}"}}
+            ) {
               data {
-                metadata {
-                  id
-                  name
-                  description
-                  external_url
-                  impact_scope
-                  impact_timeframe_from
-                  impact_timeframe_to
-                  work_timeframe_from
-                  work_timeframe_to
+                contract {
+                  chain_id
+                }
+                hypercert_id
+                fractions {
+                  count
+                  data {
+                    metadata {
+                      id
+                      name
+                      description
+                      external_url
+                      impact_scope
+                      impact_timeframe_from
+                      impact_timeframe_to
+                      work_timeframe_from
+                      work_timeframe_to
+                    }
+                    units
+                  }
                 }
                 units
               }
             }
-            units
           }
-        }
+        `,
+        }),
       }
-    `);
-
-    const res = await request(
-      process.env.NEXT_PUBLIC_HYPERCERTS_API_URL_GRAPH as string,
-      query
     );
 
-    res?.hypercerts.data?.map((d: any) => {
+    const res = await response.json();
+
+    res?.data?.hypercerts?.data?.map((d: any) => {
       let totalUnits = 0;
       d?.fractions?.data?.map(
         (i: any) => (totalUnits = totalUnits + Number(i.units))
@@ -93,7 +102,7 @@ export default function Page(props: { params: Promise<{ slug: string }> }) {
       (d as any)["totalUnits"] = totalUnits;
     });
 
-    return res.hypercerts.data;
+    return res.data.hypercerts.data;
   }
 
   async function getHyperfund() {

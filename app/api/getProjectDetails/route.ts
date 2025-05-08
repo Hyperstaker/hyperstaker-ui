@@ -6,6 +6,7 @@ import {
   HypercertQueryResponse,
 } from "@/app/types/hypercerts";
 import request from "graphql-request";
+import { contracts } from "@/components/data";
 
 const prisma = new PrismaClient();
 
@@ -26,9 +27,10 @@ export async function POST(req: Request) {
         hypercerts(
           where: {hypercert_id: {in: [${hypercertIds.map(
             (h) =>
-              `"${
-                chainId || 11155111
-              }-0xa16DFb32Eb140a6f3F2AC68f41dAd8c7e83C4941-${h.hypercertId}"`
+              `"${chainId || 11155111}-${
+                contracts[chainId as keyof typeof contracts]
+                  .hypercertMinterContract as `0x${string}`
+              }-${h.hypercertId}"`
           )}]}}
         ) {
           data {
@@ -65,6 +67,7 @@ export async function POST(req: Request) {
     );
 
     const hypercertsData = res?.hypercerts?.data;
+
     if (!hypercertsData) {
       return NextResponse.json({ hypercertsData });
     }

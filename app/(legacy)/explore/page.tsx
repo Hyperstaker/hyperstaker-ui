@@ -9,6 +9,7 @@ import type {
   HypercertFraction,
 } from "../../types/hypercerts";
 import { useAccount } from "wagmi";
+import { contracts } from "@/components/data";
 
 // Remove duplicated type definitions
 /*
@@ -68,9 +69,10 @@ export default function Page() {
         hypercerts(
           where: {
             hypercert_id: {
-              eq: "${
-                chain?.id || 11155111
-              }-0xa16DFb32Eb140a6f3F2AC68f41dAd8c7e83C4941-${id}"
+              eq: "${chain?.id || 11155111}-${
+      contracts[chain?.id as keyof typeof contracts]
+        .hypercertMinterContract as `0x${string}`
+    }-${id}"
             }
           }
         ) {
