@@ -20,7 +20,7 @@ interface HypercertQueryResponse { ... }
 */
 
 export default function Page() {
-  const { chain } = useAccount();
+  const { chainId } = useAccount();
   const [campaigns, setCampaigns] = useState<HypercertData[]>([]);
   // Add loading and error states
   const [isLoading, setIsLoading] = useState(true);
@@ -69,8 +69,8 @@ export default function Page() {
         hypercerts(
           where: {
             hypercert_id: {
-              eq: "${chain?.id || 11155111}-${
-      contracts[chain?.id as keyof typeof contracts]
+              eq: "${chainId || 11155111}-${
+      contracts[chainId as keyof typeof contracts]
         .hypercertMinterContract as `0x${string}`
     }-${id}"
             }
