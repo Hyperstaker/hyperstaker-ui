@@ -1681,7 +1681,7 @@ const contracts = {
   [42220]: {
     hypercertMinterContract: "0x16bA53B74c234C870c61EFC04cD418B8f2865959",
     hyperstakerFactoryContract: "0x57a894DD4ffc25E33Cd6BbFA4c65Dd0DB2343BF1",
-    hyperstrategyFactory: "0x6B4d1e62a0F1915C38C4460b18613885A67695C7",
+    hyperstrategyFactory: "0xD67030174E90400432e93Da55C7E589D831ceAD8",
     alloContract: "0x1133eA7Af70876e64665ecD07C0A0476d09465a1",
     directGrantsSimpleStrategy: "0x8564d522b19836b7F5B4324E7Ee8Cb41810E9F9e",
     usdc: "0xcebA9300f2b948710d2653dD7B07f33A8B32118C",
