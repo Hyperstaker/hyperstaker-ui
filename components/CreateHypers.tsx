@@ -34,8 +34,8 @@ interface CreateHypercertProps {
   ipfsHash: [string, Dispatch<SetStateAction<string>>];
   alloProfileState: [string, Dispatch<SetStateAction<string>>];
   hypercertState: [
-    HypercertFormData | undefined,
-    Dispatch<SetStateAction<HypercertFormData | undefined>>
+    HypercertFormData,
+    Dispatch<SetStateAction<HypercertFormData>>
   ];
   onPrevious: () => void;
 }

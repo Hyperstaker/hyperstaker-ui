@@ -13,11 +13,11 @@ import {
   Timeline,
 } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { CreateAlloProfile } from "./CreateAlloProfile";
 import { CreateHypercert } from "./CreateHypercert";
 import { CreateHypers } from "./CreateHypers";
-import { useForm } from "react-hook-form";
+import { useForm, UseFormReturn } from "react-hook-form";
 
 export interface HypercertFormData {
   title: string;
@@ -235,7 +235,13 @@ export function OnboardingFlow() {
             onPrevious={handlePreviousStep}
             alloProfileState={alloProfile}
             ipfsHash={ipfsHash}
-            alloForm={alloProfileForm}
+            alloForm={
+              alloProfileForm as unknown as UseFormReturn<
+                AlloProfileFormData,
+                any,
+                AlloProfileFormData
+              >
+            }
           />
         );
       case 1:
@@ -243,8 +249,19 @@ export function OnboardingFlow() {
           <CreateHypercert
             onNext={() => setCurrentStep(2)}
             onPrevious={handlePreviousStep}
-            hypercertState={hypercertId}
-            hypercertForm={hypercertForm}
+            hypercertState={
+              hypercertId as unknown as [
+                HypercertFormData,
+                Dispatch<SetStateAction<HypercertFormData>>
+              ]
+            }
+            hypercertForm={
+              hypercertForm as unknown as UseFormReturn<
+                HypercertFormData,
+                any,
+                HypercertFormData
+              >
+            }
           />
         );
       case 2:
@@ -252,7 +269,12 @@ export function OnboardingFlow() {
           <CreateHypers
             alloProfileState={alloProfile}
             ipfsHash={ipfsHash}
-            hypercertState={hypercertId}
+            hypercertState={
+              hypercertId as unknown as [
+                HypercertFormData,
+                Dispatch<SetStateAction<HypercertFormData>>
+              ]
+            }
             onPrevious={handlePreviousStep}
           />
         );
