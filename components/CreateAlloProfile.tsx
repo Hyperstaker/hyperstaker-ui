@@ -22,11 +22,7 @@ interface CreateAlloProfileProps {
   onPrevious: () => void;
   alloProfileState: [string, Dispatch<SetStateAction<string>>];
   ipfsHash: [string, Dispatch<SetStateAction<string>>];
-  alloForm: UseFormReturn<
-    AlloProfileFormData,
-    any,
-    AlloProfileFormData | undefined
-  >;
+  alloForm: UseFormReturn<AlloProfileFormData, any, AlloProfileFormData>;
 }
 
 export function CreateAlloProfile({
