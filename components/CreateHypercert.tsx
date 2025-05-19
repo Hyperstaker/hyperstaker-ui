@@ -21,7 +21,11 @@ interface CreateHypercertProps {
     HypercertFormData | undefined,
     Dispatch<SetStateAction<HypercertFormData | undefined>>
   ];
-  hypercertForm: UseFormReturn<HypercertFormData, any, HypercertFormData>;
+  hypercertForm: UseFormReturn<
+    HypercertFormData,
+    any,
+    HypercertFormData | undefined
+  >;
 }
 
 export function CreateHypercert({
