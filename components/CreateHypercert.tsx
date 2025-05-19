@@ -109,9 +109,18 @@ export function CreateHypercert({
             Create Project
           </Title>
           <Text>
-            A hypercert is a digital certificate that represents a contribution
-            to a project. It is a way to recognize and reward the work of
-            individuals and organizations.
+            When you create a project you mint a new{" "}
+            <a
+              href="https://hypercerts.org"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {" "}
+              Hypercert
+            </a>
+            . A hypercert is a digital certificate that represents a
+            contribution to a project. It is a way to recognize and reward the
+            work of individuals and organizations.
           </Text>
           <TextInput
             label="Project Title"
@@ -132,8 +141,8 @@ export function CreateHypercert({
           />
 
           <Textarea
-            label="Hypercert Description"
-            placeholder="Describe your Hypercert"
+            label="Project Description"
+            placeholder="Describe your project"
             required
             minRows={4}
             error={form.formState.errors.description?.message}
@@ -150,8 +159,8 @@ export function CreateHypercert({
             }}
           />
           <TextInput
-            label="Hypercert Image"
-            placeholder="Enter your hypercert image"
+            label="Project Image"
+            placeholder="Enter your project image"
             error={form.formState.errors.title?.message}
             {...form.register("image")}
             styles={{
@@ -205,6 +214,7 @@ export function CreateHypercert({
               <TextInput
                 label="Excluded Impact Scope"
                 placeholder="Comma-separated list"
+                description="Specify areas or categories that your project explicitly does NOT impact. For example, if your project focuses on education but not healthcare, you might list 'Healthcare' here."
                 {...(form.register("excludedImpactScope"),
                 {
                   onChange: (e) => {
@@ -222,6 +232,7 @@ export function CreateHypercert({
               <TextInput
                 label="Work Scope"
                 placeholder="Comma-separated list"
+                description="List the specific activities or types of work your project will undertake. For example: 'Software Development, Community Building, Documentation'"
                 {...(form.register("workScope"),
                 {
                   onChange: (e) => {
@@ -239,6 +250,7 @@ export function CreateHypercert({
               <TextInput
                 label="Excluded Work Scope"
                 placeholder="Comma-separated list"
+                description="Specify types of work that your project will NOT engage in. For example, if your project doesn't involve hardware development, you might list 'Hardware Development' here."
                 {...(form.register("excludedWorkScope"),
                 {
                   onChange: (e) => {
@@ -255,6 +267,7 @@ export function CreateHypercert({
 
               <DateInput
                 label="Work Start Date"
+                description="When will your project's work activities begin? This is when you plan to start implementing your project."
                 value={form.watch("workTimeframeStart")}
                 onChange={(value) =>
                   value && form.setValue("workTimeframeStart", value)
@@ -271,6 +284,7 @@ export function CreateHypercert({
 
               <DateInput
                 label="Work End Date"
+                description="When do you expect to complete the main work of your project? This is your target completion date."
                 value={form.watch("workTimeframeEnd")}
                 onChange={(value) =>
                   value && form.setValue("workTimeframeEnd", value)
@@ -287,6 +301,7 @@ export function CreateHypercert({
 
               <DateInput
                 label="Impact Start Date"
+                description="When do you expect your project to start making a positive impact? This might be different from your work start date if there's a delay between work and impact."
                 value={form.watch("impactTimeframeStart")}
                 onChange={(value) =>
                   value && form.setValue("impactTimeframeStart", value)
@@ -303,6 +318,7 @@ export function CreateHypercert({
 
               <DateInput
                 label="Impact End Date"
+                description="How long do you expect your project's impact to last? This could be ongoing if your project creates lasting change."
                 value={form.watch("impactTimeframeEnd")}
                 onChange={(value) =>
                   value && form.setValue("impactTimeframeEnd", value)
@@ -320,6 +336,7 @@ export function CreateHypercert({
               <TextInput
                 label="Contributors"
                 placeholder="Comma-separated list of addresses"
+                description="List the Ethereum addresses of all team members and contributors who will be working on this project. These people will receive recognition for their contributions."
                 {...(form.register("contributorsList"),
                 {
                   onChange: (e) => {
@@ -337,6 +354,7 @@ export function CreateHypercert({
               <TextInput
                 label="Rights"
                 placeholder="Comma-separated list"
+                description="What rights or permissions do you want to grant to contributors? For example: 'Recognition, Revenue Share, Governance Rights'"
                 {...(form.register("rights"),
                 {
                   onChange: (e) => {
@@ -354,6 +372,7 @@ export function CreateHypercert({
               <TextInput
                 label="Excluded Rights"
                 placeholder="Comma-separated list"
+                description="Specify any rights that contributors will NOT receive. For example, if you don't want to grant commercial usage rights, you might list 'Commercial Usage' here."
                 {...(form.register("excludedRights"),
                 {
                   onChange: (e) => {

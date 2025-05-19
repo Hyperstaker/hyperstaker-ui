@@ -17,6 +17,7 @@ import {
   hypercertMinterAbi,
   hyperfundAbi,
   hyperstakerAbi,
+  erc20ContractABI,
 } from "./data";
 import { Abi } from "viem";
 import { useState } from "react";
@@ -51,6 +52,25 @@ export default function ManageHypercert({
   const config = useConfig();
   const [isStaking, setIsStaking] = useState<string>("");
   const [isRetiring, setIsRetiring] = useState<string>("");
+
+  const poolBalances = useReadContracts({
+    contracts: [
+      {
+        abi: erc20ContractABI,
+        address: contracts[account.chain?.id as keyof typeof contracts]
+          ?.usdc as `0x${string}`,
+        functionName: "balanceOf",
+        args: [hyperstaker as `0x${string}`],
+      },
+      {
+        abi: erc20ContractABI,
+        address: contracts[account.chain?.id as keyof typeof contracts]
+          ?.usdc as `0x${string}`,
+        functionName: "balanceOf",
+        args: [hyperfund as `0x${string}`],
+      },
+    ],
+  });
 
   const callAbis = unstakedFractions.map((f) => {
     return {
@@ -191,7 +211,7 @@ export default function ManageHypercert({
         </div>
         <div className="px-4">
           <div className="flex">
-            <div className="p-2 mr-16  flex-1">
+            <div className="p-2 mr-16 flex-1">
               <h3>{project?.name}</h3>
               <div className="mb-2">
                 <p className="h-10 text-sm dark:text-gray-300">
@@ -200,54 +220,80 @@ export default function ManageHypercert({
                   </Skeleton>
                 </p>
               </div>
-              {/* <div className="mb-24">
-                <Skeleton isLoading={isLoading} className="w-full">
-                  <div className="">
-                    <h5 className="mt-8">
-                      Funds raised <span className="float-right">40%</span>
-                    </h5>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                      <div
-                        style={{ width: "45%" }}
-                        className="mb-4 bg-blue-600 h-2.5 rounded-full"
-                      ></div>
-                      <div className="flex justify-between items-center mb-4">
-                        <div>
-                          <div className="text-sm font-medium text-gray-100">
-                            Past Funding
-                          </div>
-                          <div className="text-2xl font-bold text-gray-200">
-                            1.2 ETH
-                          </div>
-                        </div>
 
-                        <div>
-                          <div className="text-sm font-medium text-gray-100">
-                            Target
-                          </div>
-                          <div className="text-2xl font-bold text-gray-300">
-                            40 ETH
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-sm font-medium text-gray-200">
-                            Retro split
-                          </div>
-                          <div className="text-2xl font-bold text-gray-300">
-                            20%
-                          </div>
-                        </div>
-                      </div>
-                      <div className="clear-both"></div>
-                    </div>
-                    <div className="clear-both"></div>
+              {/* Pool Information Section */}
+              <div className="mt-8 space-y-6">
+                <div className="bg-gray-800 p-4 rounded-lg">
+                  <h4 className="text-lg font-medium mb-3">Pool Information</h4>
+                  <div className="space-y-2">
+                    <p className="text-gray-300">
+                      <span className="font-medium">Hyperfund Pool:</span>{" "}
+                      {poolBalances?.data
+                        ? (
+                            parseInt(
+                              (
+                                poolBalances.data[1]?.result as bigint
+                              )?.toString()
+                            ) /
+                            10 ** 6
+                          ).toFixed(2)
+                        : 0}{" "}
+                      USD
+                    </p>
+                    <p className="text-gray-300">
+                      <span className="font-medium">Hyperstaker Pool:</span>{" "}
+                      {poolBalances?.data
+                        ? (
+                            parseInt(
+                              (
+                                poolBalances.data[0]?.result as bigint
+                              )?.toString()
+                            ) /
+                            10 ** 6
+                          ).toFixed(2)
+                        : 0}{" "}
+                      USD
+                    </p>
                   </div>
-                </Skeleton>
-              </div> */}
-              {/* <Skeleton isLoading={isLoading} className="w-[100px]">
-                <ImpactCategories tags={metadata?.data?.impactCategory} />
-              </Skeleton> */}
+                </div>
+
+                <div className="bg-gray-800 p-4 rounded-lg">
+                  <h4 className="text-lg font-medium mb-3">
+                    Understanding Actions
+                  </h4>
+                  <div className="space-y-4">
+                    <div>
+                      <h5 className="font-medium text-gray-200">Staking</h5>
+                      <p className="text-sm text-gray-300">
+                        When you stake your hypercert, it becomes eligible to
+                        earn yields from the project&apos;s success. The longer
+                        you stake, the more yields you can earn. You can unstake
+                        at any time.
+                      </p>
+                    </div>
+                    <div>
+                      <h5 className="font-medium text-gray-200">Unstaking</h5>
+                      <p className="text-sm text-gray-300">
+                        Unstaking removes your hypercert from earning yields.
+                        You can choose to stake it again later or retire it to
+                        convert to USD.
+                      </p>
+                    </div>
+                    <div>
+                      <h5 className="font-medium text-gray-200">Retiring</h5>
+                      <p className="text-sm text-gray-300">
+                        Retiring converts your hypercert into USD from the
+                        project&apos;s treasury. This is a one-way action - once
+                        retired, you cannot stake or transfer the hypercert.
+                        Make sure the Hyperfund pool has enough balance before
+                        retiring.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+
             <div className="flex-1">
               <div className="px-4 mt-8">
                 <div className="grid grid-cols-1 gap-6">
@@ -257,7 +303,6 @@ export default function ManageHypercert({
                       My Staked Hypercerts
                     </h2>
                     <div className="space-y-4">
-                      {/* Example staked item - Replace with actual data mapping */}
                       {stakedFractions.map((s) => (
                         <div
                           className="flex items-center justify-between p-3 bg-gray-600 dark:bg-gray-800 rounded"
@@ -267,9 +312,22 @@ export default function ManageHypercert({
                             <p className="font-medium">
                               Fraction ID: {s.slice(0, 5)}...{s.slice(-5)}
                             </p>
-                            {/* <p className="text-sm text-gray-200">
-                            Yield: 0.5 ETH
-                          </p> */}
+                            <p className="text-sm text-gray-300">
+                              Units:{" "}
+                              {fractionUnits.data
+                                ? (fractionUnits?.data[0]?.result as bigint) ||
+                                  BigInt(0)
+                                : BigInt(0)}
+                              (≈{" "}
+                              {fractionUnits.data
+                                ? (
+                                    ((fractionUnits?.data[0]
+                                      ?.result as bigint) || BigInt(0)) /
+                                    BigInt(10 ** 6)
+                                  ).toString()
+                                : 0}{" "}
+                              USD)
+                            </p>
                           </div>
                           <Button
                             variant="outline"
@@ -288,7 +346,6 @@ export default function ManageHypercert({
                       My Unstaked Hypercerts
                     </h2>
                     <div className="space-y-4">
-                      {/* Example unstaked item - Replace with actual data mapping */}
                       {unstakedFractions.map((f, idx) => (
                         <div
                           className="flex items-center justify-between p-3 bg-gray-600 dark:bg-gray-800 rounded"
@@ -298,11 +355,21 @@ export default function ManageHypercert({
                             <p className="font-medium">
                               Fraction ID: {f.slice(0, 5)}...{f.slice(-5)}
                             </p>
-                            <p>
+                            <p className="text-sm text-gray-300">
                               Units:{" "}
                               {fractionUnits.data
-                                ? (fractionUnits?.data[idx].result as bigint)
-                                : 0}
+                                ? (fractionUnits?.data[idx]
+                                    ?.result as bigint) || BigInt(0)
+                                : BigInt(0)}
+                              (≈{" "}
+                              {fractionUnits.data
+                                ? (
+                                    ((fractionUnits?.data[idx]
+                                      ?.result as bigint) || BigInt(0)) /
+                                    BigInt(10 ** 6)
+                                  ).toString()
+                                : 0}{" "}
+                              USD)
                             </p>
                           </div>
                           <div className="flex space-x-2">
@@ -311,7 +378,6 @@ export default function ManageHypercert({
                               className="bg-gray-800 hover:bg-gray-700"
                               onClick={() => handleStakeFraction(f)}
                               disabled={isStaking === f}
-                              // disabled={true}
                             >
                               {isStaking === f ? "Confirming..." : "Stake"}
                             </Button>
@@ -337,11 +403,29 @@ export default function ManageHypercert({
                       Retire Allowance
                     </h2>
                     <div className="space-y-4">
-                      {/* Example retirable item - Replace with actual data mapping */}
                       <div className="flex items-center justify-between p-3 bg-gray-600 dark:bg-gray-800 rounded">
                         <div>
                           <p className="font-medium">
-                            {nonFinancialContributions?.toString()} units
+                            {nonFinancialContributions?.toString()} units (≈{" "}
+                            {(
+                              Number(nonFinancialContributions) /
+                              10 ** 6
+                            ).toFixed(2)}{" "}
+                            USD)
+                          </p>
+                          <p className="text-sm text-gray-300">
+                            Available in Hyperfund:{" "}
+                            {poolBalances?.data
+                              ? (
+                                  parseInt(
+                                    (
+                                      poolBalances.data[1]?.result as bigint
+                                    )?.toString()
+                                  ) /
+                                  10 ** 6
+                                ).toFixed(2)
+                              : 0}{" "}
+                            USD
                           </p>
                         </div>
                       </div>

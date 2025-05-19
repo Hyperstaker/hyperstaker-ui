@@ -346,6 +346,35 @@ export default function ManageProject({
     <div className="p-4">
       <h3 className="text-xl font-semibold mb-4">Allocate Funds</h3>
       <div className="space-y-4">
+        <div className="bg-gray-800 p-4 rounded-lg mb-6">
+          <h4 className="text-lg font-medium mb-2">Understanding Allocation</h4>
+          <p className="text-gray-300 mb-3">
+            The Allo Pool is a smart contract that holds funds raised for your
+            project. When funds are allocated, they are distributed between two
+            key components:
+          </p>
+          <ul className="list-disc list-inside space-y-2 text-gray-300">
+            <li>
+              <span className="font-medium">Hyperfund:</span> This portion goes
+              to the project&apos;s treasury and can be used for project
+              development and operations. The contributors can retire their
+              hypercerts to get equivalent amount of funds in USD from the
+              Hyperfund.
+            </li>
+            <li>
+              <span className="font-medium">Hyperstaker:</span> This portion is
+              reserved for retroactive rewards to financial and non financial
+              contributors who have supported the project. The funds in
+              Hyperstaker is used to provide yields to the supporters who have
+              staked their Hypercerts.
+            </li>
+          </ul>
+          <p className="text-gray-300 mt-3">
+            The allocation process is irreversible, so please ensure you are
+            comfortable with the distribution before proceeding.
+          </p>
+        </div>
+
         <p>
           Available pool funds to be allocated:{" "}
           {(poolBalances?.data

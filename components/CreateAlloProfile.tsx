@@ -198,14 +198,14 @@ export function CreateAlloProfile({
         >
           <Stack gap="xl">
             <Title order={2} c="white">
-              Enter your Allo Profile ID
+              Enter your Organisation ID
             </Title>
             <Text size="sm" c="dimmed">
-              An Allo Profile is a unique, on-chain identifier for your project
-              or organization within the Allo Protocol ecosystem. Think of it
-              like a GitHub Organization profile - it represents your entity and
-              allows you to manage funding pools and build reputation. You can
-              learn more in the{" "}
+              Your organisation id is a unique, on-chain identifier for your
+              project or organization within the Allo Protocol ecosystem. Think
+              of it like a GitHub Organization profile - it represents your
+              entity and allows you to manage funding pools and build
+              reputation. You can learn more in the{" "}
               <a
                 href="https://docs.allo.gitcoin.co/overview/registry"
                 target="_blank"
@@ -233,7 +233,7 @@ export function CreateAlloProfile({
               .
             </Text>
             <TextInput
-              label="Existing Allo Profile ID"
+              label="Existing Organisation ID / Allo Profile ID"
               placeholder="Enter existing profile ID if available"
               value={alloProfile}
               onChange={(e) => setAlloProfile(e.target.value)}
@@ -273,11 +273,12 @@ export function CreateAlloProfile({
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <Stack gap="xl">
             <Title order={2} c="white">
-              Create your project
+              Create your organisation
             </Title>
             <Text>
-              This information will be used to create your project profile, as
-              well as create a profile for your project on Allo Protocol.
+              This information will be used to create your organisation profile,
+              as well as create a profile for your organisation on Allo
+              Protocol.
             </Text>
             <TextInput
               label="Project Title"
@@ -389,8 +390,8 @@ export function CreateAlloProfile({
             />
 
             <TextInput
-              label="Member Addresses"
-              description="Enter the addresses of the members of your project. This will be used to create a profile and a pool for your project on Allo Protocol."
+              label="Founding Members Addresses"
+              description="Enter the addresses of the founding members of your organisation. This will be used to create a profile and a pool for your organisation on Allo Protocol."
               placeholder="Comma-separated list of addresses"
               {...(form.register("members"),
               {
@@ -414,7 +415,7 @@ export function CreateAlloProfile({
               }}
             />
 
-            <TextInput
+            {/* <TextInput
               label="Required Credentials"
               placeholder="Comma-separated list of credentials"
               {...(form.register("credentials"),
@@ -437,7 +438,7 @@ export function CreateAlloProfile({
                   border: "1px solid var(--mantine-color-dark-4)",
                 },
               }}
-            />
+            /> */}
 
             <Group justify="space-between">
               <Button variant="default" onClick={onPrevious}>

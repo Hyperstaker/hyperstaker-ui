@@ -232,7 +232,7 @@ function AllocateForm({
               <h3 className="text-xl font-semibold mb-4">Allocate funds to contributors</h3>
               {addresses.map(address => (
                   <div key={address} className="flex justify-between">
-                      <label>{address}</label>
+                      <label>{address} ({(parseFloat(inputs[address] || 0) * 0.000001).toFixed(6)} USD)</label>
                       <div className="flex items-center">
                           <button type="button" onClick={() => handleDecrease(address)}>←</button>
                           <input
