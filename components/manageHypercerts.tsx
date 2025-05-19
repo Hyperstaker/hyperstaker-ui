@@ -46,6 +46,9 @@ export default function ManageHypercert({
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [txHash, setTxHash] = useState("");
   const [txStatus, setTxStatus] = useState("");
+  const [showInsufficientFundsModal, setShowInsufficientFundsModal] =
+    useState(false);
+  const [retireAmount, setRetireAmount] = useState<bigint>(BigInt(0));
   const hyperstakerContract = useWriteContract();
   const hyperfundContract = useWriteContract();
   const hyperminterWrite = useWriteContract();
@@ -167,8 +170,37 @@ export default function ManageHypercert({
   const handleRetireFraction = async (fractionId: string) => {
     try {
       setIsRetiring(fractionId);
-      setTxStatus("pending");
 
+      // Get the fraction units
+      const fractionUnitsResult = await readContract(config, {
+        address: contracts[account.chainId as keyof typeof contracts]
+          ?.hypercertMinterContract as `0x${string}`,
+        abi: hypercertMinterAbi,
+        functionName: "unitsOf",
+        args: [BigInt(fractionId)],
+      });
+
+      // Get Hyperfund pool balance
+      const hyperfundBalance = await readContract(config, {
+        address: contracts[account.chainId as keyof typeof contracts]
+          ?.usdc as `0x${string}`,
+        abi: erc20ContractABI,
+        functionName: "balanceOf",
+        args: [hyperfund as `0x${string}`],
+      });
+
+      // Check if there are sufficient funds
+      if (
+        BigInt(hyperfundBalance as bigint) <
+        BigInt(fractionUnitsResult as bigint)
+      ) {
+        setRetireAmount(fractionUnitsResult as bigint);
+        setShowInsufficientFundsModal(true);
+        setIsRetiring("");
+        return;
+      }
+
+      setTxStatus("pending");
       await setApprovalForAll(hyperfund as `0x${string}`);
       await delay(2000); // 2 second delay
       const tx = await hyperfundContract.writeContractAsync({
@@ -178,7 +210,7 @@ export default function ManageHypercert({
         args: [
           fractionId,
           contracts[account.chainId as keyof typeof contracts]
-            .usdc as `0x${string}`,
+            ?.usdc as `0x${string}`,
         ],
       });
 
@@ -274,19 +306,20 @@ export default function ManageHypercert({
                     <div>
                       <h5 className="font-medium text-gray-200">Unstaking</h5>
                       <p className="text-sm text-gray-300">
-                        Unstaking removes your hypercert from earning yields.
-                        You can choose to stake it again later or retire it to
+                        Unstaking removes your hypercert from earning yields and
+                        you will be ineligible for the retroactive rewards. You
+                        can choose to stake it again later or retire it to
                         convert to USD.
                       </p>
                     </div>
                     <div>
                       <h5 className="font-medium text-gray-200">Retiring</h5>
                       <p className="text-sm text-gray-300">
-                        Retiring converts your hypercert into USD from the
-                        project&apos;s treasury. This is a one-way action - once
-                        retired, you cannot stake or transfer the hypercert.
-                        Make sure the Hyperfund pool has enough balance before
-                        retiring.
+                        Retiring burns your hypercert and returns the equivalent
+                        amount of funds from the project&apos;s treasury. This
+                        is a one-way action - once retired, you cannot stake or
+                        transfer the hypercert. Make sure the Hyperfund pool has
+                        enough balance before retiring.
                       </p>
                     </div>
                   </div>
@@ -479,6 +512,42 @@ export default function ManageHypercert({
               Close
             </Button>
           )}
+        </div>
+      </Modal>
+
+      <Modal
+        open={showInsufficientFundsModal}
+        onClose={() => setShowInsufficientFundsModal(false)}
+      >
+        <div className="p-6">
+          <h3 className="text-lg font-medium mb-4 text-yellow-500">
+            Insufficient Funds in Hyperfund Pool
+          </h3>
+          <p className="text-gray-200 mb-4">
+            The Hyperfund pool does not have enough funds to process your
+            retirement request.
+          </p>
+          <p className="text-gray-300 mb-4">
+            Required amount: {(Number(retireAmount) / 10 ** 6).toFixed(2)} USD
+          </p>
+          <p className="text-gray-300 mb-4">
+            Available in pool:{" "}
+            {poolBalances?.data
+              ? (
+                  parseInt(
+                    (poolBalances.data[1]?.result as bigint)?.toString()
+                  ) /
+                  10 ** 6
+                ).toFixed(2)
+              : 0}{" "}
+            USD
+          </p>
+          <Button
+            className="mt-4"
+            onClick={() => setShowInsufficientFundsModal(false)}
+          >
+            Close
+          </Button>
         </div>
       </Modal>
     </div>
