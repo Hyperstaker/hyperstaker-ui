@@ -352,6 +352,8 @@ export function CreateHypers({
             args: [hyperstrategyAddress, true],
           });
 
+          await new Promise((resolve) => setTimeout(resolve, 2000)); // Short delay for UI update
+
           // Strategy initialization data
           const initializationData = encodeAbiParameters(
             [
@@ -395,7 +397,7 @@ export function CreateHypers({
           // Extract alloPoolId from transaction receipt events
           const _alloPoolId = decodeAbiParameters(
             [{ name: "poolId", type: "uint256" }],
-            txReceipt.logs[6]?.topics?.[1] as `0x${string}`
+            txReceipt.logs[5]?.topics?.[1] as `0x${string}`
           )[0];
 
           alloPoolId = _alloPoolId.toString();
