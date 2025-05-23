@@ -134,24 +134,16 @@ function AllocateForm({
         }
 
         try {
-            const contracts = []
-            addresses.map((a) => {
-                if (parseInt(inputs[a]) > 0) {
-                    contracts.push({
-                        address: hyperfund,
-                        abi: hyperfundAbi,
-                        functionName: "nonfinancialContribution",
-                        args: [
-                            a,
-                            parseInt(inputs[a])
-                        ]
-                    })
-                }
-            });
+            // Filter addresses with positive allocations
+            const validAllocations = addresses.filter(a => parseInt(inputs[a]) > 0);
+            const units = validAllocations.map(a => parseInt(inputs[a]));
 
-            const tx = await allocate.writeContractsAsync({
-                contracts
-            })
+            const tx = await allocateSingle.writeContractAsync({
+                address: hyperfund,
+                abi: hyperfundAbi,
+                functionName: "nonFinancialContributions",
+                args: [validAllocations, units]
+            });
 
             if (tx) {
                 allocateForm.reset();
@@ -159,34 +151,8 @@ function AllocateForm({
                 setTxHash(tx);
                 setShowSuccessModal(true);
             }
-        } catch {
-            try {
-                // Wait for all transactions to complete using Promise.all
-                const transactions = addresses.map(async (a) => {
-                    if (parseInt(inputs[a]) > 0) {
-                        return await allocateSingle.writeContractAsync({
-                            address: hyperfund,
-                            abi: hyperfundAbi,
-                            functionName: "nonfinancialContribution",
-                            args: [
-                                a,
-                                parseInt(inputs[a])
-                            ]
-                        })
-                    }
-                    return null;
-                }).filter(tx => tx !== null);
-
-                const finishedTransactions = await Promise.all(transactions);
-                console.log(finishedTransactions);
-
-                allocateForm.reset();
-                setInputs({})
-                setTxHash(finishedTransactions[0]);
-                setShowSuccessModal(true);
-            } catch (e) {
-                console.error("Transaction failed: ", e);
-            }
+        } catch (e) {
+            console.error("Transaction failed: ", e);
         }
     }
 

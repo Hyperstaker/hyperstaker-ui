@@ -151,7 +151,13 @@ export default function Page() {
       {isLoading && <p className="text-center">Loading projects...</p>}
       {error && <p className="text-center text-red-500">{error}</p>}
 
-      {!isLoading && !error && campaigns.length === 0 && (
+      {!chainId && (
+        <div className="text-center">
+          <p>Please connect your wallet to explore projects.</p>
+        </div>
+      )}
+
+      {!isLoading && !error && campaigns.length === 0 && chainId && (
         <p className="text-center">No projects found.</p>
       )}
 

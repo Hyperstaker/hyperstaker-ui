@@ -704,6 +704,23 @@ const hyperfundAbi = [{
   inputs: [{ name: "contributor", type: "address", internalType: "address" }],
   outputs: [{ name: "units", type: "uint256", internalType: "uint256" }],
   stateMutability: "view",
+}, {
+  "inputs": [
+    {
+      "internalType": "address[]",
+      "name": "_contributors",
+      "type": "address[]"
+    },
+    {
+      "internalType": "uint256[]",
+      "name": "_units",
+      "type": "uint256[]"
+    }
+  ],
+  "name": "nonFinancialContributions",
+  "outputs": [],
+  "stateMutability": "nonpayable",
+  "type": "function"
 }]
 
 const hyperstakerAbi = [
