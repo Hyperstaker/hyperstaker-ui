@@ -31,3 +31,25 @@ model UserAlloProfiles {
 
   @@index([walletAddress])
 }
+
+model ProjectCreationProgress {
+  id                Int      @id @default(autoincrement())
+  walletAddress     String
+  projectName       String
+  organisationName  String
+  currentStep       Int
+  alloProfileId     String?
+  hypercertId       String?
+  alloPoolId        String?
+  hyperfundPoolId   String?
+  hyperstakerId     String?
+  projectCreationProgress String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  status            String   // "in_progress", "completed", "failed"
+  formData          Json     // Stores allo_profile and hypercert form data
+
+  @@unique([walletAddress, projectName])
+  @@index([walletAddress])
+  @@index([status])
+}

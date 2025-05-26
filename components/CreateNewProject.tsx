@@ -38,6 +38,7 @@ interface CreateHypercertProps {
     Dispatch<SetStateAction<HypercertFormData>>
   ];
   onPrevious: () => void;
+  continueOnboardingParam: [any, Dispatch<SetStateAction<any>>];
 }
 
 // Helper component for styling steps inside the modal (copied from createProject.tsx)
@@ -64,11 +65,12 @@ function StepBox({ isActive, isCompleted, children, ...props }: StepBoxProps) {
   );
 }
 
-export function CreateHypers({
+export function CreateNewProject({
   onPrevious,
   ipfsHash,
   alloProfileState,
   hypercertState,
+  continueOnboardingParam,
 }: CreateHypercertProps) {
   // const form = useForm<HypercertFormData>({
   //   defaultValues,
@@ -82,7 +84,6 @@ export function CreateHypers({
   const [alloProfile] = alloProfileState;
   const [ipfshash] = ipfsHash;
   const [hypercertData] = hypercertState;
-
   // State for tracking completed steps within this component's scope
   const [localCompletedSteps, setLocalCompletedSteps] = useState<{
     hypercertId?: string;
@@ -106,7 +107,6 @@ export function CreateHypers({
     "Creating Hyperfund Pool",
     "Creating Hyperstaker",
     "Creating Allo Pool",
-    // Add API/DB step if applicable
   ];
 
   const onSubmit = async (data: HypercertFormData) => {
@@ -124,6 +124,13 @@ export function CreateHypers({
     setErrorMessage("");
     // Use a ref to ensure state updates correctly within the async function
     const stateRef = { current: { ...localCompletedSteps } };
+    stateRef.current = {
+      ...stateRef.current,
+      hypercertId: continueOnboardingParam[0].hypercertId,
+      hyperfundAddress: continueOnboardingParam[0].hyperfundPoolId,
+      hyperstakerAddress: continueOnboardingParam[0].hyperstakerId,
+      alloPoolId: continueOnboardingParam[0].alloPoolId,
+    };
 
     try {
       // --- Step 1: Create Hypercert ---
@@ -191,6 +198,21 @@ export function CreateHypers({
         };
         setLocalCompletedSteps(stateRef.current); // Update state
         console.log("Step 1 Complete. Hypercert ID:", currentHypercertId);
+        await fetch("/api/addProgress", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            projectName: data.title,
+            projectCreationProgress: "hypercertCreated",
+            walletAddress: account.address,
+            organisationName: alloProfile,
+            hypercertId: currentHypercertId,
+            status: "in-progress",
+            formData: data,
+          }),
+        });
         await new Promise((resolve) => setTimeout(resolve, 500)); // Short delay for UI update
       } else {
         console.log("Step 1: Skipped (Hypercert already created)");
@@ -200,49 +222,86 @@ export function CreateHypers({
       setCurrentStepIndex(1);
       let currentHyperfundAddress = stateRef.current.hyperfundAddress;
 
-      if (!currentHyperfundAddress && currentHypercertId) {
-        console.log("Step 2: Creating Hyperfund Pool...");
-        const tx = await alloContract.writeContractAsync({
-          address: contracts[account.chainId as keyof typeof contracts]
-            .hyperstakerFactoryContract as `0x${string}`,
-          abi: hyperfundFactoryAbi as Abi,
-          functionName: "createHyperfund",
-          args: [
-            BigInt(currentHypercertId),
-            account.address as `0x${string}`,
-            account.address as `0x${string}`,
-            account.address as `0x${string}`,
-            account.address as `0x${string}`,
-          ],
-        });
+      if (
+        (!currentHyperfundAddress && currentHypercertId) ||
+        continueOnboardingParam[0].projectCreationProgress == "hypercertCreated"
+      ) {
+        try {
+          console.log("Step 2: Creating Hyperfund Pool...");
+          const tx = await alloContract.writeContractAsync({
+            address: contracts[account.chainId as keyof typeof contracts]
+              .hyperstakerFactoryContract as `0x${string}`,
+            abi: hyperfundFactoryAbi as Abi,
+            functionName: "createHyperfund",
+            args: [
+              BigInt(currentHypercertId),
+              account.address as `0x${string}`,
+              account.address as `0x${string}`,
+              account.address as `0x${string}`,
+              account.address as `0x${string}`,
+            ],
+          });
 
-        console.log("Waiting for Hyperfund tx receipt:", tx);
-        const txReceipt = await waitForTransactionReceipt(wagmiConfig, {
-          hash: tx,
-        });
-        console.log("Hyperfund tx receipt:", txReceipt);
+          console.log("Waiting for Hyperfund tx receipt:", tx);
+          const txReceipt = await waitForTransactionReceipt(wagmiConfig, {
+            hash: tx,
+          });
+          console.log("Hyperfund tx receipt:", txReceipt);
 
-        // NOTE: Double check the log index and event signature if this fails
-        const hyperfundAddress = txReceipt.logs[2]?.address as `0x${string}`;
+          // NOTE: Double check the log index and event signature if this fails
+          const hyperfundAddress = txReceipt.logs[2]?.address as `0x${string}`;
 
-        if (!hyperfundAddress) {
-          throw new Error("Failed to get Hyperfund address from transaction");
-        }
+          if (!hyperfundAddress) {
+            throw new Error("Failed to get Hyperfund address from transaction");
+          }
 
-        currentHyperfundAddress = hyperfundAddress;
-        stateRef.current = {
-          ...stateRef.current,
-          hyperfundAddress: currentHyperfundAddress,
-        };
-
-        if (hyperfundAddress) {
+          currentHyperfundAddress = hyperfundAddress;
           stateRef.current = {
             ...stateRef.current,
-            hyperfundAddress: hyperfundAddress,
+            hyperfundAddress: currentHyperfundAddress,
+          };
+
+          await fetch("/api/addProgress", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              projectName: data.title,
+              projectCreationProgress: "hyperfundCreated",
+              walletAddress: account.address,
+              organisationName: alloProfile,
+              hypercertId: currentHypercertId,
+              hyperfundPoolId: currentHyperfundAddress,
+              status: "in-progress",
+              formData: data,
+            }),
+          });
+          await new Promise((resolve) => setTimeout(resolve, 500)); // Short delay
+        } catch (error) {
+          console.error("Error creating hyperfund:", error);
+          setStepStatus("error");
+          setErrorMessage("Failed to create hyperfund");
+          return;
+        }
+      } else {
+        console.log(
+          "Step 2: Skipped (Hyperfund already created or Hypercert missing)"
+        );
+      }
+
+      if (
+        currentHyperfundAddress ||
+        continueOnboardingParam[0].projectCreationProgress == "hyperfundCreated"
+      ) {
+        try {
+          stateRef.current = {
+            ...stateRef.current,
+            hyperfundAddress: currentHyperfundAddress,
           };
 
           await contract.writeContractAsync({
-            address: hyperfundAddress as `0x${string}`,
+            address: currentHyperfundAddress as `0x${string}`,
             abi: hyperfundAbi as Abi,
             functionName: "allowlistToken",
             args: [
@@ -251,63 +310,118 @@ export function CreateHypers({
               1,
             ],
           });
+
+          await fetch("/api/addProgress", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              projectName: data.title,
+              projectCreationProgress: "usdcApproved",
+              walletAddress: account.address,
+              organisationName: alloProfile,
+              hypercertId: currentHypercertId,
+              hyperfundPoolId: currentHyperfundAddress,
+              status: "in-progress",
+              formData: data,
+            }),
+          });
+          await new Promise((resolve) => setTimeout(resolve, 500)); // Short delay
+        } catch (error) {
+          console.error("Error allowlisting USDC:", error);
+          setStepStatus("error");
+          setErrorMessage("Failed to allowlist USDC");
+          return;
         }
-        setLocalCompletedSteps(stateRef.current); // Update state
-        console.log(
-          "Step 2 Complete. Hyperfund Address:",
-          currentHyperfundAddress
-        );
-        await new Promise((resolve) => setTimeout(resolve, 500)); // Short delay
       } else {
         console.log(
-          "Step 2: Skipped (Hyperfund already created or Hypercert missing)"
+          "Step 2: Skipped (USDC already allowed or Hypercert missing)"
         );
       }
+
+      setLocalCompletedSteps(stateRef.current); // Update state
+      console.log(
+        "Step 2 Complete. Hyperfund Address:",
+        currentHyperfundAddress
+      );
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Short delay
 
       // --- Step 3: Create Hyperstaker ---
       setCurrentStepIndex(2);
       let currentHyperstakerAddress = stateRef.current.hyperstakerAddress;
 
-      if (!currentHyperstakerAddress && currentHypercertId) {
-        console.log("Step 3: Creating Hyperstaker...");
-        const tx = await alloContract.writeContractAsync({
-          address: contracts[account.chainId as keyof typeof contracts]
-            .hyperstakerFactoryContract as `0x${string}`,
-          abi: hyperfundFactoryAbi as Abi, // Assuming same factory ABI? Double check.
-          functionName: "createHyperstaker",
-          args: [
-            BigInt(currentHypercertId),
-            account.address as `0x${string}`,
-            account.address as `0x${string}`,
-            account.address as `0x${string}`,
-            account.address as `0x${string}`,
-          ],
-        });
+      if (
+        (!currentHyperstakerAddress && currentHypercertId) ||
+        continueOnboardingParam[0].projectCreationProgress == "usdcApproved"
+      ) {
+        try {
+          console.log("Step 3: Creating Hyperstaker...");
+          const tx = await alloContract.writeContractAsync({
+            address: contracts[account.chainId as keyof typeof contracts]
+              .hyperstakerFactoryContract as `0x${string}`,
+            abi: hyperfundFactoryAbi as Abi, // Assuming same factory ABI? Double check.
+            functionName: "createHyperstaker",
+            args: [
+              BigInt(currentHypercertId),
+              account.address as `0x${string}`,
+              account.address as `0x${string}`,
+              account.address as `0x${string}`,
+              account.address as `0x${string}`,
+            ],
+          });
 
-        console.log("Waiting for Hyperstaker tx receipt:", tx);
-        const txReceipt = await waitForTransactionReceipt(wagmiConfig, {
-          hash: tx,
-        });
-        console.log("Hyperstaker tx receipt:", txReceipt);
+          console.log("Waiting for Hyperstaker tx receipt:", tx);
+          const txReceipt = await waitForTransactionReceipt(wagmiConfig, {
+            hash: tx,
+          });
+          console.log("Hyperstaker tx receipt:", txReceipt);
 
-        // NOTE: Double check the log index and event signature if this fails
-        const hyperstakerAddress = txReceipt.logs[2]?.address as `0x${string}`;
+          // NOTE: Double check the log index and event signature if this fails
+          const hyperstakerAddress = txReceipt.logs[2]
+            ?.address as `0x${string}`;
 
-        if (!hyperstakerAddress) {
-          throw new Error("Failed to get Hyperstaker address from transaction");
+          if (!hyperstakerAddress) {
+            throw new Error(
+              "Failed to get Hyperstaker address from transaction"
+            );
+          }
+
+          currentHyperstakerAddress = hyperstakerAddress;
+          stateRef.current = {
+            ...stateRef.current,
+            hyperstakerAddress: currentHyperstakerAddress,
+          };
+          setLocalCompletedSteps(stateRef.current); // Update state
+          console.log(
+            "Step 3 Complete. Hyperstaker Address:",
+            currentHyperstakerAddress
+          );
+
+          await fetch("/api/addProgress", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              projectName: data.title,
+              projectCreationProgress: "hyperstakerCreated",
+              walletAddress: account.address,
+              organisationName: alloProfile,
+              hypercertId: currentHypercertId,
+              hyperfundPoolId: currentHyperfundAddress,
+              hyperstakerId: currentHyperstakerAddress,
+              status: "in-progress",
+              formData: data,
+            }),
+          });
+          await new Promise((resolve) => setTimeout(resolve, 500)); // Short delay
+        } catch (error) {
+          console.error("Error creating hyperstaker:", error);
+          setStepStatus("error");
+          setErrorMessage("Failed to create hyperstaker");
+          return;
         }
-
-        currentHyperstakerAddress = hyperstakerAddress;
-        stateRef.current = {
-          ...stateRef.current,
-          hyperstakerAddress: currentHyperstakerAddress,
-        };
-        setLocalCompletedSteps(stateRef.current); // Update state
-        console.log(
-          "Step 3 Complete. Hyperstaker Address:",
-          currentHyperstakerAddress
-        );
-        await new Promise((resolve) => setTimeout(resolve, 500)); // Short delay
       } else {
         console.log(
           "Step 3: Skipped (Hyperstaker already created or Hypercert missing)"
@@ -316,8 +430,13 @@ export function CreateHypers({
 
       setCurrentStepIndex(3);
       let alloPoolId = stateRef.current.alloPoolId;
+      let currentHyperstrategyAddress;
 
-      if (!alloPoolId && currentHyperfundAddress) {
+      if (
+        (!alloPoolId && currentHyperstakerAddress) ||
+        continueOnboardingParam[0].projectCreationProgress ==
+          "hyperstakerCreated"
+      ) {
         console.log("Step 4: Creating Allo Pool...");
         try {
           // Deploy strategy contract
@@ -343,17 +462,86 @@ export function CreateHypers({
             txreceipt.logs[1]?.topics?.[1] as `0x${string}`
           )[0];
 
+          if (!hyperstrategyAddress) {
+            throw new Error(
+              "Failed to get Hyperstrategy address from transaction"
+            );
+          }
+
+          currentHyperstrategyAddress = hyperstrategyAddress;
+
+          await fetch("/api/addProgress", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              projectName: data.title,
+              projectCreationProgress: "hyperstrategyCreated",
+              walletAddress: account.address,
+              organisationName: alloProfile,
+              hypercertId: currentHypercertId,
+              hyperfundPoolId: currentHyperfundAddress,
+              hyperstakerId: currentHyperstakerAddress,
+              status: "in-progress",
+              formData: data,
+            }),
+          });
+        } catch (error) {
+          console.error("Error creating hyperstrategy:", error);
+          setStepStatus("error");
+          setErrorMessage("Failed to create hyperstrategy");
+          return;
+        }
+      }
+
+      if (
+        (!alloPoolId && currentHyperstrategyAddress) ||
+        continueOnboardingParam[0].projectCreationProgress ==
+          "hyperstrategyCreated"
+      ) {
+        try {
           // Approve strategy to distribute hypercerts
           await contract.writeContractAsync({
             abi: hypercertMinterAbi,
             address: contracts[account.chainId as keyof typeof contracts]
               .hypercertMinterContract as `0x${string}`,
             functionName: "setApprovalForAll",
-            args: [hyperstrategyAddress, true],
+            args: [currentHyperstrategyAddress, true],
           });
 
+          await fetch("/api/addProgress", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              projectName: data.title,
+              projectCreationProgress: "hypercertMinterApproved",
+              walletAddress: account.address,
+              organisationName: alloProfile,
+              hypercertId: currentHypercertId,
+              hyperfundPoolId: currentHyperfundAddress,
+              hyperstakerId: currentHyperstakerAddress,
+              status: "in-progress",
+              formData: data,
+            }),
+          });
           await new Promise((resolve) => setTimeout(resolve, 2000)); // Short delay for UI update
+        } catch (error) {
+          console.error("Error approving hypercert:", error);
+          setStepStatus("error");
+          setErrorMessage("Failed to approve hypercert");
+          return;
+        }
+      }
 
+      if (
+        (!alloPoolId && currentHyperstrategyAddress) ||
+        continueOnboardingParam[0].projectCreationProgress ==
+          "hypercertMinterApproved"
+      ) {
+        try {
           // Strategy initialization data
           const initializationData = encodeAbiParameters(
             [
@@ -380,7 +568,7 @@ export function CreateHypers({
             functionName: "createPoolWithCustomStrategy",
             args: [
               alloProfile as `0x${string}`,
-              hyperstrategyAddress,
+              currentHyperstrategyAddress,
               initializationData,
               contracts[account.chainId as keyof typeof contracts]
                 .usdc as `0x${string}`, // USDC
@@ -402,30 +590,31 @@ export function CreateHypers({
 
           alloPoolId = _alloPoolId.toString();
 
-          if (alloPoolId) {
-            stateRef.current = {
-              ...stateRef.current,
+          stateRef.current = {
+            ...stateRef.current,
+            alloPoolId: alloPoolId,
+          };
+          setLocalCompletedSteps(stateRef.current); // Update state
+          console.log("Step 4 Complete. AlloPool ID:", alloPoolId);
+
+          await fetch("/api/addProgress", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              projectName: data.title,
+              projectCreationProgress: "alloPoolCreated",
+              walletAddress: account.address,
+              organisationName: alloProfile,
+              hypercertId: currentHypercertId,
+              hyperfundPoolId: currentHyperfundAddress,
+              hyperstakerId: currentHyperstakerAddress,
               alloPoolId: alloPoolId,
-            };
-            setLocalCompletedSteps(stateRef.current); // Update state
-            console.log("Step 4 Complete. AlloPool ID:", alloPoolId);
-
-            // Call the API to add entries to the database
-            await fetch("/api/addEntry", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                hypercertId: stateRef.current.hypercertId,
-                alloProfile: alloProfile,
-                alloPool: alloPoolId,
-                listed: false,
-              }),
-            });
-
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-          }
+              status: "in-progress",
+              formData: data,
+            }),
+          });
         } catch (error) {
           console.error("Error creating Allo Pool:", error);
           setStepStatus("error");
@@ -434,10 +623,68 @@ export function CreateHypers({
         }
       }
 
+      if (
+        alloPoolId ||
+        continueOnboardingParam[0].projectCreationProgress == "alloPoolCreated"
+      ) {
+        try {
+          // Call the API to add entries to the database
+          await fetch("/api/addEntry", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              hypercertId: stateRef.current.hypercertId,
+              alloProfile: alloProfile,
+              alloPool: alloPoolId,
+              listed: false,
+            }),
+          });
+
+          await fetch("/api/addProgress", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              projectName: data.title,
+              projectCreationProgress: "databaseEntryCreated",
+              walletAddress: account.address,
+              organisationName: alloProfile,
+              hypercertId: currentHypercertId,
+              hyperfundPoolId: currentHyperfundAddress,
+              hyperstakerId: currentHyperstakerAddress,
+              alloPoolId: alloPoolId,
+              status: "completed",
+              formData: data,
+            }),
+          });
+
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } catch (error) {
+          console.error("Error adding database entry:", error);
+          setStepStatus("error");
+          setErrorMessage("Failed to add database entry");
+          return;
+        }
+      }
+
       // --- Final Step: Success ---
       setCurrentStepIndex(steps.length); // Visually mark all steps complete
       setStepStatus("success");
       console.log("All steps completed successfully!");
+
+      await fetch("/api/addProgress", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          projectName: data.title,
+          walletAddress: account.address,
+        }),
+      });
 
       setTimeout(() => {
         setIsModalOpen(false);
