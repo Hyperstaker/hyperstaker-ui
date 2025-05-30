@@ -11,20 +11,18 @@ export async function POST(request: Request) {
     }
 
     const payload = `query MyQuery {
-      projects(
-        filter: {and: {id: {in: [${alloProfileIds.map(
-          (i: string) => `"${i}"`
-        )}]}, chainId: {equalTo: ${chainId}}}}
-      ) {
-        id
-        name
-        metadata
-        chainId
-        projectNumber
+      alloProfiles(where: {AND: {alloProfileId_in: [${alloProfileIds.map(
+        (id: string) => `"${id}"`
+      )}]}}) {
+        items {
+          metadata
+          alloProfileId
+          name
+        }
       }
     }`;
 
-    const response = await fetch(process.env.ALLO_GRAPHQL_ENDPOINT as string, {
+    const response = await fetch(process.env.HYPERINDEXER_ENDPOINT as string, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,7 +33,15 @@ export async function POST(request: Request) {
     });
 
     const data = await response.json();
-    const profiles = data.data?.projects;
+    const profiles = (data.data?.alloProfiles?.items || []).map(
+      (profile: any) => ({
+        ...profile,
+        name: profile.name,
+        id: profile.alloProfileId,
+        chainId: chainId,
+        metadata: profile.metadata,
+      })
+    );
     return NextResponse.json({ profiles });
   } catch (error) {
     console.error("error fetching allo profiles: ", error);
