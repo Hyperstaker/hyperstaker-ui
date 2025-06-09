@@ -5,8 +5,6 @@ import { Button } from "./ui/Button";
 import { useEffect, useState } from "react";
 import { HypercertData } from "@/app/types/hypercerts";
 import ProjectItem from "./projectItem";
-import { useRouter } from "next/navigation";
-import { Modal } from "./ui/Modal";
 
 export default function OrganisationProjects({
   setActiveProfile,
@@ -19,9 +17,6 @@ export default function OrganisationProjects({
 }) {
   const [projects, setProjects] = useState<HypercertData[]>();
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     const getHypercertIds = async () => {
@@ -48,16 +43,6 @@ export default function OrganisationProjects({
       })
       .finally(() => setIsLoading(false));
   }, [profile]);
-
-  const handleCopyProfileId = async () => {
-    try {
-      await navigator.clipboard.writeText(profile.id);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy profile ID:", err);
-    }
-  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">

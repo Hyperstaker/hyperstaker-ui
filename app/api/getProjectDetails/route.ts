@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     }
 
     const hypercertIds = await prisma.alloProfiles.findMany({
-      where: { alloProfile: alloProfileId },
+      where: { alloProfile: alloProfileId, deleted: false },
     });
 
     const query = ` 

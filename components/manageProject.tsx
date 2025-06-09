@@ -13,6 +13,7 @@ import AllocateForm from "./allocate.js";
 import { useState, useEffect } from "react";
 import { Modal } from "./ui/Modal";
 import { getTransactionExplorerUrl } from "@/explorer";
+import { useRouter } from "next/navigation";
 
 export default function ManageProject({
   project,
@@ -42,7 +43,8 @@ export default function ManageProject({
   const [raisePercent, setRaisePercent] = useState(0);
   const [showTooltip, setShowTooltip] = useState(false);
   const [activeTab, setActiveTab] = useState("about");
-
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const router = useRouter();
   const { chain } = useAccount();
 
   const poolBalances = useReadContracts({
@@ -228,6 +230,61 @@ export default function ManageProject({
       console.error("Error allocating funds:", error);
       setTxStatus("failed");
       setShowSuccessModal(true);
+    }
+  };
+
+  const deleteProjectTab = (
+    <div className="p-4">
+      <h3 className="text-xl font-semibold mb-4">Delete Project</h3>
+      <div className="space-y-4">
+        <div className="bg-red-900/20 p-4 rounded-lg mb-6">
+          <h4 className="text-lg font-medium mb-2 text-red-500">Warning</h4>
+          <p className="text-gray-300 mb-3">
+            Deleting a project is an irreversible action. This will:
+          </p>
+          <ul className="list-disc list-inside space-y-2 text-gray-300">
+            <li>Remove the project from the marketplace</li>
+            <li>Hide the project from public view</li>
+            <li>Prevent further contributions</li>
+          </ul>
+          <p className="text-gray-300 mt-3">
+            Please ensure you have backed up any important project data before
+            proceeding.
+          </p>
+        </div>
+        <Button
+          className="w-full bg-red-600 hover:bg-red-700"
+          onClick={() => setShowDeleteModal(true)}
+        >
+          Delete Project
+        </Button>
+      </div>
+    </div>
+  );
+
+  const handleDeleteProject = async () => {
+    try {
+      const response = await fetch("/api/deleteProject", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          hypercertId: project.slug.split("-")[2],
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete project");
+      }
+
+      const data = await response.json();
+      console.log("Project deleted successfully:", data);
+      setShowDeleteModal(false);
+      router.push("/organizations");
+      // You might want to redirect or show a success message here
+    } catch (error) {
+      console.error("Error deleting project:", error);
     }
   };
 
@@ -440,6 +497,8 @@ export default function ManageProject({
         return allocateFundsTab;
       case "contributors":
         return contributorsTab;
+      case "delete":
+        return deleteProjectTab;
       default:
         return aboutTab;
     }
@@ -505,6 +564,12 @@ export default function ManageProject({
           >
             Contributors
           </Button>
+          <Button
+            className={`w-full ${activeTab === "delete" ? "bg-red-600" : ""}`}
+            onClick={() => setActiveTab("delete")}
+          >
+            Delete Project
+          </Button>
         </div>
 
         <div className="flex-1 bg-[#1e293b] rounded-2xl border border-gray-200 dark:border-gray-700">
@@ -555,6 +620,32 @@ export default function ManageProject({
           <Button className="mt-4" onClick={() => setShowSuccessModal(false)}>
             Close
           </Button>
+        </div>
+      </Modal>
+
+      <Modal open={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
+        <div className="p-6">
+          <h3 className="text-lg font-medium mb-4 text-red-500">
+            Confirm Project Deletion
+          </h3>
+          <p className="text-gray-200 mb-4">
+            Are you sure you want to delete this project? This action cannot be
+            undone.
+          </p>
+          <div className="flex gap-4">
+            <Button
+              className="flex-1 bg-gray-600 hover:bg-gray-700"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="flex-1 bg-red-600 hover:bg-red-700"
+              onClick={handleDeleteProject}
+            >
+              Delete
+            </Button>
+          </div>
         </div>
       </Modal>
     </div>

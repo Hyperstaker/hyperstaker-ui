@@ -11,7 +11,21 @@ export async function GET() {
       where: { listed: true },
     });
 
-    return NextResponse.json({ data: projectListing });
+    const filteredProjectListing = [];
+
+    await Promise.all(
+      projectListing.map(async (listing) => {
+        const project = await prisma.alloProfiles.findFirst({
+          where: { hypercertId: listing.hypercertId },
+        });
+
+        if (project?.deleted === false) {
+          filteredProjectListing.push(listing);
+        }
+      })
+    );
+
+    return NextResponse.json({ data: filteredProjectListing });
   } catch (error) {
     console.error("Error fetching project listings:", error);
     return NextResponse.json(

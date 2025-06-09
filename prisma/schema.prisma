@@ -20,6 +20,7 @@ model AlloProfiles {
   hypercertId String
   alloProfile String
   alloPool    Int    @default(0)
+  deleted     Boolean @default(false)
 
   @@index([hypercertId])
 }
