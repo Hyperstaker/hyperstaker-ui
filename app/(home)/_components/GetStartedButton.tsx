@@ -27,7 +27,7 @@ export function GetStartedButton({
         background: "linear-gradient(90deg, #5646CD 0%, #3c2cb9 100%)"
       }}
     >
-      Let&apos;s go! {showArrow && <span className="ml-1">→</span>}
+      Contribute! {showArrow && <span className="ml-1">→</span>}
     </Link>
   );
 }

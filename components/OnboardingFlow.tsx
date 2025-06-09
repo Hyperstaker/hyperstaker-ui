@@ -499,7 +499,7 @@ export function OnboardingFlow() {
                   style={{ minWidth: 200 }}
                   onClick={() => setCurrentStep(0)}
                 >
-                  Let&apos;s go
+                  Contribute
                 </Button>
               </Center>
             </Stack>

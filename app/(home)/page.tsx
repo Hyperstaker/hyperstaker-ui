@@ -78,8 +78,8 @@ export default function Home() {
                   icon: <IconCurrencyDollar size={36} stroke={1.5} />, 
                   iconBg: "#1E3A8A",
                   iconColor: "#90CDF4",
-                  title: "Retroactive Payouts",
-                  description: "Funders and builders earn upside when projects receive retro funding."
+                  title: "Retroactive Rewards",
+                  description: "Funders and builders are rewarded when projects receive retro funding."
                 },
                 {
                   icon: <IconBolt size={36} stroke={1.5} />, 
