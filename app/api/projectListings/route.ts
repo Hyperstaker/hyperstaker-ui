@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-
+import { ProjectListings } from "@prisma/client";
 export const revalidate = 1;
 
 const prisma = new PrismaClient();
@@ -11,7 +11,7 @@ export async function GET() {
       where: { listed: true },
     });
 
-    const filteredProjectListing = [];
+    const filteredProjectListing: ProjectListings[] = [];
 
     await Promise.all(
       projectListing.map(async (listing) => {
