@@ -63,7 +63,7 @@ const mantineTheme = createTheme({
           backgroundColor: theme.colors.surface[7], // bg-muted equivalent
           color: theme.colors.dark[0], // light purple text
           borderColor: theme.colors.surface[5], // border-muted
-          '&:focus': {
+          "&:focus": {
             borderColor: theme.colors.brand[5], // brand purple focus
           },
         },
@@ -75,7 +75,7 @@ const mantineTheme = createTheme({
           backgroundColor: theme.colors.surface[7],
           color: theme.colors.dark[0],
           borderColor: theme.colors.surface[5],
-          '&:focus': {
+          "&:focus": {
             borderColor: theme.colors.brand[5],
           },
         },

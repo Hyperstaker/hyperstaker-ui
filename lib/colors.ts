@@ -89,16 +89,16 @@ export const colors = {
 
 // CSS Custom Properties for easy use in styles
 export const cssVariables = {
-  '--color-brand-primary': colors.brand.primary,
-  '--color-brand-light': colors.brand.light,
-  '--color-brand-dark': colors.brand.dark,
-  '--color-surface-darkest': colors.surface.darkest,
-  '--color-surface-dark': colors.surface.veryDark,
-  '--color-surface-muted': colors.surface.muted,
-  '--color-text-primary': colors.text.primary,
-  '--color-text-secondary': colors.text.secondary,
-  '--color-interactive-hover': colors.interactive.hover,
-  '--color-interactive-active': colors.interactive.active,
+  "--color-brand-primary": colors.brand.primary,
+  "--color-brand-light": colors.brand.light,
+  "--color-brand-dark": colors.brand.dark,
+  "--color-surface-darkest": colors.surface.darkest,
+  "--color-surface-dark": colors.surface.veryDark,
+  "--color-surface-muted": colors.surface.muted,
+  "--color-text-primary": colors.text.primary,
+  "--color-text-secondary": colors.text.secondary,
+  "--color-interactive-hover": colors.interactive.hover,
+  "--color-interactive-active": colors.interactive.active,
 } as const;
 
 // Utility functions for common color operations

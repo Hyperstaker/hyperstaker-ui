@@ -47,7 +47,7 @@ import {
 
 export default function ManageProject({
   project,
-  isLoading,
+  _isLoading,
   hyperfund,
   hyperstaker,
   poolId,
@@ -55,7 +55,7 @@ export default function ManageProject({
 }: {
   project: Project;
   metadata: Metadata;
-  isLoading: boolean;
+  _isLoading: boolean;
   hyperfund: string;
   hyperstaker: string;
   poolId: number;
@@ -566,10 +566,10 @@ export default function ManageProject({
               color={activeTab === "about" ? "brand" : undefined}
               styles={{
                 root: {
-                  borderRadius: 'var(--mantine-radius-md)',
+                  borderRadius: "var(--mantine-radius-md)",
                   color: activeTab === "about" ? colors.text.primary : colors.text.secondary,
-                  backgroundColor: activeTab === "about" ? colors.brand.primary : 'transparent',
-                  '&:hover': {
+                  backgroundColor: activeTab === "about" ? colors.brand.primary : "transparent",
+                  "&:hover": {
                     backgroundColor: activeTab === "about" ? colors.brand.dark : colors.surface.dark,
                   },
                 },
@@ -591,10 +591,10 @@ export default function ManageProject({
               color={activeTab === "fundsRaised" ? "brand" : undefined}
               styles={{
                 root: {
-                  borderRadius: 'var(--mantine-radius-md)',
+                  borderRadius: "var(--mantine-radius-md)",
                   color: activeTab === "fundsRaised" ? colors.text.primary : colors.text.secondary,
-                  backgroundColor: activeTab === "fundsRaised" ? colors.brand.primary : 'transparent',
-                  '&:hover': {
+                  backgroundColor: activeTab === "fundsRaised" ? colors.brand.primary : "transparent",
+                  "&:hover": {
                     backgroundColor: activeTab === "fundsRaised" ? colors.brand.dark : colors.surface.dark,
                   },
                 },
@@ -616,10 +616,10 @@ export default function ManageProject({
               color={activeTab === "allocateFunds" ? "brand" : undefined}
               styles={{
                 root: {
-                  borderRadius: 'var(--mantine-radius-md)',
+                  borderRadius: "var(--mantine-radius-md)",
                   color: activeTab === "allocateFunds" ? colors.text.primary : colors.text.secondary,
-                  backgroundColor: activeTab === "allocateFunds" ? colors.brand.primary : 'transparent',
-                  '&:hover': {
+                  backgroundColor: activeTab === "allocateFunds" ? colors.brand.primary : "transparent",
+                  "&:hover": {
                     backgroundColor: activeTab === "allocateFunds" ? colors.brand.dark : colors.surface.dark,
                   },
                 },
@@ -641,10 +641,10 @@ export default function ManageProject({
               color={activeTab === "contributors" ? "brand" : undefined}
               styles={{
                 root: {
-                  borderRadius: 'var(--mantine-radius-md)',
+                  borderRadius: "var(--mantine-radius-md)",
                   color: activeTab === "contributors" ? colors.text.primary : colors.text.secondary,
-                  backgroundColor: activeTab === "contributors" ? colors.brand.primary : 'transparent',
-                  '&:hover': {
+                  backgroundColor: activeTab === "contributors" ? colors.brand.primary : "transparent",
+                  "&:hover": {
                     backgroundColor: activeTab === "contributors" ? colors.brand.dark : colors.surface.dark,
                   },
                 },
@@ -660,7 +660,7 @@ export default function ManageProject({
           flex={1} 
           bg="surface.7"
           style={{ 
-            borderRadius: '16px',
+            borderRadius: "16px",
             border: `1px solid ${colors.surface.muted}`
           }}
         >
@@ -773,7 +773,7 @@ export default function ManageProject({
                 </ThemeIcon>
               }
             >
-              <Text fw={600} span>Hyperfund:</Text> This portion goes to the project's treasury 
+              <Text fw={600} span>Hyperfund:</Text> This portion goes to the project&apos;s treasury 
               for development and operations. Contributors can retire their hypercerts to get 
               equivalent funds in USD from the Hyperfund.
             </List.Item>
