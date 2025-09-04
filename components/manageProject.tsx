@@ -14,6 +14,34 @@ import { useState, useEffect } from "react";
 import { Modal } from "./ui/Modal";
 import { getTransactionExplorerUrl } from "@/explorer";
 import { formatCurrency } from "@/lib/formatters";
+import { 
+  NavLink, 
+  Box, 
+  Paper, 
+  Stack, 
+  Title, 
+  Text, 
+  NumberInput, 
+  Button as MantineButton, 
+  Alert, 
+  Group, 
+  Card, 
+  Badge, 
+  Grid, 
+  List, 
+  ThemeIcon,
+  Container
+} from "@mantine/core";
+import { 
+  IconInfoCircle, 
+  IconCoins, 
+  IconUsers, 
+  IconChartBar, 
+  IconAlertCircle,
+  IconWallet,
+  IconTrendingUp,
+  IconCheck
+} from "@tabler/icons-react";
 
 export default function ManageProject({
   project,
@@ -344,80 +372,165 @@ export default function ManageProject({
   );
 
   const allocateFundsTab = (
-    <div className="p-4">
-      <h3 className="text-xl font-semibold mb-4">Allocate Funds</h3>
-      <div className="space-y-4">
-        <div className="bg-gray-800 p-4 rounded-lg mb-6">
-          <h4 className="text-lg font-medium mb-2">Understanding Allocation</h4>
-          <p className="text-gray-300 mb-3">
-            The Allo Pool is a smart contract that holds funds raised for your
-            project. When funds are allocated, they are distributed between two
-            key components:
-          </p>
-          <ul className="list-disc list-inside space-y-2 text-gray-300">
-            <li>
-              <span className="font-medium">Hyperfund:</span> This portion goes
-              to the project&apos;s treasury and can be used for project
-              development and operations. The contributors can retire their
-              hypercerts to get equivalent amount of funds in USD from the
-              Hyperfund.
-            </li>
-            <li>
-              <span className="font-medium">Hyperstaker:</span> This portion is
-              reserved for retroactive rewards to financial and non financial
-              contributors who have supported the project. The funds in
-              Hyperstaker is used to provide yields to the supporters who have
-              staked their Hypercerts.
-            </li>
-          </ul>
-          <p className="text-gray-300 mt-3">
-            The allocation process is irreversible, so please ensure you are
-            comfortable with the distribution before proceeding.
-          </p>
-        </div>
+    <Container size="lg" py="xl">
+      <Stack gap="xl">
+        {/* Header */}
+        <Group gap="sm" mb="md">
+          <IconCoins size={24} />
+          <Title order={2}>Allocate Funds</Title>
+        </Group>
 
-        <p>
-          Available pool funds to be allocated:{" "}
-          {formatCurrency((poolBalances?.data
-            ? parseInt((poolBalances.data[0]?.result as bigint)?.toString())
-            : 0) /
-            10 ** 6)}
-        </p>
-        <p>
-          Hyperstaker balance:{" "}
-          {formatCurrency((poolBalances?.data
-            ? parseInt((poolBalances.data[1]?.result as bigint)?.toString())
-            : 0) /
-            10 ** 6)}
-        </p>
-        <p>
-          Hyperfund balance:{" "}
-          {formatCurrency((poolBalances?.data
-            ? parseInt((poolBalances.data[2]?.result as bigint)?.toString())
-            : 0) /
-            10 ** 6)}
-        </p>
-        <TextField
-          label="Amount to Allocate to Hyperfund (USD)"
-          type="number"
-          fullWidth
-          margin="normal"
-          value={allocateHyperfund}
-          onChange={(e) => setAllocateHyperfund(Number(e.target.value))}
-        />
-        <TextField
-          label="Amount to Allocate to Hyperstaker (USD)"
-          type="number"
-          fullWidth
-          margin="normal"
-          value={allocateHyperstaker}
-          onChange={(e) => setAllocateHyperstaker(Number(e.target.value))}
-        />
-        <Button type="button" onClick={handleAllocateFunds}>
-          Allocate Funds
-        </Button>
-      </div>
-    </div>
+        {/* Information Card */}
+        <Alert 
+          icon={<IconInfoCircle size="1.1rem" />} 
+          title="Understanding Allocation"
+          color="blue"
+          variant="light"
+        >
+          <Text size="sm" mb="md">
+            The Allo Pool is a smart contract that holds funds raised for your project. 
+            When funds are allocated, they are distributed between two key components:
+          </Text>
+          
+          <List spacing="xs" size="sm" withPadding>
+            <List.Item 
+              icon={
+                <ThemeIcon color="blue" size={20} radius="xl">
+                  <IconWallet size="0.8rem" />
+                </ThemeIcon>
+              }
+            >
+              <Text fw={600} span>Hyperfund:</Text> This portion goes to the project's treasury 
+              for development and operations. Contributors can retire their hypercerts to get 
+              equivalent funds in USD from the Hyperfund.
+            </List.Item>
+            
+            <List.Item 
+              icon={
+                <ThemeIcon color="green" size={20} radius="xl">
+                  <IconTrendingUp size="0.8rem" />
+                </ThemeIcon>
+              }
+            >
+              <Text fw={600} span>Hyperstaker:</Text> Reserved for retroactive rewards to 
+              contributors. These funds provide yields to supporters who have staked their Hypercerts.
+            </List.Item>
+          </List>
+          
+          <Alert color="orange" variant="light" mt="md">
+            <Text size="sm" fw={500}>
+              ⚠️ The allocation process is irreversible. Please ensure you are comfortable 
+              with the distribution before proceeding.
+            </Text>
+          </Alert>
+        </Alert>
+
+        {/* Balance Overview */}
+        <Grid>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <Card p="lg" radius="md" withBorder>
+              <Group justify="space-between" mb="xs">
+                <Text size="sm" c="dimmed">Available Pool Funds</Text>
+                <IconWallet size={20} color="var(--mantine-color-blue-6)" />
+              </Group>
+              <Text fw={700} size="xl">
+                {formatCurrency((poolBalances?.data
+                  ? parseInt((poolBalances.data[0]?.result as bigint)?.toString())
+                  : 0) / 10 ** 6)}
+              </Text>
+            </Card>
+          </Grid.Col>
+          
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <Card p="lg" radius="md" withBorder>
+              <Group justify="space-between" mb="xs">
+                <Text size="sm" c="dimmed">Hyperstaker Balance</Text>
+                <IconTrendingUp size={20} color="var(--mantine-color-green-6)" />
+              </Group>
+              <Text fw={700} size="xl" c="green">
+                {formatCurrency((poolBalances?.data
+                  ? parseInt((poolBalances.data[1]?.result as bigint)?.toString())
+                  : 0) / 10 ** 6)}
+              </Text>
+            </Card>
+          </Grid.Col>
+          
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <Card p="lg" radius="md" withBorder>
+              <Group justify="space-between" mb="xs">
+                <Text size="sm" c="dimmed">Hyperfund Balance</Text>
+                <IconCoins size={20} color="var(--mantine-color-blue-6)" />
+              </Group>
+              <Text fw={700} size="xl" c="blue">
+                {formatCurrency((poolBalances?.data
+                  ? parseInt((poolBalances.data[2]?.result as bigint)?.toString())
+                  : 0) / 10 ** 6)}
+              </Text>
+            </Card>
+          </Grid.Col>
+        </Grid>
+
+        {/* Allocation Form */}
+        <Card p="lg" radius="md" withBorder>
+          <Title order={3} mb="md">Set Allocation Amounts</Title>
+          
+          <Grid>
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <NumberInput
+                label="Amount to Allocate to Hyperfund"
+                description="Project treasury funds (USD)"
+                placeholder="0.00"
+                value={allocateHyperfund}
+                onChange={(value) => setAllocateHyperfund(Number(value))}
+                leftSection={<IconWallet size={16} />}
+                min={0}
+                step={0.01}
+                decimalScale={2}
+                fixedDecimalScale
+              />
+            </Grid.Col>
+            
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <NumberInput
+                label="Amount to Allocate to Hyperstaker"
+                description="Staking rewards pool (USD)"
+                placeholder="0.00"
+                value={allocateHyperstaker}
+                onChange={(value) => setAllocateHyperstaker(Number(value))}
+                leftSection={<IconTrendingUp size={16} />}
+                min={0}
+                step={0.01}
+                decimalScale={2}
+                fixedDecimalScale
+              />
+            </Grid.Col>
+          </Grid>
+
+          {/* Summary */}
+          {(allocateHyperfund > 0 || allocateHyperstaker > 0) && (
+            <Paper p="md" withBorder radius="md" mt="md" bg="var(--mantine-color-gray-0)">
+              <Group justify="space-between">
+                <Text fw={500}>Total Allocation:</Text>
+                <Badge size="lg" variant="light">
+                  {formatCurrency(allocateHyperfund + allocateHyperstaker)}
+                </Badge>
+              </Group>
+            </Paper>
+          )}
+
+          <MantineButton 
+            onClick={handleAllocateFunds}
+            leftSection={<IconCheck size={16} />}
+            size="md"
+            fullWidth
+            mt="xl"
+            disabled={allocateHyperfund === 0 && allocateHyperstaker === 0}
+          >
+            Execute Allocation
+          </MantineButton>
+        </Card>
+      </Stack>
+    </Container>
   );
 
   const contributorsTab = (
@@ -462,52 +575,105 @@ export default function ManageProject({
       </div>
 
       <div className="flex gap-6">
-        <div className="w-64 space-y-2">
-          <Button
-            className={`w-full ${
-              activeTab === "about" ? "bg-primary-600" : ""
-            }`}
-            onClick={() => setActiveTab("about")}
-          >
-            About
-          </Button>
-          <Button
-            className={`w-full ${
-              activeTab === "fundsRaised" ? "bg-primary-600" : ""
-            }`}
-            onClick={() => setActiveTab("fundsRaised")}
-          >
-            Funds Raised
-          </Button>
-          {/* <Button
-            className={`w-full ${
-              activeTab === "supportedAssets" ? "bg-primary-600" : ""
-            }`}
-            onClick={() => setActiveTab("supportedAssets")}
-          >
-            Add Supported Assets
-          </Button> */}
-          <Button
-            className={`w-full ${
-              activeTab === "allocateFunds" ? "bg-primary-600" : ""
-            }`}
-            onClick={() => setActiveTab("allocateFunds")}
-          >
-            Allocate Funds
-          </Button>
-          <Button
-            className={`w-full ${
-              activeTab === "contributors" ? "bg-primary-600" : ""
-            }`}
-            onClick={() => setActiveTab("contributors")}
-          >
-            Contributors
-          </Button>
-        </div>
+        <Paper 
+          w={280} 
+          p={0} 
+          radius="md" 
+          withBorder
+          style={{ 
+            backgroundColor: '#1e293b',
+            borderColor: 'var(--mantine-color-gray-7)'
+          }}
+        >
+          <Stack gap="xs" p="md">
+            <NavLink
+              href="#"
+              label="About"
+              leftSection={<IconInfoCircle size="1.2rem" />}
+              active={activeTab === "about"}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveTab("about");
+              }}
+              style={(theme) => ({
+                borderRadius: theme.radius.md,
+                color: activeTab === "about" ? '#fff' : 'var(--mantine-color-gray-4)',
+                backgroundColor: activeTab === "about" ? '#6366f1' : 'transparent',
+                '&:hover': {
+                  backgroundColor: activeTab === "about" ? '#5855eb' : 'var(--mantine-color-gray-8)',
+                },
+              })}
+            />
+            
+            <NavLink
+              href="#"
+              label="Funds Raised"
+              leftSection={<IconChartBar size="1.2rem" />}
+              active={activeTab === "fundsRaised"}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveTab("fundsRaised");
+              }}
+              style={(theme) => ({
+                borderRadius: theme.radius.md,
+                color: activeTab === "fundsRaised" ? '#fff' : 'var(--mantine-color-gray-4)',
+                backgroundColor: activeTab === "fundsRaised" ? '#6366f1' : 'transparent',
+                '&:hover': {
+                  backgroundColor: activeTab === "fundsRaised" ? '#5855eb' : 'var(--mantine-color-gray-8)',
+                },
+              })}
+            />
+            
+            <NavLink
+              href="#"
+              label="Allocate Funds"
+              leftSection={<IconCoins size="1.2rem" />}
+              active={activeTab === "allocateFunds"}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveTab("allocateFunds");
+              }}
+              style={(theme) => ({
+                borderRadius: theme.radius.md,
+                color: activeTab === "allocateFunds" ? '#fff' : 'var(--mantine-color-gray-4)',
+                backgroundColor: activeTab === "allocateFunds" ? '#6366f1' : 'transparent',
+                '&:hover': {
+                  backgroundColor: activeTab === "allocateFunds" ? '#5855eb' : 'var(--mantine-color-gray-8)',
+                },
+              })}
+            />
+            
+            <NavLink
+              href="#"
+              label="Contributors"
+              leftSection={<IconUsers size="1.2rem" />}
+              active={activeTab === "contributors"}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveTab("contributors");
+              }}
+              style={(theme) => ({
+                borderRadius: theme.radius.md,
+                color: activeTab === "contributors" ? '#fff' : 'var(--mantine-color-gray-4)',
+                backgroundColor: activeTab === "contributors" ? '#6366f1' : 'transparent',
+                '&:hover': {
+                  backgroundColor: activeTab === "contributors" ? '#5855eb' : 'var(--mantine-color-gray-8)',
+                },
+              })}
+            />
+          </Stack>
+        </Paper>
 
-        <div className="flex-1 bg-[#1e293b] rounded-2xl border border-gray-200 dark:border-gray-700">
+        <Box 
+          flex={1} 
+          style={{ 
+            backgroundColor: '#1e293b',
+            borderRadius: '16px',
+            border: '1px solid var(--mantine-color-gray-7)'
+          }}
+        >
           {getTabContent()}
-        </div>
+        </Box>
       </div>
 
       <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
