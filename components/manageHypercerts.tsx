@@ -4,6 +4,7 @@ import { ProjectBanner } from "./ProjectBanner";
 import { Skeleton } from "./ui/Skeleton";
 import { Button } from "./ui/Button";
 import Project from "../interfaces/Project";
+import { colors } from "@/lib/colors";
 import Metadata from "../interfaces/Metadata";
 import {
   useWriteContract,
@@ -229,7 +230,7 @@ export default function ManageHypercert({
   return (
     <div className="basis-10/12 mx-auto">
       {/* data-testid={`project-${project.id}`} */}
-      <article className=" group rounded-2xl border border-gray-200 p-2 hover:border-primary-500 dark:border-gray-700 dark:hover:border-primary-500">
+      <article className=" group rounded-2xl border p-2 hover:border-primary-500" style={{ borderColor: colors.surface.muted }}>
         <div className="opacity-70 transition-opacity group-hover:opacity-100">
           <ProjectBanner
             profileId={project?.recipient}
@@ -246,7 +247,7 @@ export default function ManageHypercert({
             <div className="p-2 mr-16 flex-1">
               <h3>{project?.name}</h3>
               <div className="mb-2">
-                <p className="h-10 text-sm dark:text-gray-300">
+                <p className="h-10 text-sm" style={{ color: colors.text.secondary }}>
                   <Skeleton isLoading={isLoading} className="w-full">
                     {project?.longDescription || project?.longDescription}
                   </Skeleton>
@@ -255,7 +256,7 @@ export default function ManageHypercert({
 
               {/* Pool Information Section */}
               <div className="mt-8 space-y-6">
-                <div className="bg-gray-800 p-4 rounded-lg">
+                <div className="p-4 rounded-lg" style={{ backgroundColor: colors.surface.veryDark }}>
                   <h4 className="text-lg font-medium mb-3">Pool Information</h4>
                   <div className="space-y-2">
                     <p className="text-gray-300">
@@ -289,7 +290,7 @@ export default function ManageHypercert({
                   </div>
                 </div>
 
-                <div className="bg-gray-800 p-4 rounded-lg">
+                <div className="p-4 rounded-lg" style={{ backgroundColor: colors.surface.veryDark }}>
                   <h4 className="text-lg font-medium mb-3">
                     Understanding Actions
                   </h4>

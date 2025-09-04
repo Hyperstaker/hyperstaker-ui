@@ -14,6 +14,7 @@ import { useState, useEffect } from "react";
 import { Modal } from "./ui/Modal";
 import { getTransactionExplorerUrl } from "@/explorer";
 import { formatCurrency } from "@/lib/formatters";
+import { colors } from "@/lib/colors";
 import { 
   NavLink, 
   Box, 
@@ -508,10 +509,10 @@ export default function ManageProject({
 
           {/* Summary */}
           {(allocateHyperfund > 0 || allocateHyperstaker > 0) && (
-            <Paper p="md" withBorder radius="md" mt="md" bg="var(--mantine-color-gray-0)">
+            <Paper p="md" withBorder radius="md" mt="md" bg="surface.6" style={{ borderColor: colors.surface.muted }}>
               <Group justify="space-between">
-                <Text fw={500}>Total Allocation:</Text>
-                <Badge size="lg" variant="light">
+                <Text fw={500} c="dark.0">Total Allocation:</Text>
+                <Badge size="lg" variant="light" color="brand">
                   {formatCurrency(allocateHyperfund + allocateHyperstaker)}
                 </Badge>
               </Group>
@@ -580,9 +581,9 @@ export default function ManageProject({
           p={0} 
           radius="md" 
           withBorder
+          bg="surface.7"
           style={{ 
-            backgroundColor: '#1e293b',
-            borderColor: 'var(--mantine-color-gray-7)'
+            borderColor: colors.surface.muted
           }}
         >
           <Stack gap="xs" p="md">
@@ -595,14 +596,20 @@ export default function ManageProject({
                 e.preventDefault();
                 setActiveTab("about");
               }}
-              style={(theme) => ({
-                borderRadius: theme.radius.md,
-                color: activeTab === "about" ? '#fff' : 'var(--mantine-color-gray-4)',
-                backgroundColor: activeTab === "about" ? '#6366f1' : 'transparent',
-                '&:hover': {
-                  backgroundColor: activeTab === "about" ? '#5855eb' : 'var(--mantine-color-gray-8)',
+              color={activeTab === "about" ? "brand" : undefined}
+              styles={{
+                root: {
+                  borderRadius: 'var(--mantine-radius-md)',
+                  color: activeTab === "about" ? colors.text.primary : colors.text.secondary,
+                  backgroundColor: activeTab === "about" ? colors.brand.primary : 'transparent',
+                  '&:hover': {
+                    backgroundColor: activeTab === "about" ? colors.brand.dark : colors.surface.dark,
+                  },
                 },
-              })}
+                label: {
+                  color: activeTab === "about" ? colors.text.primary : colors.text.secondary,
+                },
+              }}
             />
             
             <NavLink
@@ -614,14 +621,20 @@ export default function ManageProject({
                 e.preventDefault();
                 setActiveTab("fundsRaised");
               }}
-              style={(theme) => ({
-                borderRadius: theme.radius.md,
-                color: activeTab === "fundsRaised" ? '#fff' : 'var(--mantine-color-gray-4)',
-                backgroundColor: activeTab === "fundsRaised" ? '#6366f1' : 'transparent',
-                '&:hover': {
-                  backgroundColor: activeTab === "fundsRaised" ? '#5855eb' : 'var(--mantine-color-gray-8)',
+              color={activeTab === "fundsRaised" ? "brand" : undefined}
+              styles={{
+                root: {
+                  borderRadius: 'var(--mantine-radius-md)',
+                  color: activeTab === "fundsRaised" ? colors.text.primary : colors.text.secondary,
+                  backgroundColor: activeTab === "fundsRaised" ? colors.brand.primary : 'transparent',
+                  '&:hover': {
+                    backgroundColor: activeTab === "fundsRaised" ? colors.brand.dark : colors.surface.dark,
+                  },
                 },
-              })}
+                label: {
+                  color: activeTab === "fundsRaised" ? colors.text.primary : colors.text.secondary,
+                },
+              }}
             />
             
             <NavLink
@@ -633,14 +646,20 @@ export default function ManageProject({
                 e.preventDefault();
                 setActiveTab("allocateFunds");
               }}
-              style={(theme) => ({
-                borderRadius: theme.radius.md,
-                color: activeTab === "allocateFunds" ? '#fff' : 'var(--mantine-color-gray-4)',
-                backgroundColor: activeTab === "allocateFunds" ? '#6366f1' : 'transparent',
-                '&:hover': {
-                  backgroundColor: activeTab === "allocateFunds" ? '#5855eb' : 'var(--mantine-color-gray-8)',
+              color={activeTab === "allocateFunds" ? "brand" : undefined}
+              styles={{
+                root: {
+                  borderRadius: 'var(--mantine-radius-md)',
+                  color: activeTab === "allocateFunds" ? colors.text.primary : colors.text.secondary,
+                  backgroundColor: activeTab === "allocateFunds" ? colors.brand.primary : 'transparent',
+                  '&:hover': {
+                    backgroundColor: activeTab === "allocateFunds" ? colors.brand.dark : colors.surface.dark,
+                  },
                 },
-              })}
+                label: {
+                  color: activeTab === "allocateFunds" ? colors.text.primary : colors.text.secondary,
+                },
+              }}
             />
             
             <NavLink
@@ -652,24 +671,30 @@ export default function ManageProject({
                 e.preventDefault();
                 setActiveTab("contributors");
               }}
-              style={(theme) => ({
-                borderRadius: theme.radius.md,
-                color: activeTab === "contributors" ? '#fff' : 'var(--mantine-color-gray-4)',
-                backgroundColor: activeTab === "contributors" ? '#6366f1' : 'transparent',
-                '&:hover': {
-                  backgroundColor: activeTab === "contributors" ? '#5855eb' : 'var(--mantine-color-gray-8)',
+              color={activeTab === "contributors" ? "brand" : undefined}
+              styles={{
+                root: {
+                  borderRadius: 'var(--mantine-radius-md)',
+                  color: activeTab === "contributors" ? colors.text.primary : colors.text.secondary,
+                  backgroundColor: activeTab === "contributors" ? colors.brand.primary : 'transparent',
+                  '&:hover': {
+                    backgroundColor: activeTab === "contributors" ? colors.brand.dark : colors.surface.dark,
+                  },
                 },
-              })}
+                label: {
+                  color: activeTab === "contributors" ? colors.text.primary : colors.text.secondary,
+                },
+              }}
             />
           </Stack>
         </Paper>
 
         <Box 
           flex={1} 
+          bg="surface.7"
           style={{ 
-            backgroundColor: '#1e293b',
             borderRadius: '16px',
-            border: '1px solid var(--mantine-color-gray-7)'
+            border: `1px solid ${colors.surface.muted}`
           }}
         >
           {getTabContent()}
