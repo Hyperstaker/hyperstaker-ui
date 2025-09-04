@@ -65,7 +65,7 @@ const RoadmapPhase: React.FC<RoadmapPhaseProps> = ({
   const { bgColor, textColor, label } = getStatusStyles();
 
   return (
-    <div className="rounded-xl border border-[rgba(255,255,255,0.1)] bg-[#0f172a] p-8 transition-all duration-300 hover:border-[rgba(255,255,255,0.15)] hover:shadow-lg">
+    <div className="rounded-xl border border-[rgba(255,255,255,0.1)] bg-[#0f172a] p-8 transition-all duration-300 hover:border-[rgba(255,255,255,0.15)] hover:shadow-lg text-left">
       <div className="flex justify-between items-center mb-6">
         <div 
           className="px-3 py-1 rounded-md text-sm font-medium" 
