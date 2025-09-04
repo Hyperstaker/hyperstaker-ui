@@ -11,7 +11,6 @@ import { Abi, encodeAbiParameters } from "viem";
 import { Button } from "./ui/Button";
 import AllocateForm from "./allocate.js";
 import { useState, useEffect } from "react";
-import { Modal } from "./ui/Modal";
 import { getTransactionExplorerUrl } from "@/explorer";
 import { formatCurrency } from "@/lib/formatters";
 import { colors } from "@/lib/colors";
@@ -31,7 +30,9 @@ import {
   Grid, 
   List, 
   ThemeIcon,
-  Container
+  Container,
+  Modal as MantineModal,
+  ActionIcon
 } from "@mantine/core";
 import { 
   IconInfoCircle, 
@@ -72,6 +73,7 @@ export default function ManageProject({
   const [raisePercent, setRaisePercent] = useState(0);
   const [showTooltip, setShowTooltip] = useState(false);
   const [activeTab, setActiveTab] = useState("about");
+  const [showAllocationInfoModal, setShowAllocationInfoModal] = useState(false);
 
   const { chain } = useAccount();
 
@@ -376,55 +378,20 @@ export default function ManageProject({
     <Container size="lg" py="xl">
       <Stack gap="xl">
         {/* Header */}
-        <Group gap="sm" mb="md">
-          <IconCoins size={24} />
-          <Title order={2}>Allocate Funds</Title>
+        <Group justify="space-between" mb="md">
+          <Group gap="sm">
+            <IconCoins size={24} />
+            <Title order={2}>Allocate Funds</Title>
+          </Group>
+          <ActionIcon
+            variant="light"
+            color="blue"
+            size="lg"
+            onClick={() => setShowAllocationInfoModal(true)}
+          >
+            <IconInfoCircle size="1.2rem" />
+          </ActionIcon>
         </Group>
-
-        {/* Information Card */}
-        <Alert 
-          icon={<IconInfoCircle size="1.1rem" />} 
-          title="Understanding Allocation"
-          color="blue"
-          variant="light"
-        >
-          <Text size="sm" mb="md">
-            The Allo Pool is a smart contract that holds funds raised for your project. 
-            When funds are allocated, they are distributed between two key components:
-          </Text>
-          
-          <List spacing="xs" size="sm" withPadding>
-            <List.Item 
-              icon={
-                <ThemeIcon color="blue" size={20} radius="xl">
-                  <IconWallet size="0.8rem" />
-                </ThemeIcon>
-              }
-            >
-              <Text fw={600} span>Hyperfund:</Text> This portion goes to the project's treasury 
-              for development and operations. Contributors can retire their hypercerts to get 
-              equivalent funds in USD from the Hyperfund.
-            </List.Item>
-            
-            <List.Item 
-              icon={
-                <ThemeIcon color="green" size={20} radius="xl">
-                  <IconTrendingUp size="0.8rem" />
-                </ThemeIcon>
-              }
-            >
-              <Text fw={600} span>Hyperstaker:</Text> Reserved for retroactive rewards to 
-              contributors. These funds provide yields to supporters who have staked their Hypercerts.
-            </List.Item>
-          </List>
-          
-          <Alert color="orange" variant="light" mt="md">
-            <Text size="sm" fw={500}>
-              ⚠️ The allocation process is irreversible. Please ensure you are comfortable 
-              with the distribution before proceeding.
-            </Text>
-          </Alert>
-        </Alert>
 
         {/* Balance Overview */}
         <Grid>
@@ -701,51 +668,136 @@ export default function ManageProject({
         </Box>
       </div>
 
-      <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
-        <div className="p-6">
+      <MantineModal 
+        opened={showSuccessModal} 
+        onClose={() => setShowSuccessModal(false)}
+        title={
+          txStatus === "success" ? (
+            <Group gap="sm">
+              <IconCheck size={20} color="var(--mantine-color-green-6)" />
+              <Text fw={600} c="green">Transaction Successful!</Text>
+            </Group>
+          ) : txStatus === "failed" ? (
+            <Group gap="sm">
+              <IconAlertCircle size={20} color="var(--mantine-color-red-6)" />
+              <Text fw={600} c="red">Transaction Failed</Text>
+            </Group>
+          ) : (
+            <Text fw={600}>Transaction Pending...</Text>
+          )
+        }
+        centered
+      >
+        <Stack gap="md">
           {txStatus === "success" ? (
             <>
-              <h3 className="text-lg font-medium mb-4 text-green-500">
-                Transaction Successful!
-              </h3>
-              <p className="text-gray-200 mb-4">Transaction Hash:</p>
-              <a
-                href={getTransactionExplorerUrl(chain?.id, txHash) ?? ""}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="break-all text-sm bg-gray-700 p-2 rounded text-blue-400 hover:text-blue-300 block mb-4"
-              >
-                {txHash}
-              </a>
+              <Alert color="green" variant="light">
+                Your transaction has been successfully submitted to the blockchain.
+              </Alert>
+              
+              <Stack gap="xs">
+                <Text size="sm" c="dimmed">Transaction Hash:</Text>
+                <Text 
+                  component="a"
+                  href={getTransactionExplorerUrl(chain?.id, txHash) ?? ""}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="sm"
+                  style={{ wordBreak: "break-all" }}
+                  c="blue"
+                >
+                  {txHash}
+                </Text>
+              </Stack>
             </>
           ) : txStatus === "failed" ? (
             <>
-              <h3 className="text-lg font-medium mb-4 text-red-500">
-                Transaction Failed
-              </h3>
-              <p className="text-gray-200 mb-4">Please try again</p>
-              <Button
-                className="mt-4 bg-red-500 hover:bg-red-600"
-                onClick={() => {
-                  setShowSuccessModal(false);
-                  if (activeTab === "supportedAssets") {
-                    handleAddAddress();
-                  } else if (activeTab === "allocateFunds") {
-                    handleAllocateFunds();
-                  }
-                }}
-              >
-                Retry
-              </Button>
+              <Alert color="red" variant="light">
+                The transaction failed. Please try again.
+              </Alert>
+              <Group justify="flex-end">
+                <MantineButton
+                  color="red"
+                  onClick={() => {
+                    setShowSuccessModal(false);
+                    if (activeTab === "supportedAssets") {
+                      handleAddAddress();
+                    } else if (activeTab === "allocateFunds") {
+                      handleAllocateFunds();
+                    }
+                  }}
+                >
+                  Retry
+                </MantineButton>
+              </Group>
             </>
           ) : (
-            <h3 className="text-lg font-medium mb-4">Transaction Pending...</h3>
+            <Text>Processing your transaction...</Text>
           )}
-          <Button className="mt-4" onClick={() => setShowSuccessModal(false)}>
-            Close
-          </Button>
-        </div>
-      </Modal>
+          
+          <Group justify="flex-end" mt="md">
+            <MantineButton 
+              variant="light"
+              onClick={() => setShowSuccessModal(false)}
+            >
+              Close
+            </MantineButton>
+          </Group>
+        </Stack>
+      </MantineModal>
+
+      {/* Allocation Information Modal */}
+      <MantineModal 
+        opened={showAllocationInfoModal} 
+        onClose={() => setShowAllocationInfoModal(false)}
+        title={
+          <Group gap="sm">
+            <IconInfoCircle size={20} />
+            <Text fw={600}>Understanding Fund Allocation</Text>
+          </Group>
+        }
+        size="md"
+        centered
+      >
+        <Stack gap="md">
+          <Text size="sm">
+            The Allo Pool is a smart contract that holds funds raised for your project. 
+            When funds are allocated, they are distributed between two key components:
+          </Text>
+          
+          <List spacing="sm" size="sm" withPadding>
+            <List.Item 
+              icon={
+                <ThemeIcon color="blue" size={20} radius="xl">
+                  <IconWallet size="0.8rem" />
+                </ThemeIcon>
+              }
+            >
+              <Text fw={600} span>Hyperfund:</Text> This portion goes to the project's treasury 
+              for development and operations. Contributors can retire their hypercerts to get 
+              equivalent funds in USD from the Hyperfund.
+            </List.Item>
+            
+            <List.Item 
+              icon={
+                <ThemeIcon color="green" size={20} radius="xl">
+                  <IconTrendingUp size="0.8rem" />
+                </ThemeIcon>
+              }
+            >
+              <Text fw={600} span>Hyperstaker:</Text> Reserved for retroactive rewards to 
+              contributors. These funds provide yields to supporters who have staked their Hypercerts.
+            </List.Item>
+          </List>
+          
+          <Alert color="orange" variant="light">
+            <Text size="sm" fw={500}>
+              ⚠️ The allocation process is irreversible. Please ensure you are comfortable 
+              with the distribution before proceeding.
+            </Text>
+          </Alert>
+        </Stack>
+      </MantineModal>
     </div>
   );
 }
