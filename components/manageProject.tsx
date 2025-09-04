@@ -13,6 +13,7 @@ import AllocateForm from "./allocate.js";
 import { useState, useEffect } from "react";
 import { Modal } from "./ui/Modal";
 import { getTransactionExplorerUrl } from "@/explorer";
+import { formatCurrency } from "@/lib/formatters";
 
 export default function ManageProject({
   project,
@@ -269,7 +270,7 @@ export default function ManageProject({
       <h3 className="text-xl font-semibold mb-4">Funds Raised</h3>
       <div className="space-y-4">
         <h5>
-          Progress <span className="float-right">{raisePercent}%</span>
+          Progress <span className="float-right">{raisePercent.toFixed(1)}%</span>
         </h5>
         <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
           <div
@@ -277,22 +278,22 @@ export default function ManageProject({
             className="bg-blue-600 h-2.5 rounded-full"
           ></div>
         </div>
-        <div className="grid grid-cols-3 gap-4 mt-4">
+        <div className="flex justify-between items-start mt-4">
           <div>
             <div className="text-sm font-medium text-gray-100">
               Past Funding
             </div>
             <div className="text-2xl font-bold text-gray-200">
-              {usdRaised} USD
+              {formatCurrency(usdRaised)}
             </div>
           </div>
-          <div>
+          <div className="text-left">
             <div className="text-sm font-medium text-gray-100">Target</div>
             <div className="text-2xl font-bold text-gray-300">
-              {(project.totalUnits ?? 0) / 10 ** 6} USD
+              {formatCurrency((project.totalUnits ?? 0) / 10 ** 6)}
             </div>
           </div>
-          <div>
+          <div className="text-right">
             <div className="text-sm font-medium text-gray-200">Retro split</div>
             <div className="text-2xl font-bold text-gray-300">20%</div>
           </div>
@@ -377,27 +378,24 @@ export default function ManageProject({
 
         <p>
           Available pool funds to be allocated:{" "}
-          {(poolBalances?.data
+          {formatCurrency((poolBalances?.data
             ? parseInt((poolBalances.data[0]?.result as bigint)?.toString())
             : 0) /
-            10 ** 6}{" "}
-          USD
+            10 ** 6)}
         </p>
         <p>
           Hyperstaker balance:{" "}
-          {(poolBalances?.data
+          {formatCurrency((poolBalances?.data
             ? parseInt((poolBalances.data[1]?.result as bigint)?.toString())
             : 0) /
-            10 ** 6}{" "}
-          USD
+            10 ** 6)}
         </p>
         <p>
           Hyperfund balance:{" "}
-          {(poolBalances?.data
+          {formatCurrency((poolBalances?.data
             ? parseInt((poolBalances.data[2]?.result as bigint)?.toString())
             : 0) /
-            10 ** 6}{" "}
-          USD
+            10 ** 6)}
         </p>
         <TextField
           label="Amount to Allocate to Hyperfund (USD)"

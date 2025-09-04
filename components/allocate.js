@@ -1,13 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Button } from "./ui/Button";
-import { TextField } from "./ui/TextField";
+import { 
+  Paper, 
+  Title, 
+  Text, 
+  TextInput, 
+  NumberInput, 
+  Button, 
+  Group, 
+  Stack, 
+  Table, 
+  ActionIcon, 
+  Card, 
+  Badge, 
+  Modal, 
+  Anchor, 
+  Divider,
+  Container,
+  Grid,
+  Alert,
+  Loader,
+  Center
+} from "@mantine/core";
+import { IconPlus, IconMinus, IconCheck, IconExternalLink, IconWallet, IconUsers, IconCoin } from "@tabler/icons-react";
 import { useWriteContracts } from "wagmi/experimental"
 import { contracts, hyperfundAbi, hypercertMinterAbi } from "./data";
-import { Modal } from "./ui/Modal";
 import {useWriteContract, usePublicClient, useAccount } from "wagmi";
 import {getContract} from "viem"
 import { getTransactionExplorerUrl } from "@/explorer";
+import { formatAllocationNumber } from "@/lib/formatters";
 
 function AllocateForm({
   hyperfund,
@@ -186,121 +207,259 @@ function AllocateForm({
     const allocationhistoryComponent = allocationHistory.map((item, index) => (
       <tr key={index} className="border-b">
           <td className="px-4 py-2">{String(item.address)}</td>
-          <td className="px-4 py-2 text-right">{String(item.allocated)}</td>
-          <td className="px-4 py-2 text-right">{String(item.redeemed)}</td>
+          <td className="px-4 py-2 text-right">{formatAllocationNumber(item.allocated)}</td>
+          <td className="px-4 py-2 text-right">{formatAllocationNumber(item.redeemed)}</td>
       </tr>
   ))
 
     return (
-      <div>
-        <form>
-            <div className="space-y-4 space-x-4">
-              <h3 className="text-xl font-semibold mb-4">Allocate funds to contributors</h3>
-              {addresses.map(address => (
-                  <div key={address} className="flex justify-between">
-                      <label>{address} ({(parseFloat(inputs[address] || 0) * 0.000001).toFixed(6)} USD)</label>
-                      <div className="flex items-center">
-                          <button type="button" onClick={() => handleDecrease(address)}>←</button>
-                          <input
-                              type="number"
-                              value={inputs[address] || "0"}
-                              onChange={(e) => handleInputChange(address, e.target.value)}
-                              className="flex justify-center"
-                          />
-                          <button type="button" onClick={() => handleIncrease(address)}>→</button>
-                      </div>
-                  </div>
-              ))}
-              {addresses.length > 0 ? <div className="flex justify-center mt-5">
-                  {!isApproved ? (
-                      <Button type="button" onClick={handleApprove}>
-                          Approve
-                      </Button>
-                  ) : (
-                      <Button type="button" onClick={handleAllocate}>
-                          Allocate
-                      </Button>
-                  )}
-              </div> : null}
-            </div>
-        </form>
-        <form>
-          <div className="space-y-4 space-x-4">
-            <h5>Add Contributor</h5>
-            <TextField
-                label="Address"
-                margin="normal"
-                {...allocateForm.register("address", {
-                  required: true,
-                })}
-              />
-              <TextField
-                label={`Fraction Amount (Amount of Hypercert fraction to be allocated to contributor, equivalent to ${allocateForm.watch("amount") * 0.000001} USD)`}
-                margin="normal"
-                {...allocateForm.register("amount", {
-                  required: true,
-                  
-                })}
-              />
-              <div className="flex justify-center mt-5">
-              <Button type="button" onClick={handleAddAddress}>
-                Add
-              </Button>
-              </div>
-              
-          </div>
-        </form>
-        <div className="mt-8">
-        <h3 className="text-xl font-semibold mb-4">Allocation History</h3>
-            <div className="overflow-x-auto">
-                <table className="min-w-full table-auto mt-4">
-                    <thead>
-                        <tr className="bg-gray-600">
-                            <th className="px-4 py-2 text-left">ETH Address</th>
-                            <th className="px-4 py-2 text-right">Amount Allocated</th>
-                            <th className="px-4 py-2 text-right">Amount Redeemed</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {allocationhistoryComponent}
-                    </tbody>
-                    <tfoot className="bg-gray-600">
-                        <tr>
-                            <td className="px-4 py-2 font-bold">Totals</td>
-                            <td className="px-4 py-2 text-right font-bold">{String(totals.allocated.toFixed(1))}</td>
-                            <td className="px-4 py-2 text-right font-bold">{String(totals.redeemed.toFixed(1))}</td>
-                        </tr>
-                        <tr className="bg-gray-600">
-                            <td colSpan="3" className="px-4 py-2 text-right font-bold">
-                                Amount to redeem in Pool: {String((totals.allocated - totals.redeemed).toFixed(1))}
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
+        <Container size="lg" py="xl">
+            <Stack gap="xl">
+                {/* Header */}
+                <Paper p="lg" radius="md" withBorder>
+                    <Group gap="sm" mb="md">
+                        <IconUsers size={24} />
+                        <Title order={2}>Fund Allocation</Title>
+                    </Group>
+                    <Text c="dimmed" size="sm">
+                        Allocate Hypercert fractions to contributors and track distribution history
+                    </Text>
+                </Paper>
 
-        <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
-        <div className="p-6">
-          <h3 className="text-lg font-medium mb-4 text-green-500">
-            Transaction Successful!
-          </h3>
-          <p className="text-gray-200 mb-4">Transaction Hash:</p>
-          <a 
-            href={`${getTransactionExplorerUrl(account.chainId, txHash)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="break-all text-sm bg-gray-700 p-2 rounded text-blue-400 hover:text-blue-300 block mb-4"
-          >
-            {txHash}
-          </a>
-          <Button className="mt-4" onClick={() => setShowSuccessModal(false)}>
-            Close
-          </Button>
-        </div>
-      </Modal>
+                <Grid>
+                    <Grid.Col span={{ base: 12, md: 6 }}>
+                        {/* Add Contributor Section */}
+                        <Card p="lg" radius="md" withBorder>
+                            <Group gap="sm" mb="md">
+                                <IconCoin size={20} />
+                                <Title order={3}>Add Contributor</Title>
+                            </Group>
+                            
+                            <Stack gap="md">
+                                <TextInput
+                                    label="Wallet Address"
+                                    placeholder="0x..."
+                                    {...allocateForm.register("address", { required: true })}
+                                    leftSection={<IconWallet size={16} />}
+                                />
+                                
+                                <NumberInput
+                                    label="Allocation Amount"
+                                    description={`Equivalent to ${(allocateForm.watch("amount") || 0) * 0.000001} USD`}
+                                    placeholder="0"
+                                    min={0}
+                                    {...allocateForm.register("amount", { required: true })}
+                                    leftSection={<IconCoin size={16} />}
+                                />
+                                
+                                <Button 
+                                    onClick={handleAddAddress} 
+                                    leftSection={<IconPlus size={16} />}
+                                    variant="light"
+                                    fullWidth
+                                >
+                                    Add Contributor
+                                </Button>
+                            </Stack>
+                        </Card>
+                    </Grid.Col>
 
-        </div>
+                    <Grid.Col span={{ base: 12, md: 6 }}>
+                        {/* Current Allocations */}
+                        {addresses.length > 0 && (
+                            <Card p="lg" radius="md" withBorder>
+                                <Title order={3} mb="md">Current Allocations</Title>
+                                <Stack gap="sm">
+                                    {addresses.map(address => (
+                                        <Paper key={address} p="md" withBorder radius="sm">
+                                            <Group justify="space-between" align="center">
+                                                <Stack gap={4}>
+                                                    <Text fw={500} size="sm">
+                                                        {address.slice(0, 6)}...{address.slice(-4)}
+                                                    </Text>
+                                                    <Badge size="sm" variant="light">
+                                                        {(parseFloat(inputs[address] || 0) * 0.000001).toFixed(6)} USD
+                                                    </Badge>
+                                                </Stack>
+                                                
+                                                <Group gap="xs">
+                                                    <ActionIcon 
+                                                        variant="light" 
+                                                        size="sm"
+                                                        onClick={() => handleDecrease(address)}
+                                                    >
+                                                        <IconMinus size={14} />
+                                                    </ActionIcon>
+                                                    
+                                                    <NumberInput
+                                                        value={inputs[address] || "0"}
+                                                        onChange={(value) => handleInputChange(address, value)}
+                                                        size="sm"
+                                                        w={80}
+                                                        min={0}
+                                                    />
+                                                    
+                                                    <ActionIcon 
+                                                        variant="light" 
+                                                        size="sm"
+                                                        onClick={() => handleIncrease(address)}
+                                                    >
+                                                        <IconPlus size={14} />
+                                                    </ActionIcon>
+                                                </Group>
+                                            </Group>
+                                        </Paper>
+                                    ))}
+                                    
+                                    <Button 
+                                        onClick={isApproved ? handleAllocate : handleApprove}
+                                        leftSection={<IconCheck size={16} />}
+                                        size="md"
+                                        fullWidth
+                                        mt="md"
+                                    >
+                                        {isApproved ? "Execute Allocation" : "Approve Contract"}
+                                    </Button>
+                                </Stack>
+                            </Card>
+                        )}
+                        
+                        {addresses.length === 0 && (
+                            <Card p="lg" radius="md" withBorder>
+                                <Center py="xl">
+                                    <Stack align="center" gap="sm">
+                                        <IconUsers size={48} color="var(--mantine-color-dimmed)" />
+                                        <Text c="dimmed" ta="center">
+                                            No contributors added yet
+                                        </Text>
+                                    </Stack>
+                                </Center>
+                            </Card>
+                        )}
+                    </Grid.Col>
+                </Grid>
+
+                {/* Allocation History */}
+                <Paper p="lg" radius="md" withBorder>
+                    <Title order={3} mb="md">Allocation History</Title>
+                    
+                    {allocationHistory.length > 0 ? (
+                        <>
+                            <Table.ScrollContainer minWidth={600}>
+                                <Table striped highlightOnHover>
+                                    <Table.Thead>
+                                        <Table.Tr>
+                                            <Table.Th>Address</Table.Th>
+                                            <Table.Th ta="right">Allocated</Table.Th>
+                                            <Table.Th ta="right">Redeemed</Table.Th>
+                                        </Table.Tr>
+                                    </Table.Thead>
+                                    <Table.Tbody>
+                                        {allocationHistory.map((item, index) => (
+                                            <Table.Tr key={index}>
+                                                <Table.Td>
+                                                    <Group gap="sm">
+                                                        <Text fw={500} size="sm">
+                                                            {item.address.slice(0, 6)}...{item.address.slice(-4)}
+                                                        </Text>
+                                                    </Group>
+                                                </Table.Td>
+                                                <Table.Td ta="right">
+                                                    <Badge variant="light" color="blue">
+                                                        {formatAllocationNumber(item.allocated)}
+                                                    </Badge>
+                                                </Table.Td>
+                                                <Table.Td ta="right">
+                                                    <Badge variant="light" color="green">
+                                                        {formatAllocationNumber(item.redeemed)}
+                                                    </Badge>
+                                                </Table.Td>
+                                            </Table.Tr>
+                                        ))}
+                                    </Table.Tbody>
+                                </Table>
+                            </Table.ScrollContainer>
+                            
+                            <Divider my="md" />
+                            
+                            {/* Summary */}
+                            <Group justify="space-between">
+                                <Group gap="xl">
+                                    <Stack gap={4}>
+                                        <Text size="sm" c="dimmed">Total Allocated</Text>
+                                        <Text fw={600}>{formatAllocationNumber(totals.allocated)}</Text>
+                                    </Stack>
+                                    <Stack gap={4}>
+                                        <Text size="sm" c="dimmed">Total Redeemed</Text>
+                                        <Text fw={600}>{formatAllocationNumber(totals.redeemed)}</Text>
+                                    </Stack>
+                                </Group>
+                                
+                                <Paper p="md" withBorder radius="md" bg="var(--mantine-color-primary-light)">
+                                    <Stack gap={4}>
+                                        <Text size="sm" c="dimmed">Available to Redeem</Text>
+                                        <Text fw={700} size="lg">
+                                            {formatAllocationNumber(totals.allocated - totals.redeemed)}
+                                        </Text>
+                                    </Stack>
+                                </Paper>
+                            </Group>
+                        </>
+                    ) : (
+                        <Center py="xl">
+                            <Stack align="center" gap="sm">
+                                <Text c="dimmed" ta="center">
+                                    No allocation history available
+                                </Text>
+                            </Stack>
+                        </Center>
+                    )}
+                </Paper>
+            </Stack>
+
+            {/* Success Modal */}
+            <Modal 
+                opened={showSuccessModal} 
+                onClose={() => setShowSuccessModal(false)}
+                title={
+                    <Group gap="sm">
+                        <IconCheck size={20} color="var(--mantine-color-green-6)" />
+                        <Text fw={600}>Transaction Successful</Text>
+                    </Group>
+                }
+                centered
+            >
+                <Stack gap="md">
+                    <Alert color="green" variant="light">
+                        Your allocation transaction has been successfully submitted to the blockchain.
+                    </Alert>
+                    
+                    <Stack gap="xs">
+                        <Text size="sm" c="dimmed">Transaction Hash:</Text>
+                        <Anchor 
+                            href={getTransactionExplorerUrl(account.chainId, txHash)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            size="sm"
+                        >
+                            <Group gap="xs">
+                                <Text style={{ wordBreak: "break-all" }}>{txHash}</Text>
+                                <IconExternalLink size={14} />
+                            </Group>
+                        </Anchor>
+                    </Stack>
+                    
+                    <Group justify="flex-end" mt="md">
+                        <Button 
+                            onClick={() => setShowSuccessModal(false)}
+                            variant="light"
+                        >
+                            Close
+                        </Button>
+                    </Group>
+                </Stack>
+            </Modal>
+        </Container>
     );
 }
 
