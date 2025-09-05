@@ -8,6 +8,7 @@ import { Modal } from "./ui/Modal";
 import {useWriteContract, usePublicClient, useAccount } from "wagmi";
 import {getContract} from "viem"
 import { getTransactionExplorerUrl } from "@/explorer";
+import { EnsName } from "./ens";
 
 function AllocateForm({
   hyperfund,
@@ -185,20 +186,23 @@ function AllocateForm({
 
     const allocationhistoryComponent = allocationHistory.map((item, index) => (
       <tr key={index} className="border-b">
-          <td className="px-4 py-2">{String(item.address)}</td>
+          <td className="px-4 py-2"><EnsName address={(item.address)}/></td>
           <td className="px-4 py-2 text-right">{String(item.allocated)}</td>
           <td className="px-4 py-2 text-right">{String(item.redeemed)}</td>
       </tr>
   ))
-
     return (
       <div>
         <form>
             <div className="space-y-4 space-x-4">
               <h3 className="text-xl font-semibold mb-4">Allocate funds to contributors</h3>
+              
               {addresses.map(address => (
                   <div key={address} className="flex justify-between">
-                      <label>{address} ({(parseFloat(inputs[address] || 0) * 0.000001).toFixed(6)} USD)</label>
+                      <label className="flex gap gap-x-5">
+                        <EnsName address={address}/>
+                        <div>({(parseFloat(inputs[address] || 0) * 0.000001).toFixed(6)} USD)</div>
+                      </label>
                       <div className="flex items-center">
                           <button type="button" onClick={() => handleDecrease(address)}>←</button>
                           <input
