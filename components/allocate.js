@@ -19,7 +19,7 @@ import {
   Container,
   Grid,
   Alert,
-  Loader,
+
   Center
 } from "@mantine/core";
 import { IconPlus, IconMinus, IconCheck, IconExternalLink, IconWallet, IconUsers, IconCoin } from "@tabler/icons-react";
@@ -36,7 +36,6 @@ function AllocateForm({
     const [addresses, setAddresses] = useState([]);
     const [inputs, setInputs] = useState({}); // State to hold input values
     const allocateForm = useForm();
-    const allocate = useWriteContracts()
     const allocateSingle = useWriteContract();
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [txHash, setTxHash] = useState("");
@@ -204,13 +203,6 @@ function AllocateForm({
         };
     }, { allocated: 0, redeemed: 0 });
 
-    const allocationhistoryComponent = allocationHistory.map((item, index) => (
-      <tr key={index} className="border-b">
-          <td className="px-4 py-2">{String(item.address)}</td>
-          <td className="px-4 py-2 text-right">{formatAllocationNumber(item.allocated)}</td>
-          <td className="px-4 py-2 text-right">{formatAllocationNumber(item.redeemed)}</td>
-      </tr>
-  ))
 
     return (
         <Container size="lg" py="xl">

@@ -92,57 +92,6 @@ const stepsLong = [
 ];
 
 // First, let"s extract the sidebar into its own component
-function ProgressSidebar({ currentStep }: { currentStep: number }) {
-  return (
-    <Paper p="lg" radius="lg">
-      <Title order={3} c="white" mb="xl">
-        Creation Steps
-      </Title>
-      <Timeline active={currentStep} bulletSize={32} lineWidth={2}>
-        {stepsLong.map((step, index) => (
-          <Timeline.Item
-            key={index}
-            bullet={
-              step.completed ? (
-                <ThemeIcon size={32} radius="xl" variant="light" color="teal">
-                  <IconCheck size={20} />
-                </ThemeIcon>
-              ) : (
-                <ThemeIcon
-                  size={32}
-                  radius="xl"
-                  variant="light"
-                  color={index === currentStep ? "blue" : "gray"}
-                >
-                  {index + 1}
-                </ThemeIcon>
-              )
-            }
-            title={
-              <Text
-                size="md"
-                c={
-                  index === currentStep
-                    ? "blue"
-                    : step.completed
-                    ? "teal"
-                    : "gray.3"
-                }
-                fw={600}
-              >
-                {step.title}
-              </Text>
-            }
-          >
-            <Text size="sm" c="dimmed" mt={4}>
-              {step.description}
-            </Text>
-          </Timeline.Item>
-        ))}
-      </Timeline>
-    </Paper>
-  );
-}
 
 // Add this new component
 function StepsProgress({ currentStep }: { currentStep: number }) {
@@ -218,7 +167,7 @@ export function OnboardingFlow() {
   const alloProfile = useState<string>("");
   const hypercertId = useState<HypercertFormData>();
   const [currentStep, setCurrentStep] = useState(-1);
-  const [continueOnboarding, setContinueOnboarding] = useState(false);
+  const [, setContinueOnboarding] = useState(false);
   const continueOnboardingParam = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [pendingProjects, setPendingProjects] = useState<PendingProject[]>([]);

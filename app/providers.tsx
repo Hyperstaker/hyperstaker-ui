@@ -5,7 +5,6 @@ import "@mantine/core/styles.css";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 import { ReactNode } from "react";
-import { designTokens } from "@/lib/design-tokens";
 
 // Define the theme configuration using design tokens as single source of truth
 const mantineTheme = createTheme({

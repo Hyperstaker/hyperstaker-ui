@@ -49,19 +49,19 @@ import {
 
 export default function ManageProject({
   project,
-  _isLoading,
   hyperfund,
   hyperstaker,
   poolId,
   strategyAddress,
+  _isLoading,
 }: {
   project: Project;
   metadata: Metadata;
-  _isLoading: boolean;
   hyperfund: string;
   hyperstaker: string;
   poolId: number;
   strategyAddress: `0x${string}`;
+  _isLoading: boolean;
 }) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [txHash, setTxHash] = useState("");

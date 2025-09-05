@@ -1,14 +1,11 @@
 import React from "react";
-import { Container, Group, Title, Text } from "@mantine/core";
+import { Title, Text } from "@mantine/core";
 import {
-  IconBolt,
   IconCertificate,
   IconScale,
   IconUsers,
   IconCurrencyDollar
 } from "@tabler/icons-react";
-import { IconCheck } from "@tabler/icons-react";
-
 interface FeatureDetailCardProps {
   icon: React.ReactNode;
   iconColor: string;
@@ -16,7 +13,6 @@ interface FeatureDetailCardProps {
   title: string;
   description: string;
 }
-
 const FeatureDetailCard: React.FC<FeatureDetailCardProps> = ({
   icon,
   iconColor,
@@ -33,14 +29,6 @@ const FeatureDetailCard: React.FC<FeatureDetailCardProps> = ({
     <p className="text-[#cbd5e1] leading-relaxed">{description}</p>
   </div>
 );
-
-const BenefitItem: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="flex items-start gap-3 mb-4">
-    <IconCheck size={20} className="text-emerald-500 mt-0.5 flex-shrink-0" />
-    <Text className="text-[#cbd5e1] text-lg">{children}</Text>
-  </div>
-);
-
 export const ValuePropositionSection: React.FC = () => {
   const benefits = [
     "Reward early contributors with future upside",
@@ -50,7 +38,6 @@ export const ValuePropositionSection: React.FC = () => {
     "Bootstrap new projects without relying on VC funding",
     "Earn governance through contribution, not capital"
   ];
-
   const features = [
     {
       icon: <IconCertificate size={32} stroke={1.5} />,
@@ -81,7 +68,6 @@ export const ValuePropositionSection: React.FC = () => {
       description: "Everyone benefits when projects succeed. No winners-take-all — just shared value."
     }
   ];
-
   return (
     <section className="w-full py-24 bg-[#1E293B]">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-8">
@@ -92,19 +78,16 @@ export const ValuePropositionSection: React.FC = () => {
                 Value Proposition
               </span>
             </div>
-
             <Title
               className="text-4xl md:text-5xl font-bold mb-6 text-white pb-4"
             >
               Hyperstaker: The Engine Behind Sustainable Innovation
             </Title>
-
             <Text
               className="text-[#cbd5e1] text-xl mb-12 leading-relaxed"
             >
               Hyperstaker creates a programmable impact layer for funding innovation, helping projects attract early support, reward meaningful work, and align long-term incentives with sustainable open-source development.
             </Text>
-
             <div className="space-y-3 mt-4">
               {benefits.map((benefit, index) => (
                 <div key={index} className="flex items-start mb-3">
@@ -119,7 +102,6 @@ export const ValuePropositionSection: React.FC = () => {
               ))}
             </div>
           </div>
-
           {/* Right column - Feature cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {features.map((feature, index) => (
@@ -138,5 +120,4 @@ export const ValuePropositionSection: React.FC = () => {
     </section>
   );
 };
-
 export default ValuePropositionSection;

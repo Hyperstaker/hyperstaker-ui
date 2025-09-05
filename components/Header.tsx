@@ -4,7 +4,6 @@ import React from "react";
 import Image from "next/image";
 import { Disclosure } from "@headlessui/react";
 import Link from "next/link";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 interface HeaderProps {
   children: React.ReactNode;
 }

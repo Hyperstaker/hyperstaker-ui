@@ -161,7 +161,7 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
   const handleTokenChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedToken(event.target.value);
   };
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+  const { isLoading: isConfirming } =
     useWaitForTransactionReceipt({
       hash,
     });

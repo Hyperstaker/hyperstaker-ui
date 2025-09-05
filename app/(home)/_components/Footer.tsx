@@ -1,5 +1,5 @@
-import Image from "next/image";
-import { IconBrandGithub, IconBrandTwitter, IconWorld, IconBrandX, IconBrandDiscord } from "@tabler/icons-react";
+
+import { IconBrandGithub, IconBrandTwitter } from "@tabler/icons-react";
 import Link from "next/link";
 
 export function Footer() {

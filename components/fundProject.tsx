@@ -1,11 +1,8 @@
 "use client";
 import { ProjectAvatar } from "./ProjectAvatar";
 import { ProjectBanner } from "./ProjectBanner";
-import { Heading } from "./ui/Heading";
 import { Skeleton } from "./ui/Skeleton";
 import { ImpactCategories } from "./ImpactCategories";
-import { Button } from "./ui/Button";
-import { type Address } from "viem";
 import Project from "../interfaces/Project";
 import Metadata from "../interfaces/Metadata";
 import Link from "next/link";
@@ -201,9 +198,9 @@ export default function FundProject({
                   </div>
                 </Skeleton>
               </div>
-              {/* <Skeleton isLoading={isLoading} className="w-[100px]">
+              <Skeleton isLoading={isLoading} className="w-[100px]">
                 <ImpactCategories tags={metadata?.data?.impactCategory} />
-              </Skeleton> */}
+              </Skeleton>
             </div>
             <div className="flex-1">
               {/* <h3>Fund this project</h3> */}
