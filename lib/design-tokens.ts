@@ -74,7 +74,7 @@ export const designTokens = {
       400: "#7D62D6",  // accent text
       500: "#5A4A9D",  // medium text
       600: "#4A2FB8",  // dark text
-      700: "#3A2494",  // darker text
+      700: "#0E1525",  // darker text
       800: "#2A1A70",  // very dark text
       900: "#2e1065",  // darkest text (inverse)
     },

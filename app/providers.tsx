@@ -29,7 +29,7 @@ const mantineTheme = createTheme({
     ],
     dark: [
       "#D1D5DB", "#D6CAF1", "#B8A6E8", "#9B84DF", "#7D62D6", 
-      "#5A4A9D", "#4A2FB8", "#3A2494", "#2A1A70", "#2e1065"
+      "#5A4A9D", "#4A2FB8", "#0E1525", "#2A1A70", "#2e1065"
     ],
   },
   primaryColor: "brand",
