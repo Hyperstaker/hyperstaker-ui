@@ -29,6 +29,7 @@ import {useWriteContract, usePublicClient, useAccount } from "wagmi";
 import {getContract} from "viem"
 import { getTransactionExplorerUrl } from "@/explorer";
 import { formatAllocationNumber } from "@/lib/formatters";
+import { EnsName } from "./ens";
 
 function AllocateForm({
   hyperfund,
@@ -203,6 +204,13 @@ function AllocateForm({
         };
     }, { allocated: 0, redeemed: 0 });
 
+    const allocationhistoryComponent = allocationHistory.map((item, index) => (
+      <tr key={index} className="border-b">
+          <td className="px-4 py-2"><EnsName address={(item.address)}/></td>
+          <td className="px-4 py-2 text-right">{String(item.allocated)}</td>
+          <td className="px-4 py-2 text-right">{String(item.redeemed)}</td>
+      </tr>
+  ))
 
     return (
         <Container size="lg" py="xl">

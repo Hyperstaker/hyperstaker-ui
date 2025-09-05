@@ -78,7 +78,6 @@ export default function ManageProject({
   const [showAllocationInfoModal, setShowAllocationInfoModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const router = useRouter();
-
   const { chain } = useAccount();
 
   const poolBalances = useReadContracts({
@@ -226,7 +225,7 @@ export default function ManageProject({
 
       const data = await response.json();
       console.log("Project unlisted successfully:", data);
-      setIsListed(false); // Update state to reflect unlisted status
+      setIsListed(false);
     } catch (error) {
       console.error("Error unlisting project:", error);
     }
