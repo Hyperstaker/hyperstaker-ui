@@ -13,7 +13,7 @@ import AllocateForm from "./allocate.js";
 import { useState, useEffect } from "react";
 import { getTransactionExplorerUrl } from "@/explorer";
 import { formatCurrency } from "@/lib/formatters";
-import { colors } from "@/lib/colors";
+import { designTokens } from "@/lib/design-tokens";
 import { 
   NavLink, 
   Box, 
@@ -548,9 +548,9 @@ export default function ManageProject({
           p={0} 
           radius="md" 
           withBorder
-          bg="surface.7"
+          bg="surface.8"
           style={{ 
-            borderColor: colors.surface.muted
+            borderColor: designTokens.semantic.border.primary
           }}
         >
           <Stack gap="xs" p="md">
@@ -567,14 +567,14 @@ export default function ManageProject({
               styles={{
                 root: {
                   borderRadius: "var(--mantine-radius-md)",
-                  color: activeTab === "about" ? colors.text.primary : colors.text.secondary,
-                  backgroundColor: activeTab === "about" ? colors.brand.primary : "transparent",
+                  color: activeTab === "about" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
+                  backgroundColor: activeTab === "about" ? designTokens.semantic.interactive.primary : "transparent",
                   "&:hover": {
-                    backgroundColor: activeTab === "about" ? colors.brand.dark : colors.surface.dark,
+                    backgroundColor: activeTab === "about" ? designTokens.semantic.interactive.primaryHover : designTokens.semantic.interactive.secondaryHover,
                   },
                 },
                 label: {
-                  color: activeTab === "about" ? colors.text.primary : colors.text.secondary,
+                  color: activeTab === "about" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
                 },
               }}
             />
@@ -592,14 +592,14 @@ export default function ManageProject({
               styles={{
                 root: {
                   borderRadius: "var(--mantine-radius-md)",
-                  color: activeTab === "fundsRaised" ? colors.text.primary : colors.text.secondary,
-                  backgroundColor: activeTab === "fundsRaised" ? colors.brand.primary : "transparent",
+                  color: activeTab === "fundsRaised" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
+                  backgroundColor: activeTab === "fundsRaised" ? designTokens.semantic.interactive.primary : "transparent",
                   "&:hover": {
-                    backgroundColor: activeTab === "fundsRaised" ? colors.brand.dark : colors.surface.dark,
+                    backgroundColor: activeTab === "fundsRaised" ? designTokens.semantic.interactive.primaryHover : designTokens.semantic.interactive.secondaryHover,
                   },
                 },
                 label: {
-                  color: activeTab === "fundsRaised" ? colors.text.primary : colors.text.secondary,
+                  color: activeTab === "fundsRaised" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
                 },
               }}
             />
@@ -617,14 +617,14 @@ export default function ManageProject({
               styles={{
                 root: {
                   borderRadius: "var(--mantine-radius-md)",
-                  color: activeTab === "allocateFunds" ? colors.text.primary : colors.text.secondary,
-                  backgroundColor: activeTab === "allocateFunds" ? colors.brand.primary : "transparent",
+                  color: activeTab === "allocateFunds" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
+                  backgroundColor: activeTab === "allocateFunds" ? designTokens.semantic.interactive.primary : "transparent",
                   "&:hover": {
-                    backgroundColor: activeTab === "allocateFunds" ? colors.brand.dark : colors.surface.dark,
+                    backgroundColor: activeTab === "allocateFunds" ? designTokens.semantic.interactive.primaryHover : designTokens.semantic.interactive.secondaryHover,
                   },
                 },
                 label: {
-                  color: activeTab === "allocateFunds" ? colors.text.primary : colors.text.secondary,
+                  color: activeTab === "allocateFunds" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
                 },
               }}
             />
@@ -642,14 +642,14 @@ export default function ManageProject({
               styles={{
                 root: {
                   borderRadius: "var(--mantine-radius-md)",
-                  color: activeTab === "contributors" ? colors.text.primary : colors.text.secondary,
-                  backgroundColor: activeTab === "contributors" ? colors.brand.primary : "transparent",
+                  color: activeTab === "contributors" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
+                  backgroundColor: activeTab === "contributors" ? designTokens.semantic.interactive.primary : "transparent",
                   "&:hover": {
-                    backgroundColor: activeTab === "contributors" ? colors.brand.dark : colors.surface.dark,
+                    backgroundColor: activeTab === "contributors" ? designTokens.semantic.interactive.primaryHover : designTokens.semantic.interactive.secondaryHover,
                   },
                 },
                 label: {
-                  color: activeTab === "contributors" ? colors.text.primary : colors.text.secondary,
+                  color: activeTab === "contributors" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
                 },
               }}
             />
@@ -658,10 +658,10 @@ export default function ManageProject({
 
         <Box 
           flex={1} 
-          bg="surface.7"
+          bg="surface.8"
           style={{ 
             borderRadius: "16px",
-            border: `1px solid ${colors.surface.muted}`
+            border: `1px solid ${designTokens.semantic.border.primary}`
           }}
         >
           {getTabContent()}
