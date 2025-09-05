@@ -14,6 +14,7 @@ import { useState, useEffect } from "react";
 import { getTransactionExplorerUrl } from "@/explorer";
 import { formatCurrency } from "@/lib/formatters";
 import { designTokens } from "@/lib/design-tokens";
+import { useRouter } from "next/navigation";
 import { 
   NavLink, 
   Box, 
@@ -42,7 +43,8 @@ import {
   IconAlertCircle,
   IconWallet,
   IconTrendingUp,
-  IconCheck
+  IconCheck,
+  IconTrash
 } from "@tabler/icons-react";
 
 export default function ManageProject({
@@ -74,6 +76,8 @@ export default function ManageProject({
   const [showTooltip, setShowTooltip] = useState(false);
   const [activeTab, setActiveTab] = useState("about");
   const [showAllocationInfoModal, setShowAllocationInfoModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const router = useRouter();
 
   const { chain } = useAccount();
 
@@ -262,6 +266,63 @@ export default function ManageProject({
       setShowSuccessModal(true);
     }
   };
+
+  const handleDeleteProject = async () => {
+    try {
+      const response = await fetch("/api/deleteProject", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          hypercertId: project.slug.split("-")[2],
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete project");
+      }
+
+      const data = await response.json();
+      console.log("Project deleted successfully:", data);
+      setShowDeleteModal(false);
+      router.push("/organizations");
+    } catch (error) {
+      console.error("Error deleting project:", error);
+    }
+  };
+
+  const deleteProjectTab = (
+    <div className="p-4">
+      <h3 className="text-xl font-semibold mb-4 text-red-400">Delete Project</h3>
+      <div className="space-y-4">
+        <Alert color="red" variant="light">
+          <Text fw={500} size="sm" mb="sm">⚠️ Warning: This action cannot be undone</Text>
+          <Text size="sm">
+            Deleting a project will:
+          </Text>
+          <List size="sm" withPadding mt="xs">
+            <List.Item>Remove the project from the marketplace</List.Item>
+            <List.Item>Hide the project from public view</List.Item>
+            <List.Item>Prevent further contributions</List.Item>
+          </List>
+          <Text size="sm" mt="sm">
+            Please ensure you have backed up any important project data before proceeding.
+          </Text>
+        </Alert>
+        
+        <MantineButton
+          fullWidth
+          color="red"
+          leftSection={<IconTrash size={16} />}
+          onClick={() => setShowDeleteModal(true)}
+          variant="filled"
+        >
+          Delete Project
+        </MantineButton>
+      </div>
+    </div>
+  );
 
   const aboutTab = (
     <div className="p-4">
@@ -519,6 +580,8 @@ export default function ManageProject({
         return allocateFundsTab;
       case "contributors":
         return contributorsTab;
+      case "delete":
+        return deleteProjectTab;
       default:
         return aboutTab;
     }
@@ -650,6 +713,31 @@ export default function ManageProject({
                 },
                 label: {
                   color: activeTab === "contributors" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
+                },
+              }}
+            />
+            
+            <NavLink
+              href="#"
+              label="Delete Project"
+              leftSection={<IconTrash size="1.2rem" />}
+              active={activeTab === "delete"}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveTab("delete");
+              }}
+              color={activeTab === "delete" ? "red" : undefined}
+              styles={{
+                root: {
+                  borderRadius: "var(--mantine-radius-md)",
+                  color: activeTab === "delete" ? "#ef4444" : designTokens.semantic.text.secondary,
+                  backgroundColor: activeTab === "delete" ? "rgba(239, 68, 68, 0.1)" : "transparent",
+                  "&:hover": {
+                    backgroundColor: activeTab === "delete" ? "rgba(239, 68, 68, 0.2)" : designTokens.semantic.interactive.secondaryHover,
+                  },
+                },
+                label: {
+                  color: activeTab === "delete" ? "#ef4444" : designTokens.semantic.text.secondary,
                 },
               }}
             />
@@ -796,6 +884,48 @@ export default function ManageProject({
               with the distribution before proceeding.
             </Text>
           </Alert>
+        </Stack>
+      </MantineModal>
+
+      {/* Delete Confirmation Modal */}
+      <MantineModal
+        opened={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        title={
+          <Group gap="sm">
+            <IconTrash size={20} color="var(--mantine-color-red-6)" />
+            <Text fw={600} c="red">Confirm Project Deletion</Text>
+          </Group>
+        }
+        centered
+      >
+        <Stack gap="md">
+          <Text size="sm">
+            Are you sure you want to delete this project? This action cannot be undone.
+          </Text>
+          
+          <Alert color="red" variant="light">
+            <Text size="sm" fw={500}>
+              This will permanently remove the project from the platform and all associated data.
+            </Text>
+          </Alert>
+          
+          <Group justify="flex-end" gap="sm">
+            <MantineButton
+              variant="light"
+              color="gray"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Cancel
+            </MantineButton>
+            <MantineButton
+              color="red"
+              leftSection={<IconTrash size={16} />}
+              onClick={handleDeleteProject}
+            >
+              Delete Project
+            </MantineButton>
+          </Group>
         </Stack>
       </MantineModal>
     </div>
