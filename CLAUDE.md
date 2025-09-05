@@ -108,6 +108,14 @@ NEXT_PUBLIC_WALLETCONNECT_ID=your_wallet_connect_project_id
 - Follow the dark theme configuration in providers.tsx
 - Use custom color scheme defined in tailwind.config.ts
 
+### Color System
+- **CRITICAL**: All colors MUST be defined in `/lib/design-tokens.ts` as the single source of truth
+- Never hard-code colors anywhere in the codebase - always use design tokens
+- The design token system automatically configures both Mantine and Tailwind CSS
+- To change any color throughout the entire application, update only the design tokens file
+- Use semantic color names (e.g., `designTokens.semantic.text.primary`) instead of raw values
+- Follow the color usage guide in `COLOR_USAGE_GUIDE.md`
+
 ### API Development
 - Use Next.js API routes in app/api/ directory
 - Implement proper error handling and validation

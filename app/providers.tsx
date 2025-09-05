@@ -20,7 +20,18 @@ const mantineTheme = createTheme({
     ],
     
     // Use design tokens for primary colors
-    ...designTokens.getMantineColors(),
+    brand: [
+      "#F3F0FF", "#E9E4FF", "#D6CAF1", "#B8A6E8", "#9B84DF", 
+      "#4F45E4", "#4338CA", "#3730A3", "#312E81", "#1E1B4B"
+    ],
+    surface: [
+      "#F8F9FF", "#F0F2FF", "#E8EBFF", "#D0D5FF", "#B8BFFF", 
+      "#242b3d", "#1A2332", "#150B31", "#0E1525", "#0A0F1A"
+    ],
+    dark: [
+      "#D1D5DB", "#D6CAF1", "#B8A6E8", "#9B84DF", "#7D62D6", 
+      "#5A4A9D", "#4A2FB8", "#3A2494", "#2A1A70", "#2e1065"
+    ],
   },
   primaryColor: "brand",
   primaryShade: 5,
@@ -70,12 +81,12 @@ const mantineTheme = createTheme({
       styles: (theme: MantineTheme) => ({
         root: {
           // Ensure all primary buttons use #4F45E4
-          '&[data-variant="filled"]': {
+          "&[data-variant=\"filled\"]": {
             backgroundColor: theme.colors.brand[5], // PRIMARY button color
-            '&:hover': {
+            "&:hover": {
               backgroundColor: theme.colors.brand[6],
             },
-            '&:active': {
+            "&:active": {
               backgroundColor: theme.colors.brand[7],
             },
           },

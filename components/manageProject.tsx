@@ -476,7 +476,7 @@ export default function ManageProject({
 
           {/* Summary */}
           {(allocateHyperfund > 0 || allocateHyperstaker > 0) && (
-            <Paper p="md" withBorder radius="md" mt="md" bg="surface.6" style={{ borderColor: colors.surface.muted }}>
+            <Paper p="md" withBorder radius="md" mt="md" bg="surface.6" style={{ borderColor: designTokens.colors.surface[500] }}>
               <Group justify="space-between">
                 <Text fw={500} c="dark.0">Total Allocation:</Text>
                 <Badge size="lg" variant="light" color="brand">
