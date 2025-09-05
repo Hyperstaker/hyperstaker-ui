@@ -844,42 +844,52 @@ export default function ManageProject({
             <Text fw={600}>Understanding Fund Allocation</Text>
           </Group>
         }
-        size="md"
+        size="lg"
         centered
+        padding="xl"
       >
-        <Stack gap="md">
-          <Text size="sm">
+        <Stack gap="xl" p="md">
+          <Text size="md" lh="1.6">
             The Allo Pool is a smart contract that holds funds raised for your project. 
             When funds are allocated, they are distributed between two key components:
           </Text>
           
-          <List spacing="sm" size="sm" withPadding>
+          <List spacing="lg" size="md" withPadding>
             <List.Item 
               icon={
-                <ThemeIcon color="blue" size={20} radius="xl">
-                  <IconWallet size="0.8rem" />
+                <ThemeIcon color="blue" size={24} radius="xl">
+                  <IconWallet size="1rem" />
                 </ThemeIcon>
               }
             >
-              <Text fw={600} span>Hyperfund:</Text> This portion goes to the project&apos;s treasury 
-              for development and operations. Contributors can retire their hypercerts to get 
-              equivalent funds in USD from the Hyperfund.
+              <Stack gap="xs">
+                <Text fw={600} size="md">Hyperfund</Text>
+                <Text size="sm" lh="1.5" c="dimmed">
+                  This portion goes to the project&apos;s treasury for development and operations. 
+                  Contributors can retire their hypercerts to get equivalent funds in USD from the Hyperfund.
+                </Text>
+              </Stack>
             </List.Item>
             
             <List.Item 
               icon={
-                <ThemeIcon color="green" size={20} radius="xl">
-                  <IconTrendingUp size="0.8rem" />
+                <ThemeIcon color="green" size={24} radius="xl">
+                  <IconTrendingUp size="1rem" />
                 </ThemeIcon>
               }
             >
-              <Text fw={600} span>Hyperstaker:</Text> Reserved for retroactive rewards to 
-              contributors. These funds provide yields to supporters who have staked their Hypercerts.
+              <Stack gap="xs">
+                <Text fw={600} size="md">Hyperstaker</Text>
+                <Text size="sm" lh="1.5" c="dimmed">
+                  Reserved for retroactive rewards to contributors. These funds provide yields 
+                  to supporters who have staked their Hypercerts.
+                </Text>
+              </Stack>
             </List.Item>
           </List>
           
-          <Alert color="orange" variant="light">
-            <Text size="sm" fw={500}>
+          <Alert color="orange" variant="light" p="lg">
+            <Text size="sm" fw={500} lh="1.5">
               ⚠️ The allocation process is irreversible. Please ensure you are comfortable 
               with the distribution before proceeding.
             </Text>
