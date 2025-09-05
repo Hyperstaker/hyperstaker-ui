@@ -13,6 +13,7 @@ import Fund from "./fund";
 import { Accordion } from "@mantine/core";
 import Timeline from "./Timeline";
 import { useEffect, useState } from "react";
+import { formatCurrency } from "@/lib/formatters";
 
 export default function FundProject({
   project,
@@ -178,7 +179,7 @@ export default function FundProject({
                             Past Funding
                           </div>
                           <div className="text-2xl font-bold text-gray-200">
-                            {usdRaised} USD
+                            {formatCurrency(usdRaised)}
                           </div>
                         </div>
 
@@ -187,7 +188,7 @@ export default function FundProject({
                             Target
                           </div>
                           <div className="text-2xl font-bold text-gray-300">
-                            {(project.totalUnits ?? 0) / 10 ** 6} USD
+                            {formatCurrency((project.totalUnits ?? 0) / 10 ** 6)}
                           </div>
                           {/* <div className="text-xs text-gray-200">
                             20% of prev RPGF

@@ -20,6 +20,7 @@ import { IconExternalLink } from "@tabler/icons-react";
 import Project from "../interfaces/Project";
 import { getTransactionExplorerUrl } from "../explorer";
 import { alloAbi, contracts, erc20ContractABI } from "./data";
+import { formatCurrency } from "@/lib/formatters";
 
 interface FundProps {
   project: Project;
@@ -202,7 +203,7 @@ const Fund: React.FC<FundProps> = ({ project, poolId }) => {
                   onClick={() => handlePresetClick(val)}
                   size="sm"
                 >
-                  ${val}
+                  {formatCurrency(val)}
                 </Button>
               ))}
             </Group>
