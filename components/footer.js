@@ -93,8 +93,8 @@ const Twitter = ({ size = 24 }) => (
 const Github = ({ size = 24 }) => (
   <svg
     role="img"
-    width="24"
-    height="24"
+    width={size}
+    height={size}
     className="w-5 h-5"
     viewBox="0 0 24 24"
     fill="currentColor"

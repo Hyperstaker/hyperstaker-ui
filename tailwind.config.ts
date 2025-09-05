@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { designTokens } from "./lib/design-tokens";
 
 const config: Config = {
   content: [
@@ -22,15 +23,8 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
-      colors: {
-        "custom-link": "#1791AC",
-        'border-muted': '#242b3d',
-        'bg-base': '#0E1525',
-        'bg-muted': '#150B31',
-        'bg-header': '#150B31',
-        'bg-footer': '#150B31',
-        'text-nav-link': '#D6CAF1',
-      },
+      // Use design tokens as single source of truth
+      colors: designTokens.getTailwindColors(),
     },
   },
   plugins: [],

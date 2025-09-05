@@ -1,10 +1,8 @@
 "use client";
 
 import ManageProject from "@/components/manageProject";
-import { graphql } from "@/lib/graphql";
 import { useState, useEffect, use } from "react";
 import { useAccount, useReadContract } from "wagmi";
-import request from "graphql-request";
 import { alloAbi, contracts } from "@/components/data";
 
 export default function Page(props: { params: Promise<{ slug: string }> }) {
@@ -150,7 +148,7 @@ export default function Page(props: { params: Promise<{ slug: string }> }) {
               impactCategory: project?.fractions.data[0].metadata.impact_scope,
             },
           }}
-          isLoading={false}
+          _isLoading={false}
           hyperfund={hyperfund as string}
           hyperstaker={hyperStaker as string}
           poolId={poolId}

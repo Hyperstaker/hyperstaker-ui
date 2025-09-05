@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npx prisma generate && next dev --turbopack",
+    "dev:log": "next dev 2>&1 | tee hyper.log",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import "@mantine/dates/styles.css";
-import { useForm, UseFormReturn } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import { Dispatch, SetStateAction, useState } from "react";
 import { HypercertFormData } from "./OnboardingFlow";
 
@@ -30,7 +30,7 @@ export function CreateHypercert({
   hypercertState,
   hypercertForm,
 }: CreateHypercertProps) {
-  const [hypercertData, setHypercertData] = hypercertState;
+  const [, setHypercertData] = hypercertState;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
 

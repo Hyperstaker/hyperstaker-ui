@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Title, Text, SimpleGrid } from "@mantine/core";
+import { Title, Text } from "@mantine/core";
 import { IconClock } from "@tabler/icons-react";
 
 interface RoadmapItemProps {

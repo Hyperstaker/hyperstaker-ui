@@ -1,11 +1,8 @@
 "use client";
 import { ProjectAvatar } from "./ProjectAvatar";
 import { ProjectBanner } from "./ProjectBanner";
-import { Heading } from "./ui/Heading";
 import { Skeleton } from "./ui/Skeleton";
 import { ImpactCategories } from "./ImpactCategories";
-import { Button } from "./ui/Button";
-import { type Address } from "viem";
 import Project from "../interfaces/Project";
 import Metadata from "../interfaces/Metadata";
 import Link from "next/link";
@@ -13,6 +10,7 @@ import Fund from "./fund";
 import { Accordion } from "@mantine/core";
 import Timeline from "./Timeline";
 import { useEffect, useState } from "react";
+import { formatCurrency } from "@/lib/formatters";
 
 export default function FundProject({
   project,
@@ -178,7 +176,7 @@ export default function FundProject({
                             Past Funding
                           </div>
                           <div className="text-2xl font-bold text-gray-200">
-                            {usdRaised} USD
+                            {formatCurrency(usdRaised)}
                           </div>
                         </div>
 
@@ -187,7 +185,7 @@ export default function FundProject({
                             Target
                           </div>
                           <div className="text-2xl font-bold text-gray-300">
-                            {(project.totalUnits ?? 0) / 10 ** 6} USD
+                            {formatCurrency((project.totalUnits ?? 0) / 10 ** 6)}
                           </div>
                           {/* <div className="text-xs text-gray-200">
                             20% of prev RPGF
@@ -200,9 +198,9 @@ export default function FundProject({
                   </div>
                 </Skeleton>
               </div>
-              {/* <Skeleton isLoading={isLoading} className="w-[100px]">
+              <Skeleton isLoading={isLoading} className="w-[100px]">
                 <ImpactCategories tags={metadata?.data?.impactCategory} />
-              </Skeleton> */}
+              </Skeleton>
             </div>
             <div className="flex-1">
               {/* <h3>Fund this project</h3> */}

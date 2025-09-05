@@ -1,7 +1,3 @@
-type Partner = {
-  logo: string;
-  name: string;
-};
 export default function Partner({
   logo,
   name,

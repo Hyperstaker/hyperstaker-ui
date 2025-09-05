@@ -1,0 +1,73 @@
+   ▲ Next.js 15.2.4
+   - Local:        http://localhost:3000
+   - Network:      http://172.20.10.6:3000
+   - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 1838ms
+ ○ Compiling / ...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ Compiled / in 6.9s (2774 modules)
+ ✓ Compiled in 687ms (1113 modules)
+ GET / 200 in 7652ms
+ ○ Compiling /organizations ...
+ ✓ Compiled /organizations in 9.5s (9452 modules)
+(node:97550) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ GET /organizations 200 in 10116ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1398ms (9456 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 1553ms
+ GET /_next/static/chunks/app/Notifications.module.css.mjs.map 404 in 161ms
+ HEAD /organizations 200 in 318ms
+ ○ Compiling /api/user-allo-profile ...
+ ✓ Compiled /api/user-allo-profile in 2.3s (9004 modules)
+ GET /api/user-allo-profile?walletAddress=0x94E4326A04Da5C07261D2895AE6b73316a790187 201 in 4450ms
+ ○ Compiling /api/alloProfiles ...
+ ✓ Compiled /api/alloProfiles in 615ms (9006 modules)
+ POST /api/alloProfiles 400 in 674ms
+ GET /api/user-allo-profile?walletAddress=0x63A32F1595a68E811496D820680B74A5ccA303c5 201 in 1929ms
+error fetching allo profiles:  TypeError: fetch failed
+    at async POST (app/api/alloProfiles/route.ts:27:21)
+  25 |     }`;
+  26 |
+> 27 |     const response = await fetch(process.env.ALLO_GRAPHQL_ENDPOINT as string, {
+     |                     ^
+  28 |       method: "POST",
+  29 |       headers: {
+  30 |         "Content-Type": "application/json", {
+  [cause]: [Error: getaddrinfo ENOTFOUND grants-stack-indexer-v2.gitcoin.co] {
+    errno: -3008,
+    code: 'ENOTFOUND',
+    syscall: 'getaddrinfo',
+    hostname: 'grants-stack-indexer-v2.gitcoin.co'
+  }
+}
+ POST /api/alloProfiles 500 in 318ms
+ GET /api/user-allo-profile?walletAddress=0x94E4326A04Da5C07261D2895AE6b73316a790187 201 in 203ms
+ POST /api/alloProfiles 400 in 7ms
+ GET /organizations 200 in 89ms
+ ○ Compiling / ...
+ ✓ Compiled / in 615ms (5160 modules)
+ GET / 200 in 988ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1058ms (9477 modules)
+ GET /_next/static/chunks/app/(home)/VisuallyHidden.module.css.mjs.map 404 in 1308ms
+ ○ Compiling /explore ...
+ ✓ Compiled /explore in 3.5s (9778 modules)
+ GET /explore 200 in 3676ms
+ ○ Compiling /api/projectListings ...
+ ✓ Compiled /api/projectListings in 1091ms (9780 modules)
+ GET /organizations 200 in 35ms
+ GET /api/projectListings 200 in 2996ms
+ GET /api/projectListings 200 in 189ms
+ GET /api/user-allo-profile?walletAddress=0x94E4326A04Da5C07261D2895AE6b73316a790187 201 in 1724ms
+ POST /api/alloProfiles 400 in 15ms
+ GET /api/user-allo-profile?walletAddress=0x94E4326A04Da5C07261D2895AE6b73316a790187 201 in 199ms
+ POST /api/alloProfiles 400 in 12ms
+ GET /api/alloProfiles 405 in 21ms
+   Reload env: .env.local
+ ✓ Compiled in 2.2s (9131 modules)
+ GET /organizations 200 in 86ms

@@ -11,25 +11,57 @@ import { Abi, encodeAbiParameters } from "viem";
 import { Button } from "./ui/Button";
 import AllocateForm from "./allocate.js";
 import { useState, useEffect } from "react";
-import { Modal } from "./ui/Modal";
 import { getTransactionExplorerUrl } from "@/explorer";
+import { formatCurrency } from "@/lib/formatters";
+import { designTokens } from "@/lib/design-tokens";
 import { useRouter } from "next/navigation";
+import { 
+  NavLink, 
+  Box, 
+  Paper, 
+  Stack, 
+  Title, 
+  Text, 
+  NumberInput, 
+  Button as MantineButton, 
+  Alert, 
+  Group, 
+  Card, 
+  Badge, 
+  Grid, 
+  List, 
+  ThemeIcon,
+  Container,
+  Modal as MantineModal,
+  ActionIcon
+} from "@mantine/core";
+import { 
+  IconInfoCircle, 
+  IconCoins, 
+  IconUsers, 
+  IconChartBar, 
+  IconAlertCircle,
+  IconWallet,
+  IconTrendingUp,
+  IconCheck,
+  IconTrash
+} from "@tabler/icons-react";
 
 export default function ManageProject({
   project,
-  isLoading,
   hyperfund,
   hyperstaker,
   poolId,
   strategyAddress,
+  _isLoading,
 }: {
   project: Project;
   metadata: Metadata;
-  isLoading: boolean;
   hyperfund: string;
   hyperstaker: string;
   poolId: number;
   strategyAddress: `0x${string}`;
+  _isLoading: boolean;
 }) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [txHash, setTxHash] = useState("");
@@ -43,6 +75,7 @@ export default function ManageProject({
   const [raisePercent, setRaisePercent] = useState(0);
   const [showTooltip, setShowTooltip] = useState(false);
   const [activeTab, setActiveTab] = useState("about");
+  const [showAllocationInfoModal, setShowAllocationInfoModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const router = useRouter();
   const { chain } = useAccount();
@@ -192,7 +225,7 @@ export default function ManageProject({
 
       const data = await response.json();
       console.log("Project unlisted successfully:", data);
-      setIsListed(false); // Update state to reflect unlisted status
+      setIsListed(false);
     } catch (error) {
       console.error("Error unlisting project:", error);
     }
@@ -233,35 +266,6 @@ export default function ManageProject({
     }
   };
 
-  const deleteProjectTab = (
-    <div className="p-4">
-      <h3 className="text-xl font-semibold mb-4">Delete Project</h3>
-      <div className="space-y-4">
-        <div className="bg-red-900/20 p-4 rounded-lg mb-6">
-          <h4 className="text-lg font-medium mb-2 text-red-500">Warning</h4>
-          <p className="text-gray-300 mb-3">
-            Deleting a project is an irreversible action. This will:
-          </p>
-          <ul className="list-disc list-inside space-y-2 text-gray-300">
-            <li>Remove the project from the marketplace</li>
-            <li>Hide the project from public view</li>
-            <li>Prevent further contributions</li>
-          </ul>
-          <p className="text-gray-300 mt-3">
-            Please ensure you have backed up any important project data before
-            proceeding.
-          </p>
-        </div>
-        <Button
-          className="w-full bg-red-600 hover:bg-red-700"
-          onClick={() => setShowDeleteModal(true)}
-        >
-          Delete Project
-        </Button>
-      </div>
-    </div>
-  );
-
   const handleDeleteProject = async () => {
     try {
       const response = await fetch("/api/deleteProject", {
@@ -282,11 +286,42 @@ export default function ManageProject({
       console.log("Project deleted successfully:", data);
       setShowDeleteModal(false);
       router.push("/organizations");
-      // You might want to redirect or show a success message here
     } catch (error) {
       console.error("Error deleting project:", error);
     }
   };
+
+  const deleteProjectTab = (
+    <div className="p-4">
+      <h3 className="text-xl font-semibold mb-4 text-red-400">Delete Project</h3>
+      <div className="space-y-4">
+        <Alert color="red" variant="light">
+          <Text fw={500} size="sm" mb="sm">⚠️ Warning: This action cannot be undone</Text>
+          <Text size="sm">
+            Deleting a project will:
+          </Text>
+          <List size="sm" withPadding mt="xs">
+            <List.Item>Remove the project from the marketplace</List.Item>
+            <List.Item>Hide the project from public view</List.Item>
+            <List.Item>Prevent further contributions</List.Item>
+          </List>
+          <Text size="sm" mt="sm">
+            Please ensure you have backed up any important project data before proceeding.
+          </Text>
+        </Alert>
+        
+        <MantineButton
+          fullWidth
+          color="red"
+          leftSection={<IconTrash size={16} />}
+          onClick={() => setShowDeleteModal(true)}
+          variant="filled"
+        >
+          Delete Project
+        </MantineButton>
+      </div>
+    </div>
+  );
 
   const aboutTab = (
     <div className="p-4">
@@ -326,7 +361,7 @@ export default function ManageProject({
       <h3 className="text-xl font-semibold mb-4">Funds Raised</h3>
       <div className="space-y-4">
         <h5>
-          Progress <span className="float-right">{raisePercent}%</span>
+          Progress <span className="float-right">{raisePercent.toFixed(1)}%</span>
         </h5>
         <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
           <div
@@ -334,22 +369,22 @@ export default function ManageProject({
             className="bg-blue-600 h-2.5 rounded-full"
           ></div>
         </div>
-        <div className="grid grid-cols-3 gap-4 mt-4">
+        <div className="flex justify-between items-start mt-4">
           <div>
             <div className="text-sm font-medium text-gray-100">
               Past Funding
             </div>
             <div className="text-2xl font-bold text-gray-200">
-              {usdRaised} USD
+              {formatCurrency(usdRaised)}
             </div>
           </div>
-          <div>
+          <div className="text-left">
             <div className="text-sm font-medium text-gray-100">Target</div>
             <div className="text-2xl font-bold text-gray-300">
-              {(project.totalUnits ?? 0) / 10 ** 6} USD
+              {formatCurrency((project.totalUnits ?? 0) / 10 ** 6)}
             </div>
           </div>
-          <div>
+          <div className="text-right">
             <div className="text-sm font-medium text-gray-200">Retro split</div>
             <div className="text-2xl font-bold text-gray-300">20%</div>
           </div>
@@ -400,83 +435,130 @@ export default function ManageProject({
   );
 
   const allocateFundsTab = (
-    <div className="p-4">
-      <h3 className="text-xl font-semibold mb-4">Allocate Funds</h3>
-      <div className="space-y-4">
-        <div className="bg-gray-800 p-4 rounded-lg mb-6">
-          <h4 className="text-lg font-medium mb-2">Understanding Allocation</h4>
-          <p className="text-gray-300 mb-3">
-            The Allo Pool is a smart contract that holds funds raised for your
-            project. When funds are allocated, they are distributed between two
-            key components:
-          </p>
-          <ul className="list-disc list-inside space-y-2 text-gray-300">
-            <li>
-              <span className="font-medium">Hyperfund:</span> This portion goes
-              to the project&apos;s treasury and can be used for project
-              development and operations. The contributors can retire their
-              hypercerts to get equivalent amount of funds in USD from the
-              Hyperfund.
-            </li>
-            <li>
-              <span className="font-medium">Hyperstaker:</span> This portion is
-              reserved for retroactive rewards to financial and non financial
-              contributors who have supported the project. The funds in
-              Hyperstaker is used to provide yields to the supporters who have
-              staked their Hypercerts.
-            </li>
-          </ul>
-          <p className="text-gray-300 mt-3">
-            The allocation process is irreversible, so please ensure you are
-            comfortable with the distribution before proceeding.
-          </p>
-        </div>
+    <Container size="lg" py="xl">
+      <Stack gap="xl">
+        {/* Header */}
+        <Group justify="space-between" mb="md">
+          <Group gap="sm">
+            <IconCoins size={24} />
+            <Title order={2}>Allocate Funds</Title>
+          </Group>
+          <ActionIcon
+            variant="light"
+            color="blue"
+            size="lg"
+            onClick={() => setShowAllocationInfoModal(true)}
+          >
+            <IconInfoCircle size="1.2rem" />
+          </ActionIcon>
+        </Group>
 
-        <p>
-          Available pool funds to be allocated:{" "}
-          {(poolBalances?.data
-            ? parseInt((poolBalances.data[0]?.result as bigint)?.toString())
-            : 0) /
-            10 ** 6}{" "}
-          USD
-        </p>
-        <p>
-          Hyperstaker balance:{" "}
-          {(poolBalances?.data
-            ? parseInt((poolBalances.data[1]?.result as bigint)?.toString())
-            : 0) /
-            10 ** 6}{" "}
-          USD
-        </p>
-        <p>
-          Hyperfund balance:{" "}
-          {(poolBalances?.data
-            ? parseInt((poolBalances.data[2]?.result as bigint)?.toString())
-            : 0) /
-            10 ** 6}{" "}
-          USD
-        </p>
-        <TextField
-          label="Amount to Allocate to Hyperfund (USD)"
-          type="number"
-          fullWidth
-          margin="normal"
-          value={allocateHyperfund}
-          onChange={(e) => setAllocateHyperfund(Number(e.target.value))}
-        />
-        <TextField
-          label="Amount to Allocate to Hyperstaker (USD)"
-          type="number"
-          fullWidth
-          margin="normal"
-          value={allocateHyperstaker}
-          onChange={(e) => setAllocateHyperstaker(Number(e.target.value))}
-        />
-        <Button type="button" onClick={handleAllocateFunds}>
-          Allocate Funds
-        </Button>
-      </div>
-    </div>
+        {/* Balance Overview */}
+        <Grid>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <Card p="lg" radius="md" withBorder>
+              <Group justify="space-between" mb="xs">
+                <Text size="sm" c="dimmed">Available Pool Funds</Text>
+                <IconWallet size={20} color="var(--mantine-color-blue-6)" />
+              </Group>
+              <Text fw={700} size="xl">
+                {formatCurrency((poolBalances?.data
+                  ? parseInt((poolBalances.data[0]?.result as bigint)?.toString())
+                  : 0) / 10 ** 6)}
+              </Text>
+            </Card>
+          </Grid.Col>
+          
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <Card p="lg" radius="md" withBorder>
+              <Group justify="space-between" mb="xs">
+                <Text size="sm" c="dimmed">Hyperstaker Balance</Text>
+                <IconTrendingUp size={20} color="var(--mantine-color-green-6)" />
+              </Group>
+              <Text fw={700} size="xl" c="green">
+                {formatCurrency((poolBalances?.data
+                  ? parseInt((poolBalances.data[1]?.result as bigint)?.toString())
+                  : 0) / 10 ** 6)}
+              </Text>
+            </Card>
+          </Grid.Col>
+          
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <Card p="lg" radius="md" withBorder>
+              <Group justify="space-between" mb="xs">
+                <Text size="sm" c="dimmed">Hyperfund Balance</Text>
+                <IconCoins size={20} color="var(--mantine-color-blue-6)" />
+              </Group>
+              <Text fw={700} size="xl" c="blue">
+                {formatCurrency((poolBalances?.data
+                  ? parseInt((poolBalances.data[2]?.result as bigint)?.toString())
+                  : 0) / 10 ** 6)}
+              </Text>
+            </Card>
+          </Grid.Col>
+        </Grid>
+
+        {/* Allocation Form */}
+        <Card p="lg" radius="md" withBorder>
+          <Title order={3} mb="md">Set Allocation Amounts</Title>
+          
+          <Grid>
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <NumberInput
+                label="Amount to Allocate to Hyperfund"
+                description="Project treasury funds (USD)"
+                placeholder="0.00"
+                value={allocateHyperfund}
+                onChange={(value) => setAllocateHyperfund(Number(value))}
+                leftSection={<IconWallet size={16} />}
+                min={0}
+                step={0.01}
+                decimalScale={2}
+                fixedDecimalScale
+              />
+            </Grid.Col>
+            
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <NumberInput
+                label="Amount to Allocate to Hyperstaker"
+                description="Staking rewards pool (USD)"
+                placeholder="0.00"
+                value={allocateHyperstaker}
+                onChange={(value) => setAllocateHyperstaker(Number(value))}
+                leftSection={<IconTrendingUp size={16} />}
+                min={0}
+                step={0.01}
+                decimalScale={2}
+                fixedDecimalScale
+              />
+            </Grid.Col>
+          </Grid>
+
+          {/* Summary */}
+          {(allocateHyperfund > 0 || allocateHyperstaker > 0) && (
+            <Paper p="md" withBorder radius="md" mt="md" bg="surface.6" style={{ borderColor: designTokens.colors.surface[500] }}>
+              <Group justify="space-between">
+                <Text fw={500} c="dark.0">Total Allocation:</Text>
+                <Badge size="lg" variant="light" color="brand">
+                  {formatCurrency(allocateHyperfund + allocateHyperstaker)}
+                </Badge>
+              </Group>
+            </Paper>
+          )}
+
+          <MantineButton 
+            onClick={handleAllocateFunds}
+            leftSection={<IconCheck size={16} />}
+            size="md"
+            fullWidth
+            mt="xl"
+            disabled={allocateHyperfund === 0 && allocateHyperstaker === 0}
+          >
+            Execute Allocation
+          </MantineButton>
+        </Card>
+      </Stack>
+    </Container>
   );
 
   const contributorsTab = (
@@ -523,131 +605,338 @@ export default function ManageProject({
       </div>
 
       <div className="flex gap-6">
-        <div className="w-64 space-y-2">
-          <Button
-            className={`w-full ${
-              activeTab === "about" ? "bg-primary-600" : ""
-            }`}
-            onClick={() => setActiveTab("about")}
-          >
-            About
-          </Button>
-          <Button
-            className={`w-full ${
-              activeTab === "fundsRaised" ? "bg-primary-600" : ""
-            }`}
-            onClick={() => setActiveTab("fundsRaised")}
-          >
-            Funds Raised
-          </Button>
-          {/* <Button
-            className={`w-full ${
-              activeTab === "supportedAssets" ? "bg-primary-600" : ""
-            }`}
-            onClick={() => setActiveTab("supportedAssets")}
-          >
-            Add Supported Assets
-          </Button> */}
-          <Button
-            className={`w-full ${
-              activeTab === "allocateFunds" ? "bg-primary-600" : ""
-            }`}
-            onClick={() => setActiveTab("allocateFunds")}
-          >
-            Allocate Funds
-          </Button>
-          <Button
-            className={`w-full ${
-              activeTab === "contributors" ? "bg-primary-600" : ""
-            }`}
-            onClick={() => setActiveTab("contributors")}
-          >
-            Contributors
-          </Button>
-          <Button
-            className={`w-full ${activeTab === "delete" ? "bg-red-600" : ""}`}
-            onClick={() => setActiveTab("delete")}
-          >
-            Delete Project
-          </Button>
-        </div>
+        <Paper 
+          w={280} 
+          p={0} 
+          radius="md" 
+          withBorder
+          bg="surface.8"
+          style={{ 
+            borderColor: designTokens.semantic.border.primary
+          }}
+        >
+          <Stack gap="xs" p="md">
+            <NavLink
+              href="#"
+              label="About"
+              leftSection={<IconInfoCircle size="1.2rem" />}
+              active={activeTab === "about"}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveTab("about");
+              }}
+              color={activeTab === "about" ? "brand" : undefined}
+              styles={{
+                root: {
+                  borderRadius: "var(--mantine-radius-md)",
+                  color: activeTab === "about" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
+                  backgroundColor: activeTab === "about" ? designTokens.semantic.interactive.primary : "transparent",
+                  "&:hover": {
+                    backgroundColor: activeTab === "about" ? designTokens.semantic.interactive.primaryHover : designTokens.semantic.interactive.secondaryHover,
+                  },
+                },
+                label: {
+                  color: activeTab === "about" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
+                },
+              }}
+            />
+            
+            <NavLink
+              href="#"
+              label="Funds Raised"
+              leftSection={<IconChartBar size="1.2rem" />}
+              active={activeTab === "fundsRaised"}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveTab("fundsRaised");
+              }}
+              color={activeTab === "fundsRaised" ? "brand" : undefined}
+              styles={{
+                root: {
+                  borderRadius: "var(--mantine-radius-md)",
+                  color: activeTab === "fundsRaised" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
+                  backgroundColor: activeTab === "fundsRaised" ? designTokens.semantic.interactive.primary : "transparent",
+                  "&:hover": {
+                    backgroundColor: activeTab === "fundsRaised" ? designTokens.semantic.interactive.primaryHover : designTokens.semantic.interactive.secondaryHover,
+                  },
+                },
+                label: {
+                  color: activeTab === "fundsRaised" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
+                },
+              }}
+            />
+            
+            <NavLink
+              href="#"
+              label="Allocate Funds"
+              leftSection={<IconCoins size="1.2rem" />}
+              active={activeTab === "allocateFunds"}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveTab("allocateFunds");
+              }}
+              color={activeTab === "allocateFunds" ? "brand" : undefined}
+              styles={{
+                root: {
+                  borderRadius: "var(--mantine-radius-md)",
+                  color: activeTab === "allocateFunds" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
+                  backgroundColor: activeTab === "allocateFunds" ? designTokens.semantic.interactive.primary : "transparent",
+                  "&:hover": {
+                    backgroundColor: activeTab === "allocateFunds" ? designTokens.semantic.interactive.primaryHover : designTokens.semantic.interactive.secondaryHover,
+                  },
+                },
+                label: {
+                  color: activeTab === "allocateFunds" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
+                },
+              }}
+            />
+            
+            <NavLink
+              href="#"
+              label="Contributors"
+              leftSection={<IconUsers size="1.2rem" />}
+              active={activeTab === "contributors"}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveTab("contributors");
+              }}
+              color={activeTab === "contributors" ? "brand" : undefined}
+              styles={{
+                root: {
+                  borderRadius: "var(--mantine-radius-md)",
+                  color: activeTab === "contributors" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
+                  backgroundColor: activeTab === "contributors" ? designTokens.semantic.interactive.primary : "transparent",
+                  "&:hover": {
+                    backgroundColor: activeTab === "contributors" ? designTokens.semantic.interactive.primaryHover : designTokens.semantic.interactive.secondaryHover,
+                  },
+                },
+                label: {
+                  color: activeTab === "contributors" ? designTokens.semantic.text.primary : designTokens.semantic.text.secondary,
+                },
+              }}
+            />
+            
+            <NavLink
+              href="#"
+              label="Delete Project"
+              leftSection={<IconTrash size="1.2rem" />}
+              active={activeTab === "delete"}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveTab("delete");
+              }}
+              color={activeTab === "delete" ? "red" : undefined}
+              styles={{
+                root: {
+                  borderRadius: "var(--mantine-radius-md)",
+                  color: activeTab === "delete" ? "#ef4444" : designTokens.semantic.text.secondary,
+                  backgroundColor: activeTab === "delete" ? "rgba(239, 68, 68, 0.1)" : "transparent",
+                  "&:hover": {
+                    backgroundColor: activeTab === "delete" ? "rgba(239, 68, 68, 0.2)" : designTokens.semantic.interactive.secondaryHover,
+                  },
+                },
+                label: {
+                  color: activeTab === "delete" ? "#ef4444" : designTokens.semantic.text.secondary,
+                },
+              }}
+            />
+          </Stack>
+        </Paper>
 
-        <div className="flex-1 bg-[#1e293b] rounded-2xl border border-gray-200 dark:border-gray-700">
+        <Box 
+          flex={1} 
+          bg="surface.8"
+          style={{ 
+            borderRadius: "16px",
+            border: `1px solid ${designTokens.semantic.border.primary}`
+          }}
+        >
           {getTabContent()}
-        </div>
+        </Box>
       </div>
 
-      <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
-        <div className="p-6">
+      <MantineModal 
+        opened={showSuccessModal} 
+        onClose={() => setShowSuccessModal(false)}
+        title={
+          txStatus === "success" ? (
+            <Group gap="sm">
+              <IconCheck size={20} color="var(--mantine-color-green-6)" />
+              <Text fw={600} c="green">Transaction Successful!</Text>
+            </Group>
+          ) : txStatus === "failed" ? (
+            <Group gap="sm">
+              <IconAlertCircle size={20} color="var(--mantine-color-red-6)" />
+              <Text fw={600} c="red">Transaction Failed</Text>
+            </Group>
+          ) : (
+            <Text fw={600}>Transaction Pending...</Text>
+          )
+        }
+        centered
+      >
+        <Stack gap="md">
           {txStatus === "success" ? (
             <>
-              <h3 className="text-lg font-medium mb-4 text-green-500">
-                Transaction Successful!
-              </h3>
-              <p className="text-gray-200 mb-4">Transaction Hash:</p>
-              <a
-                href={getTransactionExplorerUrl(chain?.id, txHash) ?? ""}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="break-all text-sm bg-gray-700 p-2 rounded text-blue-400 hover:text-blue-300 block mb-4"
-              >
-                {txHash}
-              </a>
+              <Alert color="green" variant="light">
+                Your transaction has been successfully submitted to the blockchain.
+              </Alert>
+              
+              <Stack gap="xs">
+                <Text size="sm" c="dimmed">Transaction Hash:</Text>
+                <Text 
+                  component="a"
+                  href={getTransactionExplorerUrl(chain?.id, txHash) ?? ""}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="sm"
+                  style={{ wordBreak: "break-all" }}
+                  c="blue"
+                >
+                  {txHash}
+                </Text>
+              </Stack>
             </>
           ) : txStatus === "failed" ? (
             <>
-              <h3 className="text-lg font-medium mb-4 text-red-500">
-                Transaction Failed
-              </h3>
-              <p className="text-gray-200 mb-4">Please try again</p>
-              <Button
-                className="mt-4 bg-red-500 hover:bg-red-600"
-                onClick={() => {
-                  setShowSuccessModal(false);
-                  if (activeTab === "supportedAssets") {
-                    handleAddAddress();
-                  } else if (activeTab === "allocateFunds") {
-                    handleAllocateFunds();
-                  }
-                }}
-              >
-                Retry
-              </Button>
+              <Alert color="red" variant="light">
+                The transaction failed. Please try again.
+              </Alert>
+              <Group justify="flex-end">
+                <MantineButton
+                  color="red"
+                  onClick={() => {
+                    setShowSuccessModal(false);
+                    if (activeTab === "supportedAssets") {
+                      handleAddAddress();
+                    } else if (activeTab === "allocateFunds") {
+                      handleAllocateFunds();
+                    }
+                  }}
+                >
+                  Retry
+                </MantineButton>
+              </Group>
             </>
           ) : (
-            <h3 className="text-lg font-medium mb-4">Transaction Pending...</h3>
+            <Text>Processing your transaction...</Text>
           )}
-          <Button className="mt-4" onClick={() => setShowSuccessModal(false)}>
-            Close
-          </Button>
-        </div>
-      </Modal>
+          
+          <Group justify="flex-end" mt="md">
+            <MantineButton 
+              variant="light"
+              onClick={() => setShowSuccessModal(false)}
+            >
+              Close
+            </MantineButton>
+          </Group>
+        </Stack>
+      </MantineModal>
 
-      <Modal open={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
-        <div className="p-6">
-          <h3 className="text-lg font-medium mb-4 text-red-500">
-            Confirm Project Deletion
-          </h3>
-          <p className="text-gray-200 mb-4">
-            Are you sure you want to delete this project? This action cannot be
-            undone.
-          </p>
-          <div className="flex gap-4">
-            <Button
-              className="flex-1 bg-gray-600 hover:bg-gray-700"
+      {/* Allocation Information Modal */}
+      <MantineModal 
+        opened={showAllocationInfoModal} 
+        onClose={() => setShowAllocationInfoModal(false)}
+        title={
+          <Group gap="sm">
+            <IconInfoCircle size={20} />
+            <Text fw={600}>Understanding Fund Allocation</Text>
+          </Group>
+        }
+        size="lg"
+        centered
+        padding="xl"
+      >
+        <Stack gap="xl" p="md">
+          <Text size="md" lh="1.6">
+            The Allo Pool is a smart contract that holds funds raised for your project. 
+            When funds are allocated, they are distributed between two key components:
+          </Text>
+          
+          <List spacing="lg" size="md" withPadding>
+            <List.Item 
+              icon={
+                <ThemeIcon color="blue" size={24} radius="xl">
+                  <IconWallet size="1rem" />
+                </ThemeIcon>
+              }
+            >
+              <Stack gap="xs">
+                <Text fw={600} size="md">Hyperfund</Text>
+                <Text size="sm" lh="1.5" c="dimmed">
+                  This portion goes to the project&apos;s treasury for development and operations. 
+                  Contributors can retire their hypercerts to get equivalent funds in USD from the Hyperfund.
+                </Text>
+              </Stack>
+            </List.Item>
+            
+            <List.Item 
+              icon={
+                <ThemeIcon color="green" size={24} radius="xl">
+                  <IconTrendingUp size="1rem" />
+                </ThemeIcon>
+              }
+            >
+              <Stack gap="xs">
+                <Text fw={600} size="md">Hyperstaker</Text>
+                <Text size="sm" lh="1.5" c="dimmed">
+                  Reserved for retroactive rewards to contributors. These funds provide yields 
+                  to supporters who have staked their Hypercerts.
+                </Text>
+              </Stack>
+            </List.Item>
+          </List>
+          
+          <Alert color="orange" variant="light" p="lg">
+            <Text size="sm" fw={500} lh="1.5">
+              ⚠️ The allocation process is irreversible. Please ensure you are comfortable 
+              with the distribution before proceeding.
+            </Text>
+          </Alert>
+        </Stack>
+      </MantineModal>
+
+      {/* Delete Confirmation Modal */}
+      <MantineModal
+        opened={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        title={
+          <Group gap="sm">
+            <IconTrash size={20} color="var(--mantine-color-red-6)" />
+            <Text fw={600} c="red">Confirm Project Deletion</Text>
+          </Group>
+        }
+        centered
+      >
+        <Stack gap="md">
+          <Text size="sm">
+            Are you sure you want to delete this project? This action cannot be undone.
+          </Text>
+          
+          <Alert color="red" variant="light">
+            <Text size="sm" fw={500}>
+              This will permanently remove the project from the platform and all associated data.
+            </Text>
+          </Alert>
+          
+          <Group justify="flex-end" gap="sm">
+            <MantineButton
+              variant="light"
+              color="gray"
               onClick={() => setShowDeleteModal(false)}
             >
               Cancel
-            </Button>
-            <Button
-              className="flex-1 bg-red-600 hover:bg-red-700"
+            </MantineButton>
+            <MantineButton
+              color="red"
+              leftSection={<IconTrash size={16} />}
               onClick={handleDeleteProject}
             >
-              Delete
-            </Button>
-          </div>
-        </div>
-      </Modal>
+              Delete Project
+            </MantineButton>
+          </Group>
+        </Stack>
+      </MantineModal>
     </div>
   );
 }
